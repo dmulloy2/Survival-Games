@@ -1,14 +1,11 @@
 package org.mcsg.survivalgames.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.MessageManager;
-import org.mcsg.survivalgames.SettingsManager;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
+import org.mcsg.survivalgames.SettingsManager;
 
-
-
-public class ResetSpawns implements SubCommand{
+public class ResetSpawns implements SubCommand {
 
     public boolean onCommand(Player player, String[] args) {
         

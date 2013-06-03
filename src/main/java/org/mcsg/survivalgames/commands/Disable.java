@@ -1,15 +1,12 @@
 package org.mcsg.survivalgames.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.MessageManager;
 import org.mcsg.survivalgames.SettingsManager;
 
-
-
-public class Disable implements SubCommand{
+public class Disable implements SubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {        

@@ -3,6 +3,7 @@ package org.mcsg.survivalgames;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -20,8 +21,6 @@ import org.mcsg.survivalgames.logging.QueueManager;
 import org.mcsg.survivalgames.stats.StatsManager;
 import org.mcsg.survivalgames.util.ItemReader;
 import org.mcsg.survivalgames.util.Kit;
-
-import com.sk89q.wepif.PluginPermissionsResolver;
 
 
 
@@ -360,12 +359,10 @@ public class Game {
 		}
 		vote++;
 		voted.add(pl);
-		msgmgr.sendFMessage(PrefixType.INFO, "game.playervote", pl, "player-"+pl.getName());
+		for (Player player : activePlayers) {
+			msgmgr.sendFMessage(PrefixType.INFO, "game.playervote", player, "player-"+pl.getName(), "voted-"+vote, "players-"+getActivePlayers());
+		}
 		HookManager.getInstance().runHook("PLAYER_VOTE", "player-"+pl.getName());
-		/*for(Player p: activePlayers){
-            p.sendMessage(ChatColor.AQUA+pl.getName()+" Voted to start the game! "+ Math.round((vote +0.0) / ((getActivePlayers() +0.0)*100)) +"/"+((c.getInt("auto-start-vote")+0.0))+"%");
-        }*/
-		// Bukkit.getServer().broadcastPrefixType((vote +0.0) / (getActivePlayers() +0.0) +"% voted, needs "+(c.getInt("auto-start-vote")+0.0)/100);
 		if ((((vote + 0.0) / (getActivePlayers() +0.0))>=(config.getInt("auto-start-vote")+0.0)/100) && getActivePlayers() > 1) {
 			countdown(config.getInt("auto-start-time"));
 			for (Player p: activePlayers) {
