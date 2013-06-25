@@ -33,7 +33,6 @@ public class GameManager {
 	MessageManager msgmgr = MessageManager.getInstance();
 
 	private GameManager() {
-
 	}
 
 	public static GameManager getInstance() {
@@ -44,7 +43,7 @@ public class GameManager {
 		p = plugin;
 		LoadGames();
 		LoadKits();
-		for (Game g: getGames()) {
+		for (Game g : getGames()) {
 			openedChest.put(g.getID(), new HashSet < Block > ());
 		}
 	}
@@ -58,7 +57,7 @@ public class GameManager {
 	}
 
 
-	public void LoadKits(){
+	public void LoadKits() {
 		Set<String> kits1 = SettingsManager.getInstance().getKits().getConfigurationSection("kits").getKeys(false);
 		for(String s:kits1){
 			kits.add(new Kit(s));
@@ -91,7 +90,7 @@ public class GameManager {
 	}
 
 	public int getBlockGameId(Location v) {
-		for (Game g: games) {
+		for (Game g : games) {
 			if (g.isBlockInArena(v)) {
 				return g.getID();
 			}
@@ -100,7 +99,7 @@ public class GameManager {
 	}
 
 	public int getPlayerGameId(Player p) {
-		for (Game g: games) {
+		for (Game g : games) {
 			if (g.isPlayerActive(p)) {
 				return g.getID();
 			}
@@ -109,7 +108,7 @@ public class GameManager {
 	}
 
 	public int getPlayerSpectateId(Player p) {
-		for (Game g: games) {
+		for (Game g : games) {
 			if (g.isSpectator(p)) {
 				return g.getID();
 			}
@@ -118,7 +117,7 @@ public class GameManager {
 	}
 
 	public boolean isPlayerActive(Player player) {
-		for (Game g: games) {
+		for (Game g : games) {
 			if (g.isPlayerActive(player)) {
 				return true;
 			}
@@ -127,7 +126,7 @@ public class GameManager {
 	}
 
 	public boolean isPlayerInactive(Player player) {
-		for (Game g: games) {
+		for (Game g : games) {
 			if (g.isPlayerActive(player)) {
 				return true;
 			}
@@ -136,7 +135,7 @@ public class GameManager {
 	}
 
 	public boolean isSpectator(Player player) {
-		for (Game g: games) {
+		for (Game g : games) {
 			if (g.isSpectator(player)) {
 				return true;
 			}
@@ -145,7 +144,7 @@ public class GameManager {
 	}
 
 	public void removeFromOtherQueues(Player p, int id) {
-		for (Game g: getGames()) {
+		for (Game g : getGames()) {
 			if (g.isInQueue(p) && g.getID() != id) {
 				g.removeFromQueue(p);
 				msgmgr.sendMessage(PrefixType.INFO, "Removed from the queue in arena " + g.getID(), p);
@@ -153,15 +152,15 @@ public class GameManager {
 		}
 	}
 
-	public boolean isInKitMenu(Player p){
+	public boolean isInKitMenu(Player p) {
 		return kitsel.contains(p);
 	}
 
-	public void leaveKitMenu(Player p){
+	public void leaveKitMenu(Player p) {
 		kitsel.remove(p);
 	}
 
-	public void openKitMenu(Player p){
+	public void openKitMenu(Player p) {
 		kitsel.add(p);
 	}
 
@@ -169,9 +168,9 @@ public class GameManager {
 	public void selectKit(Player p, int i) {
 		p.getInventory().clear();
 		ArrayList<Kit>kits = getKits(p);
-		if(i <= kits.size()){
+		if (i <= kits.size()) {
 			Kit k = getKits(p).get(i);
-			if(k!=null){
+			if (k !=null) {
 				p.getInventory().setContents(k.getContents().toArray(new ItemStack[0]));
 			}
 		}
@@ -185,7 +184,7 @@ public class GameManager {
 
 	public Game getGame(int a) {
 		//int t = gamemap.get(a);
-		for (Game g: games) {
+		for (Game g : games) {
 			if (g.getID() == a) {
 				return g;
 			}
@@ -254,7 +253,7 @@ public class GameManager {
 
 	public void autoAddPlayer(Player pl) {
 		ArrayList < Game > qg = new ArrayList < Game > (5);
-		for (Game g: games) {
+		for (Game g : games) {
 			if (g.getMode() == Game.GameMode.WAITING) qg.add(g);
 		}
 		//TODO: fancy auto balance algorithm
@@ -292,7 +291,9 @@ public class GameManager {
 		c.set("sg-system.arenano", no);
 		if (games.size() == 0) {
 			no = 1;
-		} else no = games.get(games.size() - 1).getID() + 1;
+		} else {
+			no = games.get(games.size() - 1).getID() + 1;
+		}
 		SettingsManager.getInstance().getSpawns().set(("spawns." + no), null);
 		c.set("sg-system.arenas." + no + ".world", max.getWorld().getName());
 		c.set("sg-system.arenas." + no + ".x1", max.getBlockX());
@@ -329,24 +330,26 @@ public class GameManager {
 		openedChest.put(id, new HashSet < Block > ());
 	}
 
-	public String getStringList(int gid){
+	public String getStringList(int gid) {
 		Game g = getGame(gid);
 		StringBuilder sb = new StringBuilder();
 		Player[][]players = g.getPlayers();
 
-		sb.append(ChatColor.GREEN+"<---------------------[ Alive: "+players[0].length+" ]--------------------->\n"+ChatColor.GREEN+" ");
-		for(Player p: players[0]){
-			sb.append(p.getName()+",");
+		sb.append(ChatColor.GREEN + "<---------------------[ Alive: "+players[0].length+" ]--------------------->\n"+ChatColor.GREEN+" ");
+		for (Player p : players[0]) {
+			sb.append(p.getName() + ", ");
 		}
 		sb.append("\n\n");
-		sb.append(ChatColor.RED+  "<---------------------[ Dead: "+players[1].length+" ]---------------------->\n"+ChatColor.GREEN+" ");
-		for(Player p: players[1]){
-			sb.append(p.getName()+",");
+		
+		sb.append(ChatColor.RED + "<---------------------[ Dead: "+players[1].length+" ]--------------------->\n"+ChatColor.RED+" ");
+		for (Player p : players[1]) {
+			sb.append(p.getName() + ",");
 		}
 		sb.append("\n\n");
-
+		
+		if (sb.toString().contains(", "))
+			sb.delete(sb.lastIndexOf(","), sb.lastIndexOf(" "));
+		
 		return sb.toString();
 	}
-
-
 }

@@ -4,13 +4,11 @@ import org.bukkit.Location;
 
 public class Arena {
 
-    Location min;
-    Location max;
-
+    private Location min;
+    private Location max;
     public Arena(Location min, Location max) {
         this.max = max;
         this.min = min;
-        
     }
 
     public boolean containsBlock(Location v) {

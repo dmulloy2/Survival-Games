@@ -19,9 +19,6 @@ import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.SettingsManager;
 import org.mcsg.survivalgames.SurvivalGames;
 
-
-
-
 public class QueueManager {
 
 	private static QueueManager instance = new QueueManager();
@@ -166,7 +163,7 @@ public class QueueManager {
 				int a = data.size()-1;
 				int rb = 0;
 				while(a>=0 && (rb < 100 || shutdown)){
-					SurvivalGames.debug("Reseting "+a);
+					SurvivalGames.debug("Resetting "+a);
 					BlockData result = data.get(a);
 					if(result.getGameId() == game.getID()){
 

@@ -24,14 +24,7 @@ public class JoinEvent implements Listener {
 	@EventHandler
     public void PlayerJoin(PlayerJoinEvent e) {
         final Player p = e.getPlayer();
-        
-/*        if (p.getName().equalsIgnoreCase("Double0negative") || p.getName().equalsIgnoreCase("PogoStick29")) {
-        	if (SettingsManager.getInstance().getConfig().getBoolean("broadcastdevmessage")) {
-        		Bukkit.getServer().broadcastMessage(MessageManager.getInstance().pre + ChatColor.GREEN + ChatColor.BOLD + p.getName() + ChatColor.GREEN + " created SurvivalGames!");
-        	}
-        }
-*/
-        
+
         if(GameManager.getInstance().getBlockGameId(p.getLocation()) != -1){
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
                 public void run(){
@@ -40,11 +33,11 @@ public class JoinEvent implements Listener {
                 }
             }, 5L);
         }
-        if((p.isOp() || p.hasPermission("sg.system.updatenotify")) && SettingsManager.getInstance().getConfig().getBoolean("check-for-update", true)){
+        if ((p.isOp() || p.hasPermission("sg.admin.reload")) && SettingsManager.getInstance().getConfig().getBoolean("check-for-update", true)){
             Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
 
                 public void run() {
-                    System.out.println("[SG]Checking for updates");
+                    System.out.println("[SG] Checking for updates");
                     new UpdateChecker().check(p, plugin);
                 }
              }, 60L);

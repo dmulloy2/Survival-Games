@@ -4,17 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.SettingsManager;
 
-
-
 public class PlayerStatsSession {
-
-
     public Player player;
     public int kills = 0,death = 0,gameno, arenaid, points = 0;
     public int finish = 0;
@@ -31,16 +26,9 @@ public class PlayerStatsSession {
 
     private HashMap<Integer, Integer>kslist = new HashMap<Integer, Integer>();
 
-
-
-
-
-
-
     public PlayerStatsSession(Player p, int arenaid ){
         this.player = p;
         this.arenaid = arenaid;
-
 
         kslist.put(1, 0);
         kslist.put(2, 0);
@@ -48,13 +36,11 @@ public class PlayerStatsSession {
         kslist.put(4, 0);
         kslist.put(5, 0);
 
-
     }
 
     public void setGameID(int gameid){
         this.gameno = gameid;
     }
-
 
     public int addKill(Player p){
         killed.add(p);
@@ -80,28 +66,15 @@ public class PlayerStatsSession {
         this.time = time;
     }
 
-    public void addkillStreak(int ks){
-
+    public void addkillStreak(int ks) {
         ksbon = ksbon + ( SettingsManager.getInstance().getConfig().getInt("stats.points.killstreak.base") * (SettingsManager.getInstance().getConfig().getInt("stats.points.killstreak.multiplier") + ks));
         int level = ks;
-        if(level>5)level = 5;
+        if (level > 5) level = 5;
         kslist.put(level, kslist.get(level)+1);
-        if(level < 4){
-            for(Player p: GameManager.getInstance().getGame(arenaid).getAllPlayers()){
-                p.sendMessage(SettingsManager.getInstance().getConfig().getString("stats.killstreak.level"+level).replace("{player}", player.getName()).replaceAll("(&([a-fk-or0-9]))", "\u00A7$2"));
-            }
-        }
-        else{
-            Bukkit.getServer().broadcastMessage(SettingsManager.getInstance().getConfig().getString("stats.killstreak.level"+level).replace("{player}", player.getName()).replaceAll("(&([a-fk-or0-9]))", "\u00A7$2"));
-        }
         lastkill = new Date().getTime();
-
-
     }
 
-
-
-    public void calcPoints(){
+    public void calcPoints() {
         FileConfiguration c = SettingsManager.getInstance().getConfig();
         int kpoints = kills * c.getInt("stats.points.kill");
         int ppoints = pppoints * c.getInt("stats.points.position");
@@ -116,8 +89,8 @@ public class PlayerStatsSession {
 
     }
 
-    public boolean checkKS(){
-        if(15000 > new Date().getTime() - lastkill){
+    public boolean checkKS() {
+        if(15000 > new Date().getTime() - lastkill) {
             kslevel++;
             addkillStreak(kslevel);
 
@@ -129,7 +102,7 @@ public class PlayerStatsSession {
     }
 
 
-    public String createQuery(){
+    public String createQuery() {
         calcPoints();
         String query= "INSERT INTO "+SettingsManager.getSqlPrefix()+"playerstats VALUES(NULL,";
         query = query + gameno+","+/*SettingsManager.getInstance().getConfig().getString("sql.server-prefix")+*/arenaid+",'"+player.getName()+"',"+points+","+position+","+kills+","+death+",";
@@ -145,7 +118,5 @@ public class PlayerStatsSession {
        // System.out.println(query);
 
         return query;
-
     }
-
 }

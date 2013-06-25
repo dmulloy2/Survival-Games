@@ -34,8 +34,6 @@ import org.mcsg.survivalgames.commands.SubCommand;
 import org.mcsg.survivalgames.commands.Teleport;
 import org.mcsg.survivalgames.commands.Vote;
 
-
-
 public class CommandHandler implements CommandExecutor {
 	private Plugin plugin;
 	private HashMap < String, SubCommand > commands;
@@ -130,21 +128,17 @@ public class CommandHandler implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("help")) {
 				if (args.length == 1) {
 					help(player, 1);
-				}
-				else {
+				} else {
 					if (args[1].toLowerCase().startsWith("player")) {
 						help(player, 1);
 						return true;
-					}
-					if (args[1].toLowerCase().startsWith("staff")) {
+					} else if (args[1].toLowerCase().startsWith("staff")) {
 						help(player, 2);
 						return true;
-					}
-					if (args[1].toLowerCase().startsWith("admin")) {
+					} else if (args[1].toLowerCase().startsWith("admin")) {
 						help(player, 3);
 						return true;
-					}
-					else {
+					} else {
 						msgmgr.sendMessage(PrefixType.WARNING, args[1] + " is not a valid page! Valid pages are Player, Staff, and Admin.", player);
 					}
 				}

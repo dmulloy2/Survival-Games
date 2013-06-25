@@ -35,7 +35,7 @@ public class SurvivalGames extends JavaPlugin {
 	public static List < String > auth = Arrays.asList(new String[] {
 			"Double0negative", "iMalo", "Medic0987", "alex_markey", "skitscape", "AntVenom", "YoshiGenius", "pimpinpsp", "WinryR", "Jazed2011",
 			"KiwiPantz", "blackracoon", "CuppingCakes", "4rr0ws", "Fawdz", "Timothy13", "rich91", "ModernPrestige", "Snowpool", "egoshk", 
-			"nickm140",  "chaseoes", "Oceangrass", "GrailMore", "iAngelic", "Lexonia", "ChaskyT", "Anon232"
+			"nickm140",  "chaseoes", "Oceangrass", "GrailMore", "iAngelic", "Lexonia", "ChaskyT", "Anon232", "KHobbits", "dmulloy2"
 	});
 
 	SurvivalGames p = this;
@@ -44,10 +44,10 @@ public class SurvivalGames extends JavaPlugin {
 		PluginDescriptionFile pdfFile = p.getDescription();
 		SettingsManager.getInstance().saveSpawns();
 		SettingsManager.getInstance().saveSystemConfig();
-		for (Game g: GameManager.getInstance().getGames()) {
-			try{
+		for (Game g : GameManager.getInstance().getGames()) {
+			try {
 				g.disable();
-			}catch(Exception e){
+			} catch(Exception e){
 				//will throw useless "tried to register task blah blah error." Use the method below to reset the arena without a task.
 			}
 			QueueManager.getInstance().rollback(g.getID(), true);
@@ -67,8 +67,6 @@ public class SurvivalGames extends JavaPlugin {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 	}
 
 	class Startup implements Runnable {
@@ -128,9 +126,6 @@ public class SurvivalGames extends JavaPlugin {
 		getCommand("survivalgames").setExecutor(new CommandHandler(p));
 	}
 
-
-
-
 	public static File getPluginDataFolder() {
 		return datafolder;
 	}
@@ -157,7 +152,7 @@ public class SurvivalGames extends JavaPlugin {
 	}
 
 	public static void debug(String msg){
-		if(SettingsManager.getInstance().getConfig().getBoolean("debug", false))
+		if (SettingsManager.getInstance().getConfig().getBoolean("debug", false))
 			$("[Debug] "+msg);
 	}
 

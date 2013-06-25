@@ -18,7 +18,7 @@ debug: false
 #Enables the udpdate checker. This will enabled
 #anyone with the perm sg.system.updatenotify to
 #be notified when a new update is avalible
-check-for-updates: true
+check-for-updates: false
 
 #Set how many players are needed for the game
 #to auto-start. Once the player limit is reached
@@ -45,11 +45,12 @@ disallow-commands: true
 #the cmdwhitelist section below to whitelist certain
 #commands.
 cmdwhitelist: 
-- 'kit' 
+- 'msg'
+- 'r' 
 
 #Set how long the grace period for be after the start of 
 #the game in seconds.
-grace-period: 20
+grace-period: 1
 
 #Controlls if chests should be restocked on the first
 #night. If set to true this will also have the side
@@ -81,10 +82,6 @@ block:
     - 103
     - 43
 
-
-
- 
-
 #Settings for when the game nears end. This runs
 #when there are only x amount of players
 #remaining. If place chest is enabled then
@@ -100,8 +97,7 @@ endgame:
   fire-lighting:
     enabled: true
     interval: 20
-  
-  
+
 #If enabled, after x amount of time, each player
 #remaing will be teleported to the center of the
 #arena for a death match. If they have not been 
@@ -111,7 +107,17 @@ deathmatch:
   time: 30
   killtime: 5
   
-  
+
+#If enabled, winner gets the specified reward
+# Items are defined as 
+#    itemnumber, amount, durabilty, enchantments, name
+# Example: diamond sword with 1 item, full durabilty, shaprness 4, knockback 2 and the name killer
+#     276, 1, 0, sharpness: 4 knockback: 2, killer
+reward:
+  enabled: true
+  contents:
+   - '267, 1, 0, sharpness:4, Blade'
+
 #Settings for connecting to and 
 #SQL server. These settings will
 #be used for  the online webstats
@@ -127,18 +133,14 @@ sql:
   database: 'survivalgames'
   prefix: 'sg_'
 
-  
-  
+
 ###########################################################
 #######################  Stats ############################
 ###########################################################
   
-  
 #Settings for the webstats. If enabled, stats 
 #such as k/d record, wins, win streaks, kill
 #streaks, etc. will be saved. 
-
-
 stats:
   enabled: false
   webserver:
@@ -151,14 +153,3 @@ stats:
     killstreak:
       base: 10
       multiplier: 2
-  killstreak:
-    level1: '&e{player}&7 got a Double Kill!'
-    level2: '&e{player}&9 got a Multi Kill!'
-    level3: '&e{player}&5 got an Ultra Kill!'
-    level4: '&e{player}&4 got an Unbelievable Kill!'
-    level5: '&e{player}&a&kii&4&l Unbelievable+!&a&kii'
-    
-    
-    
-
-

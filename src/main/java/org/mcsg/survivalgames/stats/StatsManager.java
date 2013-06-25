@@ -45,10 +45,10 @@ public class StatsManager {
         return instance;
     }
 
-    public void setup(Plugin p, boolean b){
+    public void setup(Plugin p, boolean b) {
         enabled = b;
-        if(b){
-            try{
+        if (b) {
+            try {
                 PreparedStatement s = dbman.createStatement(" CREATE TABLE "+SettingsManager.getSqlPrefix() + 
                         "playerstats(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, gameno int,arenaid int, player text, points int,position int," +
                         " kills int, death int, killed text,time int, ks1 int, ks2 int,ks3 int, ks4 int, ks5 int)");
@@ -78,8 +78,6 @@ public class StatsManager {
         arenas.put(arenaid, new HashMap<Player, PlayerStatsSession>());
     }
 
-
-
     public void addPlayer(Player p, int arenaid){
         arenas.get(arenaid).put(p, new PlayerStatsSession(p, arenaid));
     }
@@ -99,12 +97,16 @@ public class StatsManager {
     public void playerWin(Player p, int arenaid, long time){
         arenas.get(arenaid).get(p).win(time);
     }
-
-
-
+    
+    public PlayerStatsSession getPlayerStatsSession(Player p, int arenaid) {
+    	return arenas.get(arenaid).get(p);
+    } 
 
     public void addKill(Player p, Player killed, int arenaid){
         PlayerStatsSession s = arenas.get(arenaid).get(p);
+        
+        if (s == null)
+        	return;
 
         int kslevel = s.addKill(killed);
         if(kslevel > 3){

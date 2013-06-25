@@ -12,7 +12,7 @@ public class SetLobbySpawn implements SubCommand {
             return true;
         }
         SettingsManager.getInstance().setLobbySpawn(player.getLocation());
-        MessageManager.getInstance().sendMessage(MessageManager.PrefixType.INFO, "info.lobbyspawn", player);
+        MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.INFO, "info.lobbyspawn", player);
         return true;
     }
     
