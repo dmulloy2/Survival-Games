@@ -22,8 +22,6 @@ import org.mcsg.survivalgames.stats.StatsManager;
 import org.mcsg.survivalgames.util.ItemReader;
 import org.mcsg.survivalgames.util.Kit;
 
-
-
 //Data container for a game
 
 public class Game {
@@ -155,7 +153,9 @@ public class Game {
 
 	public void enable() {
 		mode = GameMode.WAITING;
-
+		if(disabled){
+			MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameenabled", "arena-"+gameID);
+		}
 		disabled = false;
 		int b = (SettingsManager.getInstance().getSpawnCount(gameID) > queue.size()) ? queue.size() : SettingsManager.getInstance().getSpawnCount(gameID);
 		for (int a = 0; a < b; a++) {
@@ -168,6 +168,8 @@ public class Game {
 		}
 
 		LobbyManager.getInstance().updateWall(gameID);
+		
+		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamewaiting", "arena-"+gameID);
 
 	}
 
@@ -359,10 +361,12 @@ public class Game {
 		}
 		vote++;
 		voted.add(pl);
-		for (Player player : activePlayers) {
-			msgmgr.sendFMessage(PrefixType.INFO, "game.playervote", player, "player-"+pl.getName(), "voted-"+vote, "players-"+getActivePlayers());
-		}
+		msgmgr.sendFMessage(PrefixType.INFO, "game.playervote", pl, "player-"+pl.getName());
 		HookManager.getInstance().runHook("PLAYER_VOTE", "player-"+pl.getName());
+		/*for(Player p: activePlayers){
+            p.sendMessage(ChatColor.AQUA+pl.getName()+" Voted to start the game! "+ Math.round((vote +0.0) / ((getActivePlayers() +0.0)*100)) +"/"+((c.getInt("auto-start-vote")+0.0))+"%");
+        }*/
+		// Bukkit.getServer().broadcastPrefixType((vote +0.0) / (getActivePlayers() +0.0) +"% voted, needs "+(c.getInt("auto-start-vote")+0.0)/100);
 		if ((((vote + 0.0) / (getActivePlayers() +0.0))>=(config.getInt("auto-start-vote")+0.0)/100) && getActivePlayers() > 1) {
 			countdown(config.getInt("auto-start-time"));
 			for (Player p: activePlayers) {
@@ -429,6 +433,7 @@ public class Game {
 
 		mode = GameMode.INGAME;
 		LobbyManager.getInstance().updateWall(gameID);
+		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamestarted", "arena-"+gameID);
 
 	}
 	/*
@@ -448,6 +453,8 @@ public class Game {
 	int count = 20;
 	int tid = 0;
 	public void countdown(int time) {
+		//Bukkit.broadcastMessage(""+time);
+		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamestarting", "arena-"+gameID, "t-"+time);
 		countdownRunning = true;
 		count = time;
 		Bukkit.getScheduler().cancelTask(tid);
@@ -547,23 +554,28 @@ public class Game {
 						Player killer = p.getKiller();
 						msgFall(PrefixType.INFO, "death."+p.getLastDamageCause().getEntityType(),
 								"player-"+(SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(),
-								"killer-"+((killer != null)?(SurvivalGames.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName():"Unknown"),
+								"killer-"+((killer != null)?(SurvivalGames.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") 
+										+ killer.getName():"Unknown"),
 								"item-"+((killer!=null)?ItemReader.getFriendlyItemName(killer.getItemInHand().getType()) : "Unknown Item"));
 						if(killer != null && p != null)
 							sm.addKill(killer, p, gameID);
 					}
 					else{
-						msgFall(PrefixType.INFO, "death."+p.getLastDamageCause().getEntityType(), "player-"+(SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-"+p.getLastDamageCause().getEntityType());
+						msgFall(PrefixType.INFO, "death."+p.getLastDamageCause().getEntityType(), "player-"
+					+(SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") 
+					+ p.getName(), "killer-"+p.getLastDamageCause().getEntityType());
 					}
 					break;
 				default:
-					msgFall(PrefixType.INFO, "death."+p.getLastDamageCause().getCause(), "player-"+(SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), 
+					msgFall(PrefixType.INFO, "death."+p.getLastDamageCause().getCause(), 
+							"player-"+(SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), 
 							"killer-"+p.getLastDamageCause().getCause());
 					break;
 				}
 				if (getActivePlayers() > 1) {
 					for (Player pl: getAllPlayers()) {
-						msgmgr.sendMessage(PrefixType.INFO, ChatColor.DARK_AQUA + "There are " + ChatColor.YELLOW + "" + getActivePlayers() + ChatColor.DARK_AQUA + " players remaining!", pl);
+						msgmgr.sendMessage(PrefixType.INFO, ChatColor.DARK_AQUA + "There are " + ChatColor.YELLOW + "" 
+					+ getActivePlayers() + ChatColor.DARK_AQUA + " players remaining!", pl);
 					}
 				}
 			}
@@ -628,6 +640,7 @@ public class Game {
 
 		loadspawns();
 		LobbyManager.getInstance().updateWall(gameID);
+		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-"+gameID);
 
 	}
 
@@ -676,6 +689,7 @@ public class Game {
 
 		endGame();
 		LobbyManager.getInstance().updateWall(gameID);
+		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamedisabled", "arena-"+gameID);
 
 	}
 	/*
@@ -709,7 +723,9 @@ public class Game {
 	}
 
 	public void resetCallback() {
-		if (!disabled) enable();
+		if (!disabled){
+			enable();
+		}
 		else mode = GameMode.DISABLED;
 		LobbyManager.getInstance().updateWall(gameID);
 	}

@@ -6,10 +6,12 @@ import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.LobbyManager;
 import org.mcsg.survivalgames.MessageManager;
-import org.mcsg.survivalgames.MessageManager.PrefixType;
 import org.mcsg.survivalgames.SettingsManager;
+import org.mcsg.survivalgames.MessageManager.PrefixType;
 
-public class DelArena implements SubCommand {
+
+
+public class DelArena implements SubCommand{
 
     @Override
     public boolean onCommand(Player player, String[] args) {
@@ -40,7 +42,8 @@ public class DelArena implements SubCommand {
         MessageManager.getInstance().sendFMessage(PrefixType.INFO, "info.deleted", player, "input-Arena");
         SettingsManager.getInstance().saveSystemConfig();
         GameManager.getInstance().hotRemoveArena(arena);
-        LobbyManager.getInstance().clearAllSigns();
+        //LobbyManager.getInstance().clearAllSigns();
+        LobbyManager.getInstance().updateall();
         return true;
     }
 

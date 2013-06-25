@@ -5,7 +5,7 @@ import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.MessageManager;
 import org.mcsg.survivalgames.SettingsManager;
 
-public class ListPlayers implements SubCommand {
+public class ListPlayers implements SubCommand{
 
 	@Override
 	public boolean onCommand(Player player, String[] args) {
