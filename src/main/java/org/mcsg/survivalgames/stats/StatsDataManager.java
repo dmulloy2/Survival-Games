@@ -1,31 +1,19 @@
 package org.mcsg.survivalgames.stats;
 
 public class StatsDataManager {
-
 	private static StatsDataManager instance = new StatsDataManager();
 	
-	private StatsDataManager(){
-		
+	private StatsDataManager() {
 	}
-	
-	
-	
-	
 	
 	public static StatsDataManager getInstance(){
 		return instance;
 	}
 	
-	public void setup(){
-		
-		
+	public void setup() {
 	}
 	
-	
-	
-	
-	
-	class PlayerData{
+	class PlayerData {
 		
 		public String getName() {
 			return name;
@@ -43,16 +31,10 @@ public class StatsDataManager {
 		private int pos;
 		private int score;
 		
-		public PlayerData(String name, int pos, int score){
+		public PlayerData(String name, int pos, int score) {
 			this.name = name;
 			this.pos = pos;
 			this.score = score;
-		}
-		
-		
-	}
-	
-	
-	
-	
+		}	
+	}	
 }

@@ -26,7 +26,7 @@ public class PlayerStatsSession {
 
     private HashMap<Integer, Integer>kslist = new HashMap<Integer, Integer>();
 
-    public PlayerStatsSession(Player p, int arenaid ){
+    public PlayerStatsSession(Player p, int arenaid) {
         this.player = p;
         this.arenaid = arenaid;
 
@@ -35,14 +35,13 @@ public class PlayerStatsSession {
         kslist.put(3, 0);
         kslist.put(4, 0);
         kslist.put(5, 0);
-
     }
 
-    public void setGameID(int gameid){
+    public void setGameID(int gameid) {
         this.gameno = gameid;
     }
 
-    public int addKill(Player p){
+    public int addKill(Player p) {
         killed.add(p);
         kills++;
         checkKS();
@@ -50,19 +49,19 @@ public class PlayerStatsSession {
         return kslevel;
     }
 
-    public void win(long time){
+    public void win(long time) {
         position = 1;
         this.time  = time;
     }
 
-    public void died(int pos, long time){
+    public void died(int pos, long time) {
         this.time = time;
         death=1;
         position = pos;
         pppoints = GameManager.getInstance().getGame(arenaid).getInactivePlayers();
     }
 
-    public void setTime(long time){
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -83,7 +82,7 @@ public class PlayerStatsSession {
         points = kpoints + ppoints + kspoints + ksbon;
         //System.out.println(player+"  "+kpoints +" "+ppoints+" "+kspoints);
 
-        if(position == 1){
+        if (position == 1) {
             points = points + c.getInt("stats.points.win");
         }
 

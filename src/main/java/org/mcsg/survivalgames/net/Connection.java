@@ -8,45 +8,38 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 
-
-
-public class Connection extends Thread{
-
+public class Connection extends Thread {
     BufferedReader in;
     DataOutputStream out;
     Socket skt;
-    HashMap<String, String>html = new HashMap<String, String>();
+    HashMap<String, String> html = new HashMap<String, String>();
 
-    public Connection(Socket skt){
-        try{
+    public Connection(Socket skt) {
+        try {
             this.in = new BufferedReader(new InputStreamReader(skt.getInputStream()));
             this.out = new DataOutputStream(skt.getOutputStream());
             this.skt = skt;
-        }catch(Exception e){}
+        } catch(Exception e) {
+        	//
+        }
     }
 
-    public void run(){
-        try{
+    public void run() {
+        try {
             write("ADFSADFDSAF",out, in.readLine());
             skt.close();
-        }catch(Exception e){e.printStackTrace();}
-
-
+        } catch(Exception e) {
+        	e.printStackTrace();
+        }
     }
 
-
-
-
-    public void getHTML(String pageName){
-
+    public void getHTML(String pageName) {
     }
 
-    public void parseHTML(String page){
-
-
+    public void parseHTML(String page) {
     }
     
-    public void write(String str, OutputStream out, String header){
+    public void write(String str, OutputStream out, String header) {
         String s = "HTTP/1.0 ";
         s = s + "200 OK";
         s = s + "\r\n"; 
@@ -57,10 +50,8 @@ public class Connection extends Thread{
      
         String template = FileCache.getHTML("template", true);
        
-        
-        
-        String[] args = header.split(" ")[1].trim().split("/");
-        System.out.print(args[1]);
+        //String[] args = header.split(" ")[1].trim().split("/");
+        //System.out.print(args[1]);
         
         String page     = template; //.replace("{#page}", FileCache.getHTML(args[1], false));
         
@@ -72,14 +63,12 @@ public class Connection extends Thread{
         try {
             out.write(str.getBytes());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
     }
 
-    public String parse(String page){
+    public String parse(String page) {
         return page;
     }
-
 }

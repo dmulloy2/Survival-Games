@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -15,9 +16,8 @@ import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.MessageManager;
 import org.mcsg.survivalgames.SettingsManager;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
+import org.mcsg.survivalgames.SurvivalGames;
 import org.mcsg.survivalgames.util.DatabaseManager;
-
-
 
 public class StatsManager {
     private static StatsManager instance = new StatsManager();
@@ -35,15 +35,15 @@ public class StatsManager {
     
     MessageManager msgmgr;
 
-    private StatsManager(){
+    private StatsManager() {
     	msgmgr = MessageManager.getInstance();;
     }
 
-    public static StatsManager getInstance(){
+    public static StatsManager getInstance() {
         return instance;
     }
 
-    public void setup(Plugin p, boolean b) {
+    public void setup(Plugin p, boolean b)  {
         enabled = b;
         if (b) {
             try {
@@ -72,19 +72,19 @@ public class StatsManager {
         }
     }
 
-    public void addArena(int arenaid){
+    public void addArena(int arenaid) {
         arenas.put(arenaid, new HashMap<Player, PlayerStatsSession>());
     }
 
-    public void addPlayer(Player p, int arenaid){
+    public void addPlayer(Player p, int arenaid){ 
         arenas.get(arenaid).put(p, new PlayerStatsSession(p, arenaid));
     }
 
-    public void removePlayer(Player p, int id){
+    public void removePlayer(Player p, int id) {
         arenas.get(id).remove(p);
     }
 
-    public void playerDied(Player p, int pos, int arenaid,long time){
+    public void playerDied(Player p, int pos, int arenaid,long time) {
         /*    System.out.println("player null "+(p == null));
         System.out.println("arena null "+(arenas == null));
         System.out.println("arenagetplayer null "+(arenas.get(arenaid).get(p) == null));*/
@@ -92,7 +92,7 @@ public class StatsManager {
         arenas.get(arenaid).get(p).died(pos, time);
     }
 
-    public void playerWin(Player p, int arenaid, long time){
+    public void playerWin(Player p, int arenaid, long time) {
         arenas.get(arenaid).get(p).win(time);
     }
     
@@ -100,25 +100,26 @@ public class StatsManager {
     	return arenas.get(arenaid).get(p);
     } 
 
-    public void addKill(Player p, Player killed, int arenaid){
+    public void addKill(Player p, Player killed, int arenaid) {
         PlayerStatsSession s = arenas.get(arenaid).get(p);
         
         if (s == null)
         	return;
 
         int kslevel = s.addKill(killed);
-        if(kslevel > 3){
+        if (kslevel > 3) {
         	msgmgr.broadcastFMessage(PrefixType.INFO, "killstreak.level"+((kslevel>5)?5:kslevel), "player-"+p.getName());
-        }
-        else if(kslevel > 0){
+        } else if(kslevel > 0) {
             for (Player pl : GameManager.getInstance().getGame(arenaid).getAllPlayers()) {
             	msgmgr.sendFMessage(PrefixType.INFO, "killstreak.level"+((kslevel>5)?5:kslevel), pl, "player-"+p.getName());
             }
         }
     }
 
-    public void saveGame(int arenaid, Player winner,int players, long time ){
-        if(!enabled)return;
+    public void saveGame(int arenaid, Player winner,int players, long time) {
+        if (!enabled)
+        	return;
+        
         int gameno = 0;
         Game g = GameManager.getInstance().getGame(arenaid);
 
@@ -130,9 +131,10 @@ public class StatsManager {
             rs.next();
             gameno = rs.getInt(1) + 1;
 
-            if(time1 + 5000 < new Date().getTime())System.out.println("Your database took a long time to respond. Check the connection between the server and database");
+            if(time1 + 5000 < new Date().getTime()) {
+            	SurvivalGames.$(Level.WARNING, "Your database took a long time to respond. Check the connection between the server and database");
+            }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             g.setRBStatus("Error: getno");
         }
@@ -144,22 +146,19 @@ public class StatsManager {
             addSQL(s.createQuery());
         }
         arenas.get(arenaid).clear();
-
-
     }
 
-    private void addSQL(String query){
+    private void addSQL(String query) {
         addSQL( dbman.createStatement(query));
     }
 
-    private void addSQL(PreparedStatement s){
+    private void addSQL(PreparedStatement s) {
         queue.add(s);
-        if(!dumper.isAlive()){
+        if (!dumper.isAlive()) {
             dumper = new DatabaseDumper();
             dumper.start();
         }
     }
-
 
     class DatabaseDumper extends Thread {
         public void run() {
