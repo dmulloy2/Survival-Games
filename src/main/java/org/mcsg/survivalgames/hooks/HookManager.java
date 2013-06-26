@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.mcsg.survivalgames.SettingsManager;
+import org.mcsg.survivalgames.SurvivalGames;
 import org.mcsg.survivalgames.util.MessageUtil;
 
 
@@ -85,14 +86,12 @@ public class HookManager {
 					break;
 				}
 			}
-			if(!flag){
-				System.out.println("[Survival Games][HookManager]Condition does not contian a compare operator: "+split);
+			if (!flag) {
+				SurvivalGames.$("HookManager Condition does not contian a compare operator: "+split);
 				return false;
 			}
-			try{
-
+			try {
 				//attempt to compare the "values", probably a better way to do this
-
 				if(split.contains(">")){
 					if(Double.parseDouble(split.substring(0, split.indexOf(">")).trim()) > Double.parseDouble(split.substring(split.indexOf(">")).trim())){
 					}
@@ -129,7 +128,7 @@ public class HookManager {
 					}
 				}
 			}catch(Exception e){
-				System.out.println("[Survival Games][HookManager]Error parsing value for: "+split);
+				SurvivalGames.$("HookManager: Error parsing value for: "+split);
 				return false;
 			}
 		}

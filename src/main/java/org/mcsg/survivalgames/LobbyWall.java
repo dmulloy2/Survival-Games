@@ -12,10 +12,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.util.NameUtil;
 
-
-
 public class LobbyWall {
-
     private ArrayList < Sign > signs = new ArrayList < Sign > ();
     private ArrayList < String > msgqueue = new ArrayList < String > ();
     private int gameid;
@@ -102,7 +99,9 @@ public class LobbyWall {
             if (game.getRBPercent() > 100) {
                 s1.setLine(1, "Saving Queue");
                 s1.setLine(3, (int) game.getRBPercent() + " left");
-            } else s1.setLine(3, (int) game.getRBPercent() + "%");
+            } else {
+            	s1.setLine(3, (int) game.getRBPercent() + "%");
+            }
         } else {
             s1.setLine(3, "");
         }
@@ -124,7 +123,10 @@ public class LobbyWall {
                     no++;
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        	//
+        }
+        
         for (Sign s: signs) {
             s.update();
         }
@@ -141,7 +143,6 @@ public class LobbyWall {
 
     public void addMsg(String s) {
         msgqueue.add(s);
-
     }
 
     int displaytid = 0;
@@ -154,7 +155,9 @@ public class LobbyWall {
                     signs.get(b).setLine(a, s.substring(b * 16, (b + 1) * 16));
 
                     signs.get(b).update();
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                	//
+                }
             }
             a++;
             msgqueue.remove(0);
@@ -162,22 +165,11 @@ public class LobbyWall {
 
     }
 
-
-
-    int aniline = 0;
+    /*int aniline = 0;
     class AniSign implements Runnable {
         public void run() {
 
 
         }
-    }
-
-
-
-
-
-
-
-
-
+    }*/
 }

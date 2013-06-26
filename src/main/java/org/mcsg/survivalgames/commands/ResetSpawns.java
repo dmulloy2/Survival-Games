@@ -5,24 +5,24 @@ import org.mcsg.survivalgames.MessageManager;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
 import org.mcsg.survivalgames.SettingsManager;
 
-public class ResetSpawns implements SubCommand{
+public class ResetSpawns implements SubCommand {
 
+	@Override
     public boolean onCommand(Player player, String[] args) {
-        
         if (!player.hasPermission(permission()) && !player.isOp()) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.nopermission", player);
             return true;
         }
-        try{
-        SettingsManager.getInstance().getSpawns().set("spawns."+Integer.parseInt(args[0]), null);
+        try {
+        	SettingsManager.getInstance().getSpawns().set("spawns."+Integer.parseInt(args[0]), null);
+        	return true;
+        } catch (NumberFormatException e) {
+        	MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notanumber", player, "input-Arena");
+        } catch (NullPointerException e) {
+        	MessageManager.getInstance().sendMessage(MessageManager.PrefixType.ERROR, "error.gamenoexist", player);
+        }
         return true;
-                } catch (NumberFormatException e) {
-                    MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notanumber", player, "input-Arena");
-                } catch (NullPointerException e) {
-                    MessageManager.getInstance().sendMessage(MessageManager.PrefixType.ERROR, "error.gamenoexist", player);
-                }
-        return true;
-    }   
+	}   
 
     @Override
     public String help(Player p) {

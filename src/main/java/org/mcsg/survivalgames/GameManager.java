@@ -87,6 +87,7 @@ public class GameManager {
 		}
 		LobbyManager.getInstance().clearAllSigns();
 		
+		SurvivalGames.$("Loaded " + loaded + " arenas!");
 	}
 
 	public int getBlockGameId(Location v) {

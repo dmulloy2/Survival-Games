@@ -11,9 +11,6 @@ import org.mcsg.survivalgames.SettingsManager;
 
 
 public class ChestRatioStorage {
-
-
-
 	HashMap<Integer, ArrayList<ItemStack>>lvlstore = new HashMap<Integer, ArrayList<ItemStack>>();
 	public static ChestRatioStorage instance = new ChestRatioStorage();
 	int ratio = 2;
@@ -69,15 +66,6 @@ public class ChestRatioStorage {
 			}
 
 		}
-
-		//Bukkit.broadcastMessage(items+"");
 		return items;
-
-
-
 	}
-
-
-
-
 }

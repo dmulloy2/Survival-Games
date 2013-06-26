@@ -9,5 +9,4 @@ public interface SubCommand {
     public String help(Player p);
     
     public String permission();
-    
 }

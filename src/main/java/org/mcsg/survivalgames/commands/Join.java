@@ -6,32 +6,30 @@ import org.mcsg.survivalgames.MessageManager;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
 import org.mcsg.survivalgames.SettingsManager;
 
-public class Join implements SubCommand{
-
+public class Join implements SubCommand {
+	
+	@Override
 	public boolean onCommand(Player player, String[] args) {
-		if(args.length == 1){
-			if(player.hasPermission(permission())){
+		if (args.length == 1) {
+			if (player.hasPermission(permission()) ){
 				try {
 					int a = Integer.parseInt(args[0]);
 					GameManager.getInstance().addPlayer(player, a);
 				} catch (NumberFormatException e) {
 					MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notanumber", player, "input-" + args[0]);
 				}
-			}
-			else{
+			} else {
 				MessageManager.getInstance().sendFMessage(PrefixType.WARNING, "error.nopermission", player);
 			}
-		}
-		else{
-			if(player.hasPermission("sg.player.joinlobby")){
-				if(GameManager.getInstance().getPlayerGameId(player)!=-1){
+		} else {
+			if (player.hasPermission("sg.player.joinlobby")) {
+				if (GameManager.getInstance().getPlayerGameId(player)!=-1) {
 					MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.alreadyingame", player);
 					return true;
 				}
 				player.teleport(SettingsManager.getInstance().getLobbySpawn());
 				return true;
-			}
-			else{
+			} else {
 				MessageManager.getInstance().sendFMessage(PrefixType.WARNING, "error.nopermission", player);
 			}
 		}

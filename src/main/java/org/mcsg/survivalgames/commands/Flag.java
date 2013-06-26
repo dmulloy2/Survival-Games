@@ -12,30 +12,26 @@ public class Flag implements SubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {
-        
         if (!player.hasPermission(permission())) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.nopermission", player);
             return true;
         }
         
-        if(args.length < 2){
+        if (args.length < 2) {
             player.sendMessage(help(player));
             return true;
         }
         
         Game g = GameManager.getInstance().getGame(Integer.parseInt(args[0]));
         
-        if(g == null){
+        if (g == null) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.gamedoesntexist", player, "arena-" + args[0]);
             return true;
         }
         
-        HashMap<String, Object>z = SettingsManager.getInstance().getGameFlags(g.getID());
+        HashMap<String, Object> z = SettingsManager.getInstance().getGameFlags(g.getID());
         z.put(args[1].toUpperCase(), g.getID());
         SettingsManager.getInstance().saveGameFlags(z, g.getID());
-        		
-
-        
         return false;
     }
 

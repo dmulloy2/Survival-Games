@@ -4,9 +4,7 @@ import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.SettingsManager;
 
-
-
-public class LeaveQueue implements SubCommand{
+public class LeaveQueue implements SubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {
@@ -23,5 +21,4 @@ public class LeaveQueue implements SubCommand{
 	public String permission() {
 		return null;
 	}
-
 }

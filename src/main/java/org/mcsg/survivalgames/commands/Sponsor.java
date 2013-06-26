@@ -3,8 +3,6 @@ package org.mcsg.survivalgames.commands;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.MessageManager;
 
-
-
 public class Sponsor implements SubCommand {
 
 	MessageManager msgmgr = MessageManager.getInstance();

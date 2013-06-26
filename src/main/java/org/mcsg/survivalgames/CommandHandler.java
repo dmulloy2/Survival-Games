@@ -178,12 +178,13 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		for (String command : commands.keySet()) {
-			try{
+			try {
 				if (helpinfo.get(command) == page) {
-
 					msgmgr.sendMessage(PrefixType.INFO, commands.get(command).help(p), p);
 				}
-			}catch(Exception e){}
+			} catch(Exception e) {
+				
+			}
 		}
 		/*for (SubCommand v : commands.values()) {
             if (v.permission() != null) {

@@ -9,18 +9,16 @@ import org.mcsg.survivalgames.MessageManager;
 import org.mcsg.survivalgames.SettingsManager;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
 
-
-
-public class DelArena implements SubCommand{
+public class DelArena implements SubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {
-        if (!player.hasPermission(permission()) && !player.isOp()){
+        if (!player.hasPermission(permission()) && !player.isOp()) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.nopermission", player);
             return true;
         }
         
-        if(args.length != 1){
+        if(args.length != 1) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notspecified", player, "input-Arena");
             return true;
         }
@@ -30,7 +28,7 @@ public class DelArena implements SubCommand{
         int arena = Integer.parseInt(args[0]);
         Game g = GameManager.getInstance().getGame(arena);
         
-        if(g == null){
+        if (g == null) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.gamedoesntexist", player, "arena-" + arena);
             return true;
         }

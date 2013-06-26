@@ -5,7 +5,7 @@ import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.MessageManager;
 import org.mcsg.survivalgames.SettingsManager;
 
-public class Spectate implements SubCommand{
+public class Spectate implements SubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {
@@ -14,21 +14,20 @@ public class Spectate implements SubCommand{
             return true;
         }
         
-        if(args.length == 0){
-            if(GameManager.getInstance().isSpectator(player)){
+        if (args.length == 0) {
+            if (GameManager.getInstance().isSpectator(player)) {
                 GameManager.getInstance().removeSpectator(player);
                 return true;
-            }
-            else{
+            } else {
                 MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notspecified", player, "input-Game ID");
                 return true;
             }
         }
-        if(SettingsManager.getInstance().getSpawnCount(Integer.parseInt(args[0])) == 0){
+        if (SettingsManager.getInstance().getSpawnCount(Integer.parseInt(args[0])) == 0) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.nospawns", player);
             return true;
         }
-        if(GameManager.getInstance().isPlayerActive(player)){
+        if (GameManager.getInstance().isPlayerActive(player)) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.specingame", player);
             return true;
         }
@@ -45,5 +44,4 @@ public class Spectate implements SubCommand{
 	public String permission() {
 		return "sg.player.spectate";
 	}
-
 }

@@ -42,31 +42,30 @@ public class LobbyManager {
 	}
 
 	public void loadSign(int a) {
-		try{
-		SurvivalGames.debug("sg-system.lobby.signs." + a + ".world");
-		World w = Bukkit.getWorld(s.getString("sg-system.lobby.signs." + a + ".world"));
-		int x1 = s.getInt("sg-system.lobby.signs." + a + ".x1");
-		int y1 = s.getInt("sg-system.lobby.signs." + a + ".y1");
-		int z1 = s.getInt("sg-system.lobby.signs." + a + ".z1");
-		int x2 = s.getInt("sg-system.lobby.signs." + a + ".x2");
-		//int y2 = s.getInt("sg-system.lobby.signs." + a + ".y2");
-		int z2 = s.getInt("sg-system.lobby.signs." + a + ".z2");
-		int gameid = s.getInt("sg-system.lobby.signs." + a + ".id");
+		try {
+			SurvivalGames.debug("sg-system.lobby.signs." + a + ".world");
+			World w = Bukkit.getWorld(s.getString("sg-system.lobby.signs." + a + ".world"));
+			int x1 = s.getInt("sg-system.lobby.signs." + a + ".x1");
+			int y1 = s.getInt("sg-system.lobby.signs." + a + ".y1");
+			int z1 = s.getInt("sg-system.lobby.signs." + a + ".z1");
+			int x2 = s.getInt("sg-system.lobby.signs." + a + ".x2");
+			//int y2 = s.getInt("sg-system.lobby.signs." + a + ".y2");
+			int z2 = s.getInt("sg-system.lobby.signs." + a + ".z2");
+			int gameid = s.getInt("sg-system.lobby.signs." + a + ".id");
 
-		LobbyWall ls = new LobbyWall(gameid);
-		if (ls.loadSign(w, x1, x2, z1, z2, y1)) {
-			ArrayList < LobbyWall > t = signs.get(gameid);
-			if (t == null) {
-				t = new ArrayList < LobbyWall > ();
-				signs.put(gameid, t);
+			LobbyWall ls = new LobbyWall(gameid);
+			if (ls.loadSign(w, x1, x2, z1, z2, y1)) {
+				ArrayList < LobbyWall > t = signs.get(gameid);
+				if (t == null) {
+					t = new ArrayList < LobbyWall > ();
+					signs.put(gameid, t);
+				}
+				t.add(ls);
+				ls.update(); //TODO
+			} else {
+				/*s.set("sg-system.lobby.signs." + a, null); 
+			      SettingsManager.getInstance().saveSystemConfig();*/
 			}
-			t.add(ls);
-			ls.update(); //TODO
-		}
-		else{
-			/*s.set("sg-system.lobby.signs." + a, null); 
-			SettingsManager.getInstance().saveSystemConfig();*/
-		}
 		}catch(Exception e){
 			s.set("sg-system.lobby.signs." + a, null);
 			s.set("sg-system.lobby.signno", s.getInt("sg-system.lobby.signno")-1);

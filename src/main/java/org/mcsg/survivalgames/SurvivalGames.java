@@ -151,13 +151,12 @@ public class SurvivalGames extends JavaPlugin {
 		logger.log(l, msg);
 	}
 
-	public static void debug(String msg){
+	public static void debug(String msg) {
 		if (SettingsManager.getInstance().getConfig().getBoolean("debug", false))
-			$("[Debug] "+msg);
+			$("[Debug] " + msg);
 	}
 
 	public static void debug(int a) {
-		if(SettingsManager.getInstance().getConfig().getBoolean("debug", false))
-			debug(a+"");
+		debug(String.valueOf(a));
 	}
 }

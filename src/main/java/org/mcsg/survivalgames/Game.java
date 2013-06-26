@@ -25,6 +25,7 @@ import org.mcsg.survivalgames.logging.QueueManager;
 import org.mcsg.survivalgames.stats.StatsManager;
 import org.mcsg.survivalgames.util.ItemReader;
 import org.mcsg.survivalgames.util.Kit;
+import org.mcsg.survivalgames.util.LocationUtil;
 
 /**
  * Data container for a game
@@ -85,7 +86,7 @@ public class Game {
 		SurvivalGames.debug(msg);
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// Setup
 	//-------------------------//
 	public void setup() {
@@ -93,15 +94,14 @@ public class Game {
 		int x = system.getInt("sg-system.arenas." + gameID + ".x1");
 		int y = system.getInt("sg-system.arenas." + gameID + ".y1");
 		int z = system.getInt("sg-system.arenas." + gameID + ".z1");
-		$(x + " " + y + " " + z);
 		int x1 = system.getInt("sg-system.arenas." + gameID + ".x2");
 		int y1 = system.getInt("sg-system.arenas." + gameID + ".y2");
 		int z1 = system.getInt("sg-system.arenas." + gameID + ".z2");
-		$(x1 + " " + y1 + " " + z1);
+		
 		Location max = new Location(SettingsManager.getGameWorld(gameID), Math.max(x, x1), Math.max(y, y1), Math.max(z, z1));
-		$(max.toString());
+		debug("[Max] " + LocationUtil.locToString(max));
 		Location min = new Location(SettingsManager.getGameWorld(gameID), Math.min(x, x1), Math.min(y, y1), Math.min(z, z1));
-		$(min.toString());
+		debug("[Min] " + LocationUtil.locToString(min));
 
 		arena = new Arena(min, max);
 
@@ -150,7 +150,7 @@ public class Game {
 		return sm;
 	} 
 
-	//--------------------------//
+	//-------------------------//
 	// Enable
 	//-------------------------//
 	public void enable() {
@@ -175,11 +175,11 @@ public class Game {
 
 	}
 	
-	//--------------------------//
+	//-------------------------//
 	// Add Player
 	//-------------------------//
 	public boolean addPlayer(Player p) {
-		if(SettingsManager.getInstance().getLobbySpawn() == null){
+		if (SettingsManager.getInstance().getLobbySpawn() == null ){
 			msgmgr.sendFMessage(PrefixType.WARNING, "error.nolobbyspawn", p);
 			return false;
 		}
@@ -227,7 +227,8 @@ public class Game {
 
 						p.setHealth(p.getMaxHealth());p.setFoodLevel(20);clearInv(p);
 
-						activePlayers.add(p);sm.addPlayer(p, gameID);
+						activePlayers.add(p);
+						sm.addPlayer(p, gameID);
 
 						hookvars.put("activeplayers", activePlayers.size()+"");
 						LobbyManager.getInstance().updateWall(gameID);
@@ -276,14 +277,16 @@ public class Game {
 				}
 			}
 		}
-		if (mode == GameMode.INGAME)
+		
+		if (mode == GameMode.INGAME) {
 			msgmgr.sendFMessage(PrefixType.WARNING, "error.alreadyingame", p);
-		else if (mode == GameMode.DISABLED) 
+		} else if (mode == GameMode.DISABLED) { 
 			msgmgr.sendFMessage(PrefixType.WARNING, "error.gamedisabled", p, "arena-"+gameID);
-		else if (mode == GameMode.RESETTING) 
+		} else if (mode == GameMode.RESETTING) {
 			msgmgr.sendFMessage(PrefixType.WARNING, "error.gameresetting", p);
-		else
+		} else {
 			msgmgr.sendMessage(PrefixType.INFO, "Cannot join game!", p);
+		}
 		
 		LobbyManager.getInstance().updateWall(gameID);
 		return false;
@@ -336,7 +339,7 @@ public class Game {
 		debug("Showing menu");
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// Remove from Queue
 	//-------------------------//
 	public void removeFromQueue(Player p) {

@@ -20,8 +20,6 @@ import org.mcsg.survivalgames.util.DatabaseManager;
 
 
 public class StatsManager {
-
-
     private static StatsManager instance = new StatsManager();
     
     private ArrayList<PreparedStatement> queue = new ArrayList<PreparedStatement>();
@@ -61,16 +59,16 @@ public class StatsManager {
                 ResultSet tables = dbm.getTables(null, null, SettingsManager.getSqlPrefix()+"playerstats", null);
                 ResultSet tables1 = dbm.getTables(null, null, SettingsManager.getSqlPrefix()+"gamestats", null);
 
-                if (tables.next()) { }
-                else {
-                    s.execute();
+                if (!tables.next()) {
+                	s.execute();
                 }
-                if (tables1.next()) { }
-                else {
+
+                if (!tables1.next()) {
                     s1.execute();
                 }
-            }catch(Exception e){e.printStackTrace();}
-
+            } catch(Exception e) {
+            	e.printStackTrace();
+            }
         }
     }
 
@@ -150,13 +148,6 @@ public class StatsManager {
 
     }
 
-
-
-
-
-
-
-
     private void addSQL(String query){
         addSQL( dbman.createStatement(query));
     }
@@ -170,26 +161,16 @@ public class StatsManager {
     }
 
 
-    class DatabaseDumper extends Thread{
-
-        public void run(){
-            while(queue.size()>0){
+    class DatabaseDumper extends Thread {
+        public void run() {
+            while(queue.size() > 0) {
                 PreparedStatement s = queue.remove(0);
-                try{
-
-
+                try {
                     s.execute();
-                }catch(Exception e){     dbman.connect();}
-
+                } catch(Exception e) {
+                	dbman.connect();
+                }
             }
         }
     }
-
-
-
-
-
-
-
-
 }

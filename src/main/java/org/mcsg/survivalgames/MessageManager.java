@@ -9,17 +9,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.util.MessageUtil;
 
-
-
 public class MessageManager {
 
 	public static MessageManager instance = new MessageManager();
 	public String pre = ChatColor.BLUE + "" + ChatColor.BOLD + "[" + ChatColor.GOLD + "" + ChatColor.BOLD + "SG" + ChatColor.BLUE + "" + ChatColor.BOLD + "] " + ChatColor.RESET;
 	private HashMap<PrefixType, String>prefix = new HashMap<PrefixType, String>();
+	
 	public enum PrefixType {
-
 		MAIN, INFO, WARNING, ERROR;
-		
 	}
 	
 	public static MessageManager getInstance() {
@@ -34,7 +31,6 @@ public class MessageManager {
 		prefix.put(PrefixType.ERROR, MessageUtil.replaceColors(f.getString("prefix.states.error")));
 		
 	}
-	
 	
 	/**
 	 * SendMessage
@@ -67,7 +63,6 @@ public class MessageManager {
 	 * @param msg
 	 * @param p
 	 */
-	
 	public void sendMessage(PrefixType type, String msg, Player player){
 		player.sendMessage(prefix.get(PrefixType.MAIN)+ " "+prefix.get(type)+ msg );
 	}
@@ -96,7 +91,4 @@ public class MessageManager {
 	public void broadcastMessage(PrefixType type, String msg, Player player){
 		Bukkit.broadcastMessage(prefix.get(PrefixType.MAIN)+ " "+prefix.get(type)+ " "+msg );
 	}
-	
-
-
 }

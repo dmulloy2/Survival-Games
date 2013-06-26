@@ -1,6 +1,5 @@
 package org.mcsg.survivalgames.commands;
 
-
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.MessageManager;
@@ -14,7 +13,7 @@ public class Vote implements SubCommand {
             return false;
         }
         int game = GameManager.getInstance().getPlayerGameId(player);
-        if(game == -1){
+        if (game == -1) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notinarena", player);
             return true;
         }

@@ -11,8 +11,6 @@ import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.SettingsManager;
 
-
-
 public class BreakEvent implements Listener {
 
     public ArrayList<Integer> allowedBreak =  new ArrayList<Integer>();;

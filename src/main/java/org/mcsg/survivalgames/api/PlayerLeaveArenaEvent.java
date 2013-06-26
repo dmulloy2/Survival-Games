@@ -5,8 +5,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.mcsg.survivalgames.Game;
 
-
-
 public class PlayerLeaveArenaEvent extends Event {
 
 	private static final HandlerList handlers = new HandlerList();

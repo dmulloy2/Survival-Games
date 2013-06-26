@@ -3,7 +3,7 @@ package org.mcsg.survivalgames.commands;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.SettingsManager;
 
-public class SetLobbyWall implements SubCommand{
+public class SetLobbyWall implements SubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

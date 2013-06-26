@@ -5,10 +5,6 @@ import java.io.Serializable;
 import org.bukkit.inventory.ItemStack;
 
 public class BlockData implements Serializable {
-
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String world;
     private int previd;
@@ -28,7 +24,7 @@ public class BlockData implements Serializable {
      * 
      * Provides a object for holding the data for block changes
      */
-    public BlockData(int gameid, String world, int previd,byte prevdata, int newid,byte newdata, int x, int y, int z, ItemStack[] items){
+    public BlockData(int gameid, String world, int previd,byte prevdata, int newid,byte newdata, int x, int y, int z, ItemStack[] items) {
         this.gameid = gameid;
         this.world = world;
         this.previd = previd;
@@ -41,11 +37,11 @@ public class BlockData implements Serializable {
         this.items = items;
     }
     
-    public int getGameId(){
+    public int getGameId() {
         return gameid;
     }
     
-    public String getWorld(){
+    public String getWorld() {
         return world;
     }
 

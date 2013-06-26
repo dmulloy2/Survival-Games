@@ -19,7 +19,6 @@ import org.bukkit.util.Vector;
 public class SettingsManager {
 
 	//makes the config easily accessible
-
 	private static SettingsManager instance = new SettingsManager();
 	private static Plugin p;
 	private FileConfiguration spawns;
@@ -27,7 +26,6 @@ public class SettingsManager {
 	private FileConfiguration kits;
 	private FileConfiguration messages;
 	private FileConfiguration chest;
-
 
 	private File f; //spawns
 	private File f2; //system
@@ -43,7 +41,6 @@ public class SettingsManager {
 	
 	
 	private SettingsManager() {
-
 	}
 
 	public static SettingsManager getInstance() {
@@ -54,7 +51,7 @@ public class SettingsManager {
 		SettingsManager.p = p;
 		if (p.getConfig().getInt("config-version") == SurvivalGames.config_version) {
 			SurvivalGames.config_todate = true;
-		}else{
+		} else {
 			File config = new File(p.getDataFolder(), "config.yml");
 			config.delete();
 		}
@@ -75,8 +72,7 @@ public class SettingsManager {
 			if (!f4.exists()) 	loadFile("messages.yml");
 			if (!f5.exists()) 	loadFile("chest.yml");
 
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -93,8 +89,6 @@ public class SettingsManager {
 		
 		reloadMessages();
 		saveMessages();
-		
-		
 	}
 
 	public void set(String arg0, Object arg1) {
@@ -126,7 +120,6 @@ public class SettingsManager {
 		return messages;
 	}
 
-
 	public void saveConfig() {
 		// p.saveConfig();
 	}
@@ -137,34 +130,33 @@ public class SettingsManager {
 			return null;
 
 		}
+		
 		return p.getServer().getWorld(SettingsManager.getInstance().getSystemConfig().getString("sg-system.arenas." + game + ".world"));
 	}
 
-	public void reloadConfig(){
+	public void reloadConfig() {
 		p.reloadConfig();
 	}
 	
-	public boolean moveFile(File ff){
+	public boolean moveFile(File ff) {
 		SurvivalGames.$("Moving outdated config file. "+f.getName());
 		String name = ff.getName();
 		File ff2 = new File(SurvivalGames.getPluginDataFolder(), getNextName(name, 0));
 		return ff.renameTo(ff2);
 	}
 	
-	public String getNextName(String name, int n){
+	public String getNextName(String name, int n) {
 		File ff = new File(SurvivalGames.getPluginDataFolder(), name+".old"+n);
-		if(!ff.exists()){
+		if(!ff.exists()) {
 			return ff.getName();
-		}
-		else{
+		} else {
 			return getNextName(name, n+1);
 		}
 	}
 	
-	
 	public void reloadSpawns() {
 		spawns = YamlConfiguration.loadConfiguration(f);
-		if(spawns.getInt("version", 0) != SPAWN_VERSION){
+		if (spawns.getInt("version", 0) != SPAWN_VERSION) {
 			moveFile(f);
 			reloadSpawns();
 		}
@@ -174,7 +166,7 @@ public class SettingsManager {
 
 	public void reloadSystem() {
 		system = YamlConfiguration.loadConfiguration(f2);
-		if(system.getInt("version", 0) != SYSTEM_VERSION){
+		if (system.getInt("version", 0) != SYSTEM_VERSION) {
 			moveFile(f2);
 			reloadSystem();
 		}
@@ -184,7 +176,7 @@ public class SettingsManager {
 
 	public void reloadKits() {
 		kits = YamlConfiguration.loadConfiguration(f3);
-		if(kits.getInt("version", 0) != KIT_VERSION){
+		if (kits.getInt("version", 0) != KIT_VERSION) {
 			moveFile(f3);
 			loadFile("kits.yml");
 			reloadKits();
@@ -195,7 +187,7 @@ public class SettingsManager {
 	
 	public void reloadMessages() {
 		messages = YamlConfiguration.loadConfiguration(f4);
-		if(messages.getInt("version", 0) != MESSAGE_VERSION){
+		if (messages.getInt("version", 0) != MESSAGE_VERSION) {
 			moveFile(f4);
 			loadFile("messages.yml");
 			reloadKits();
@@ -206,22 +198,17 @@ public class SettingsManager {
 	
 	public void reloadChest() {
 		chest = YamlConfiguration.loadConfiguration(f5);
-		if(chest.getInt("version", 0) != CHEST_VERSION){
+		if (chest.getInt("version", 0) != CHEST_VERSION) {
 			moveFile(f5);
 			loadFile("chest.yml");
 			reloadKits();
 		}
 	}
 
-
-
-
-
 	public void saveSystemConfig() {
 		try {
 			system.save(f2);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -230,7 +217,6 @@ public class SettingsManager {
 		try {
 			spawns.save(f);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -239,7 +225,6 @@ public class SettingsManager {
 		try {
 			kits.save(f3);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -248,7 +233,6 @@ public class SettingsManager {
 		try {
 			messages.save(f4);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -257,7 +241,6 @@ public class SettingsManager {
 		try {
 			chest.save(f5);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -265,8 +248,6 @@ public class SettingsManager {
 	public int getSpawnCount(int gameid) {
 		return spawns.getInt("spawns." + gameid + ".count");
 	}
-
-
 
 	//TODO: Implement per-arena settings aka flags
 	public HashMap < String, Object > getGameFlags(int a) {
@@ -291,8 +272,8 @@ public class SettingsManager {
 		return flags;
 
 	}
+	
 	public void saveGameFlags(HashMap < String, Object > flags, int a) {
-
 		system.set("sg-system.arenas." + a + ".flags.autostart", flags.get("AUTOSTART_PLAYERS"));
 		system.set("sg-system.arenas." + a + ".flags.vote", flags.get("AUTOSTART_VOTE"));
 		system.set("sg-system.arenas." + a + ".flags.endgame-enabled", flags.get("ENDGAME_ENABLED"));
@@ -310,16 +291,15 @@ public class SettingsManager {
 		system.set("sg-system.arenas." + a + ".flags.sponsor-mode", flags.get("SPONSOR_MODE"));
 
 		saveSystemConfig();
-
 	}
 
 	public Location getLobbySpawn() {
-		try{
+		try {
 			return new Location(Bukkit.getWorld(system.getString("sg-system.lobby.spawn.world")),
 				system.getInt("sg-system.lobby.spawn.x"),
 				system.getInt("sg-system.lobby.spawn.y"),
 				system.getInt("sg-system.lobby.spawn.z"));
-		}catch(Exception e){
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -338,7 +318,6 @@ public class SettingsManager {
 		system.set("sg-system.lobby.spawn.z", l.getBlockZ());
 	}
 
-
 	public void setSpawn(int gameid, int spawnid, Vector v) {
 		spawns.set("spawns." + gameid + "." + spawnid + ".x", v.getBlockX());
 		spawns.set("spawns." + gameid + "." + spawnid + ".y", v.getBlockY());
@@ -356,35 +335,33 @@ public class SettingsManager {
 	}
 
 	public static String getSqlPrefix() {
-
 		return getInstance().getConfig().getString("sql.prefix");
 	}
 
 
-	public void loadFile(String file){
+	public void loadFile(String file) {
 		File t = new File(p.getDataFolder(), file);
 		System.out.println("Writing new file: "+ t.getAbsolutePath());
 			
-			try {
-				t.createNewFile();
-				FileWriter out = new FileWriter(t);
-				System.out.println(file);
-				InputStream is = getClass().getResourceAsStream("/"+file);
-				InputStreamReader isr = new InputStreamReader(is);
-				BufferedReader br = new BufferedReader(isr);
-				String line;
-				while ((line = br.readLine()) != null) {
-					out.write(line+"\n");
-					System.out.println(line);
-				}
-				out.flush();
-				is.close();
-				isr.close();
-				br.close();
-				out.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+		try {
+			t.createNewFile();
+			FileWriter out = new FileWriter(t);
+			System.out.println(file);
+			InputStream is = getClass().getResourceAsStream("/"+file);
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String line;
+			while ((line = br.readLine()) != null) {
+				out.write(line+"\n");
+				System.out.println(line);
 			}
-		
+			out.flush();
+			is.close();
+			isr.close();
+			br.close();
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

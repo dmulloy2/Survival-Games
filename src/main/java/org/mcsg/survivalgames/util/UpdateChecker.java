@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -54,20 +53,20 @@ public class UpdateChecker {
             Boolean b =  Boolean.parseBoolean(in[0]);
             
            // System.out.println(in[0]+b);
-            if(b){
+            if (b) {
                 player.sendMessage(ChatColor.DARK_BLUE+"--------------------------------------");
                 player.sendMessage(ChatColor.DARK_RED+"[SurvivalGames] Update Available!");
                 player.sendMessage(ChatColor.DARK_AQUA    + "Your version: "+ChatColor.GOLD+v+ChatColor.DARK_AQUA+" Latest: "+ChatColor.GOLD+in[1]);
                 player.sendMessage(ChatColor.DARK_AQUA    + in[2]);
                 player.sendMessage(ChatColor.AQUA+""+ChatColor.UNDERLINE+in[3]);
                 player.sendMessage(ChatColor.DARK_BLUE+"--------------------------------------");
-                SurvivalGames.$("[Updates found!");
+                SurvivalGames.$("Updates found!");
 
-            }else{
-            	SurvivalGames.$("[SG][info]No updates found!");
+            } else {
+            	SurvivalGames.debug("No updates found!");
             }   
-        }catch(Exception e){
-        	SurvivalGames.$(Level.WARNING, "[SurvivalGames] could not check for updates.");
+        } catch(Exception e) {
+        	SurvivalGames.debug("Could not check for updates.");
         }
     }
 }
