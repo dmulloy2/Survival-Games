@@ -184,7 +184,6 @@ public class SettingsManager {
 
 	}
 	
-	
 	public void reloadMessages() {
 		messages = YamlConfiguration.loadConfiguration(f4);
 		if (messages.getInt("version", 0) != MESSAGE_VERSION) {
@@ -328,8 +327,9 @@ public class SettingsManager {
 		try {
 			spawns.save(f);
 		} catch (IOException e) {
-
+			//
 		}
+		
 		GameManager.getInstance().getGame(gameid).addSpawn();
 
 	}
@@ -341,19 +341,19 @@ public class SettingsManager {
 
 	public void loadFile(String file) {
 		File t = new File(p.getDataFolder(), file);
-		System.out.println("Writing new file: "+ t.getAbsolutePath());
+		SurvivalGames.$("Writing new file: "+ t.getAbsolutePath());
 			
 		try {
 			t.createNewFile();
 			FileWriter out = new FileWriter(t);
-			System.out.println(file);
+			SurvivalGames.debug(file);
 			InputStream is = getClass().getResourceAsStream("/"+file);
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String line;
 			while ((line = br.readLine()) != null) {
 				out.write(line+"\n");
-				System.out.println(line);
+				SurvivalGames.debug(line);
 			}
 			out.flush();
 			is.close();
