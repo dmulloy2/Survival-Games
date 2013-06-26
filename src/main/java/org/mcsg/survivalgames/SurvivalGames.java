@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcsg.survivalgames.events.*;
@@ -31,6 +30,7 @@ public class SurvivalGames extends JavaPlugin {
 	public static boolean dbcon = false;
 	public static boolean config_todate = false;
 	public static int config_version = 3;
+	private long start;
 
 	public static List < String > auth = Arrays.asList(new String[] {
 			"Double0negative", "iMalo", "Medic0987", "alex_markey", "skitscape", "AntVenom", "YoshiGenius", "pimpinpsp", "WinryR", "Jazed2011",
@@ -41,23 +41,26 @@ public class SurvivalGames extends JavaPlugin {
 	SurvivalGames p = this;
 	public void onDisable() {
 		disabling = false;
-		PluginDescriptionFile pdfFile = p.getDescription();
+		start = System.currentTimeMillis();
+
 		SettingsManager.getInstance().saveSpawns();
 		SettingsManager.getInstance().saveSystemConfig();
 		for (Game g : GameManager.getInstance().getGames()) {
 			try {
 				g.disable();
-			} catch(Exception e){
+			} catch(Exception e) {
 				//will throw useless "tried to register task blah blah error." Use the method below to reset the arena without a task.
 			}
+			
 			QueueManager.getInstance().rollback(g.getID(), true);
 		}
 
-		logger.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " has now been disabled and reset");
+		$(getDescription().getFullName() + " has been disabled (" + (System.currentTimeMillis() - start) + "ms)");
 	}
 
 	public void onEnable() {
 		logger = p.getLogger();
+		start = System.currentTimeMillis();
 
 		//ensure that all worlds are loaded. Fixes some issues with Multiverse loading after this plugin had started
 		getServer().getScheduler().scheduleSyncDelayedTask(this, new Startup(), 10);
@@ -119,6 +122,8 @@ public class SurvivalGames extends JavaPlugin {
 			}
 
 			//   new Webserver().start();
+			
+			$(getDescription().getFullName() + " has been enabled (" + (System.currentTimeMillis() - start) + "ms)");
 		}
 	}
 
