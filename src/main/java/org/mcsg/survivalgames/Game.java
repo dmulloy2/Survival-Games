@@ -437,7 +437,7 @@ public class Game {
 
 	}
 	
-	//--------------------------//
+	//-------------------------//
 	// Countdowns
 	//-------------------------//
 	public int getCountdownTime() {
@@ -478,7 +478,7 @@ public class Game {
 		}
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// Remove a player
 	//-------------------------//
 	public void removePlayer(Player p, boolean b) {
@@ -493,7 +493,7 @@ public class Game {
 			activePlayers.remove(p);
 			inactivePlayers.remove(p);
 			
-			for (Object in : spawns.keySet()) {
+			for (Object in : spawns.keySet().toArray()) {
 				if (spawns.get(in) == p) spawns.remove(in);
 			}
 			LobbyManager.getInstance().clearSigns(gameID);
