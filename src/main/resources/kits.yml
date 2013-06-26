@@ -1,11 +1,6 @@
-
-
-
-    
 ###########################################################
 #######################  Kits #############################
 ###########################################################
-
 
 ##  Kits
 # the permission for each kit is sg.kits.<kitname> where
@@ -26,9 +21,7 @@
 #DONT TOUCH THIS
 version: 1
 
-
 enabled: false
-
 
 ## Kit Display Mode 
 #
@@ -37,9 +30,6 @@ enabled: false
 #  AUTO_SELECT  = Auto select the top level kit
 
 kit-select-mode: 'SHOW_ALL'
-
-
-
 
 kits:
   test-kit:
@@ -56,4 +46,3 @@ kits:
     - '276,1, 0, fire:2, Fire'
     - '261'
     - '262, 64'
-    

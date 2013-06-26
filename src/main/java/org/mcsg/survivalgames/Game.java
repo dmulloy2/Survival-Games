@@ -509,7 +509,7 @@ public class Game {
 
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// Kill a player
 	//-------------------------//
 	public void killPlayer(Player p, boolean left) {
@@ -564,7 +564,7 @@ public class Game {
 			}
 		}
 
-		for (Player pe: activePlayers) {
+		for (Player pe : activePlayers) {
 			Location l = pe.getLocation();
 			l.setY(l.getWorld().getMaxHeight());
 			l.getWorld().strikeLightningEffect(l);
@@ -585,7 +585,7 @@ public class Game {
 		LobbyManager.getInstance().updateWall(gameID);
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// Player win
 	//-------------------------//
 	public void playerWin(Player p) {
@@ -630,7 +630,7 @@ public class Game {
 
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// End Game
 	//-------------------------//
 	public void endGame() {
@@ -641,7 +641,7 @@ public class Game {
 
 	}
 	
-	//--------------------------//
+	//-------------------------//
 	// Disable
 	//-------------------------//
 	public void disable() {
@@ -654,16 +654,18 @@ public class Game {
 				Player p = activePlayers.get(a);
 				msgmgr.sendMessage(PrefixType.WARNING, "Game disabled!", p);
 				removePlayer(p, false);
-			} catch (Exception e) {}
-
+			} catch (Exception e) {
+				//
+			}
 		}
 
 		for (int a = 0; a < inactivePlayers.size(); a = 0) {
 			try {
-
 				Player p = inactivePlayers.remove(a);
 				msgmgr.sendMessage(PrefixType.WARNING, "Game disabled!", p);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				//
+			}
 
 		}
 
@@ -676,7 +678,7 @@ public class Game {
 
 	}
 	
-	//--------------------------//
+	//-------------------------//
 	// Reset
 	//-------------------------//
 	public void resetArena() {
@@ -707,7 +709,7 @@ public class Game {
 		LobbyManager.getInstance().updateWall(gameID);
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// Save a player's inventory
 	//-------------------------//
 	public void saveInv(Player p) {
@@ -724,7 +726,7 @@ public class Game {
 		restoreInv(Bukkit.getPlayer(p));
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// Spectating
 	//-------------------------//
 	public void addSpectator(Player p) {
@@ -739,7 +741,7 @@ public class Game {
 
 		HookManager.getInstance().runHook("PLAYER_SPECTATE", "player-"+p.getName());
 
-		for (Player pl: Bukkit.getOnlinePlayers()) {
+		for (Player pl : Bukkit.getOnlinePlayers()) {
 			pl.hidePlayer(p);
 		}
 
@@ -790,7 +792,7 @@ public class Game {
 		return nextspec;
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// Inventory Work
 	//-------------------------//
 	@SuppressWarnings("deprecation")
@@ -822,7 +824,7 @@ public class Game {
 
 
 
-	//--------------------------//
+	//-------------------------//
 	// Check for night
 	//-------------------------//
 	class NightChecker extends BukkitRunnable {
@@ -840,7 +842,7 @@ public class Game {
 		}
 	}
 
-	//--------------------------//
+	//-------------------------//
 	// Ending Games
 	//-------------------------//
 	class EndgameManager extends BukkitRunnable {
@@ -856,7 +858,7 @@ public class Game {
 	}
 
 
-	//--------------------------//
+	//-------------------------//
 	// Death Match
 	//-------------------------//
 	class DeathMatch extends BukkitRunnable {

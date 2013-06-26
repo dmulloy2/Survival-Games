@@ -44,8 +44,6 @@ grace-period: 20
 #has been implemented
 restock-chest: true
 
-
-
 block:
   place:
     whitelist:
@@ -67,8 +65,6 @@ block:
     - 50
     - 103
     - 43
-
-
 
 #if mob-progression is enabled, then the 
 #difficulty of mobs and amount of mobs
@@ -155,4 +151,3 @@ stats:
     level3: '&e{player}&5 Ultra Kill!'
     level4: '&e{player}&4 Unbelievable Kill!'
     level5: '&e{player}&a&kii&4&l Unbelievable+!&a&kii'
-    
