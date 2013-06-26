@@ -60,14 +60,12 @@ public class SurvivalGames extends JavaPlugin {
 
 	public void onEnable() {
 		logger = p.getLogger();
-		start = System.currentTimeMillis();
 
 		//ensure that all worlds are loaded. Fixes some issues with Multiverse loading after this plugin had started
 		getServer().getScheduler().scheduleSyncDelayedTask(this, new Startup(), 10);
 		try {
 			new Metrics(this).start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -75,6 +73,7 @@ public class SurvivalGames extends JavaPlugin {
 	class Startup implements Runnable {
 		public void run() {
 			datafolder = p.getDataFolder();
+			start = System.currentTimeMillis();
 
 			PluginManager pm = getServer().getPluginManager();
 			setCommands();
