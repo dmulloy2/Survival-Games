@@ -1,6 +1,5 @@
 package org.mcsg.survivalgames.util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -9,30 +8,30 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
-import org.mcsg.survivalgames.SurvivalGames;
-
 
 public class ThirstManager implements Listener {
-	
-	ThirstManager instance = new ThirstManager();
+	private ThirstManager instance = new ThirstManager();
 	
 	public ThirstManager getInstance() {
 		return instance;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void startThirst() {
-		Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(new SurvivalGames(), new Runnable() {
-    	public void run() {
-    		for (Game g : GameManager.getInstance().getGames()) {
-    			for (Player p : g.getAllPlayers()) {
-    				removeThirst(p, 1);
-    			}
-    		}
-    	}
-    }, 60L, 200L);
+		class ThirstTimer extends BukkitRunnable {
+			@Override
+			public void run() {
+				for (Game g : GameManager.getInstance().getGames()) {
+					for (Player p : g.getAllPlayers()) {
+						removeThirst(p, 1);
+					}
+				}
+			}
+		}
+		
+		new ThirstTimer().runTaskTimer(GameManager.getInstance().getPlugin(), 60L, 200L);
 	}
 	
 	public void removeThirst(Player p, int amount) {

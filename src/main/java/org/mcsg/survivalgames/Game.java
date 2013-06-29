@@ -292,8 +292,7 @@ public class Game {
 		return false;
 	}
 	
-	public boolean canJoinArena(Player p, int gameId)
-	{
+	public boolean canJoinArena(Player p, int gameId) {
 		return (p.hasPermission("sg.arenas.join." + gameId) || p.hasPermission("sg.arenas.join.*"));
 	}
 
@@ -376,10 +375,6 @@ public class Game {
 		
 		if ((((vote + 0.0) / (getActivePlayers() +0.0))>=(config.getInt("auto-start-vote")+0.0)/100) && getActivePlayers() > 1) {
 			countdown(config.getInt("auto-start-time"));
-			/*for (Player p: activePlayers) {
-				//p.sendMessage(ChatColor.LIGHT_PURPLE + "Game Starting in " + c.getInt("auto-start-time"));
-				msgmgr.sendMessage(PrefixType.INFO, "Game starting in " + config.getInt("auto-start-time") + "!", p);
-			}*/
 		}
 	}
 

@@ -1,14 +1,15 @@
-#Configuration for the chest item ratios
-#this system works by levels. Level 1 aka lvl1 
-#is the most common stuff whereas lvl5 is the least 
-#common. You can set what will spawn at each level below.
-#The ratio setting determines how likley the next level is
-#to spawn in. a ratio of 2 means that it is twice as unlikley
-#for the next level to spawn in.
-##FORMAT
+# Configuration for the chest item ratios
+# this system works by levels. Level 1 aka lvl1 
+# is the most common stuff whereas lvl5 is the least 
+# common. You can set what will spawn at each level below.
+# The ratio setting determines how likley the next level is
+# to spawn in. a ratio of 2 means that it is twice as unlikley
+# for the next level to spawn in.
+
+# FORMAT #
 # <itemid>,<max amount per slot>
 
-#DONT TOUCH THIS
+# DONT TOUCH THIS #
 version: 0
 
 chest:

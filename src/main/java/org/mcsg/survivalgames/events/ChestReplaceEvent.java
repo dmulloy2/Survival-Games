@@ -17,37 +17,38 @@ import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.Game.GameMode;
 import org.mcsg.survivalgames.util.ChestRatioStorage;
 
-
-
-public class ChestReplaceEvent implements Listener{
-
+public class ChestReplaceEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void ChestListener(PlayerInteractEvent e){
-        try{
-            HashSet<Block>openedChest3 = new HashSet<Block>();
+    public void ChestListener(PlayerInteractEvent e) {
+        try {
+            HashSet<Block> openedChest3 = new HashSet<Block>();
 
-            if(!(e.getAction()==Action.RIGHT_CLICK_BLOCK)) return;
+            if (!(e.getAction()==Action.RIGHT_CLICK_BLOCK)) {
+            	return;
+            }
 
             Block clickedBlock = e.getClickedBlock(); 
             int gameid = GameManager.getInstance().getPlayerGameId(e.getPlayer());
-            if(gameid == -1) return;
+            if (gameid == -1) {
+            	return;
+            }
             GameManager gm = GameManager.getInstance();
             
-            if(!gm.isPlayerActive(e.getPlayer())){
+            if (!gm.isPlayerActive(e.getPlayer())) {
                 return;
             }
             
-            if(gm.getGame(gameid).getMode() != GameMode.INGAME){
+            if (gm.getGame(gameid).getMode() != GameMode.INGAME) {
             	e.setCancelled(true);
                 return;
             }
             
-            if(GameManager.openedChest.get(gameid) !=null){
+            if (GameManager.openedChest.get(gameid) != null) {
                 openedChest3.addAll(GameManager.openedChest.get(gameid));
             }
             
-            if(openedChest3.contains(clickedBlock)){
+            if (openedChest3.contains(clickedBlock)) {
                 return;
             }
             
@@ -58,32 +59,27 @@ public class ChestReplaceEvent implements Listener{
                 size = 1;
                 inv  = ((Chest) clickedBlock.getState()).getInventory();
 
-            }
-            else if(clickedBlock.getState() instanceof DoubleChest){
+            } else if (clickedBlock.getState() instanceof DoubleChest) {
                 size = 2;
                 inv = ((DoubleChest) clickedBlock.getState()).getInventory();
-
+            } else {
+            	return;
             }
-            else return;
 
             inv.clear();
             Random r = new Random();
 
-            for(ItemStack i: ChestRatioStorage.getInstance().getItems()){
+            for (ItemStack i: ChestRatioStorage.getInstance().getItems()) {
                 int l = r.nextInt(26 * size);
 
                 while(inv.getItem(l) != null)
                     l = r.nextInt(26 * size);
                 inv.setItem(l, i);
-
-
             }
             openedChest3.add(clickedBlock);
             GameManager.openedChest.put(gameid, openedChest3);
+        } catch(Exception e5) {
+        	//
         }
-        catch(Exception e5){}
     }
-
-
-
 }

@@ -17,8 +17,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 
-
-
 public class SpectatorEvents implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -48,23 +46,23 @@ public class SpectatorEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerClickEvent(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        try{
+        try {
             if(GameManager.getInstance().isSpectator(player) && player.isSneaking() && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR)||
-                    GameManager.getInstance().isSpectator(player) && player.isSneaking() && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_AIR)){
+                    GameManager.getInstance().isSpectator(player) && player.isSneaking() && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_AIR)) {
                 Player[]players = GameManager.getInstance().getGame(GameManager.getInstance().getPlayerSpectateId(player)).getPlayers()[0];
                 Game g = GameManager.getInstance().getGame(GameManager.getInstance().getPlayerSpectateId(player));
 
                 int i = g.getNextSpec().get(player);
-                if((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR)){
+                if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR)) {
                     i++;
-                }
-                else if(event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_AIR){
+                } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_AIR) {
                     i--;
                 }
-                if(i>players.length-1){
+                
+                if (i>players.length-1) {
                     i = 0;
                 }
-                if(i<0){
+                if (i<0) {
                     i = players.length-1;
                 }
                 g.getNextSpec().put(player, i);
@@ -74,12 +72,12 @@ public class SpectatorEvents implements Listener {
                 l.setPitch(0);
                 player.teleport(l);
                 player.sendMessage(ChatColor.AQUA+"You are now spectating "+tpto.getName());
-            }
-            else if (GameManager.getInstance().isSpectator(player)) {
+            } else if (GameManager.getInstance().isSpectator(player)) {
                 event.setCancelled(true);
             }
+        } catch(Exception e) {
+        	e.printStackTrace();
         }
-        catch(Exception e){e.printStackTrace();}
     }
 
     
@@ -96,8 +94,9 @@ public class SpectatorEvents implements Listener {
         Player player = null;
         if (event.getDamager() instanceof Player) {
             player = (Player)event.getDamager();
+        } else {
+        	return;
         }
-        else return;
         if (GameManager.getInstance().isSpectator(player)) {
             event.setCancelled(true);
         }
@@ -108,8 +107,9 @@ public class SpectatorEvents implements Listener {
         Player player = null;
         if (event.getEntity() instanceof Player) {
             player = (Player)event.getEntity();
+        } else {
+        	return;
         }
-        else return;
         if (GameManager.getInstance().isSpectator(player)) {
             event.setCancelled(true);
         }
@@ -127,4 +127,3 @@ public class SpectatorEvents implements Listener {
         }
     }*/
 }
-

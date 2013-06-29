@@ -20,7 +20,7 @@ public class Arena {
     }
 
     public Location getMax() {
-    	Runtime.getRuntime().freeMemory();
+//    	Runtime.getRuntime().freeMemory(); Umm why..?
         return max;
     }
 

@@ -103,7 +103,7 @@ public class CommandHandler implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd1, String commandLabel, String[] args) {
 		PluginDescriptionFile pdfFile = plugin.getDescription();
 		if (!(sender instanceof Player)) {
-			msgmgr.logMessage(PrefixType.WARNING, "Only in-game players can use SurvivalGames commands! ");
+			msgmgr.logMessage(PrefixType.WARNING, "Only in-game players can use SurvivalGames commands!");
 			return true;
 		}
 
@@ -168,13 +168,13 @@ public class CommandHandler implements CommandExecutor {
 
 	public void help (Player p, int page) {
 		if (page == 1) {
-			p.sendMessage(ChatColor.BLUE + "------------ " + msgmgr.pre + ChatColor.DARK_AQUA + " Player Commands" + ChatColor.BLUE + " ------------");
+			p.sendMessage(ChatColor.BLUE + "------------[ " + ChatColor.DARK_AQUA + "Player Commands" + ChatColor.BLUE + " ]------------");
 		}
 		if (page == 2) {
-			p.sendMessage(ChatColor.BLUE + "------------ " + msgmgr.pre + ChatColor.DARK_AQUA + " Staff Commands" + ChatColor.BLUE + " ------------");
+			p.sendMessage(ChatColor.BLUE + "------------[ " + ChatColor.DARK_AQUA + "Staff Commands" + ChatColor.BLUE + " ]------------");
 		}
 		if (page == 3) {
-			p.sendMessage(ChatColor.BLUE + "------------ " + msgmgr.pre + ChatColor.DARK_AQUA + " Admin Commands" + ChatColor.BLUE + " ------------");
+			p.sendMessage(ChatColor.BLUE + "------------[ " + ChatColor.DARK_AQUA + "Admin Commands" + ChatColor.BLUE + " ]------------");
 		}
 
 		for (String command : commands.keySet()) {
@@ -183,19 +183,8 @@ public class CommandHandler implements CommandExecutor {
 					msgmgr.sendMessage(PrefixType.INFO, commands.get(command).help(p), p);
 				}
 			} catch(Exception e) {
-				
+				//
 			}
 		}
-		/*for (SubCommand v : commands.values()) {
-            if (v.permission() != null) {
-                if (p.hasPermission(v.permission())) {
-                    msgmgr.sendMessage(PrefixType.INFO1, v.help(p), p);
-                } else {
-                    msgmgr.sendMessage(PrefixType.WARNING, v.help(p), p);
-                }
-            } else {
-                msgmgr.sendMessage(PrefixType.INFO, v.help(p), p);
-            }
-        }*/
 	}
 }

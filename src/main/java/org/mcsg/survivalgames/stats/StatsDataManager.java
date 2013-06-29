@@ -6,7 +6,7 @@ public class StatsDataManager {
 	private StatsDataManager() {
 	}
 	
-	public static StatsDataManager getInstance(){
+	public static StatsDataManager getInstance() {
 		return instance;
 	}
 	

@@ -13,9 +13,9 @@ import org.mcsg.survivalgames.SettingsManager;
 
 public class BreakEvent implements Listener {
 
-    public ArrayList<Integer> allowedBreak =  new ArrayList<Integer>();;
+    public ArrayList<Integer> allowedBreak =  new ArrayList<Integer>();
 
-    public BreakEvent(){
+    public BreakEvent() {
         allowedBreak.addAll( SettingsManager.getInstance().getConfig().getIntegerList("block.break.whitelist"));
     }
 
@@ -24,29 +24,29 @@ public class BreakEvent implements Listener {
         Player p = event.getPlayer();
         int pid = GameManager.getInstance().getPlayerGameId(p);
 
-
-        if(pid == -1){
+        if (pid == -1) {
             int blockgameid  = GameManager.getInstance().getBlockGameId(event.getBlock().getLocation());
 
-            if(blockgameid != -1){
-                if(GameManager.getInstance().getGame(blockgameid).getGameMode() != Game.GameMode.DISABLED){
+            if(blockgameid != -1) {
+                if (GameManager.getInstance().getGame(blockgameid).getGameMode() != Game.GameMode.DISABLED) {
                     event.setCancelled(true);
                 }
             }
             return;
         }
-
-
+        
         Game g = GameManager.getInstance().getGame(pid);
 
-        if(g.getMode() == Game.GameMode.DISABLED){
+        if (g.getMode() == Game.GameMode.DISABLED) {
             return;
         }
-        if(g.getMode() != Game.GameMode.INGAME){
+        if (g.getMode() != Game.GameMode.INGAME) {
             event.setCancelled(true);
             return;
         }
 
-        if(!allowedBreak.contains(event.getBlock().getTypeId()))event.setCancelled(true);
+        if(!allowedBreak.contains(event.getBlock().getTypeId())) {
+        	event.setCancelled(true);
+        }
     }
 }

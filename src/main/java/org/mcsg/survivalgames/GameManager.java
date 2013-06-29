@@ -3,6 +3,7 @@ package org.mcsg.survivalgames;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -331,26 +332,46 @@ public class GameManager {
 		openedChest.put(id, new HashSet < Block > ());
 	}
 
-	public String getStringList(int gid) {
+	public List<String> getStringList(int gid) {
 		Game g = getGame(gid);
-		StringBuilder sb = new StringBuilder();
-		Player[][]players = g.getPlayers();
+		Player[][] players = g.getPlayers();
+		
+		List<String> lines = new ArrayList<String>();
+		StringBuilder line = new StringBuilder();
 
-		sb.append(ChatColor.GREEN + "<---------------------[ Alive: "+players[0].length+" ]--------------------->\n"+ChatColor.GREEN+" ");
-		for (Player p : players[0]) {
-			sb.append(p.getName() + ", ");
+		line.append(ChatColor.GREEN + "<---------------------[ Alive: "+players[0].length+" ]--------------------->"+ChatColor.GREEN+" ");
+		lines.add(line.toString());
+		
+		line = new StringBuilder();
+		if (players[0].length == 0) {
+			line.append(ChatColor.GREEN + "None");
+		} else {
+			for (Player p : players[0]) {
+				line.append(ChatColor.GREEN + p.getName() + ", ");
+			}
+			line.delete(line.lastIndexOf(","), line.lastIndexOf(" "));
 		}
-		sb.append("\n\n");
 		
-		sb.append(ChatColor.RED + "<---------------------[ Dead: "+players[1].length+" ]--------------------->\n"+ChatColor.RED+" ");
-		for (Player p : players[1]) {
-			sb.append(p.getName() + ",");
+		line.append(".");
+		lines.add(line.toString());
+
+		line = new StringBuilder();
+		line.append(ChatColor.RED + "<---------------------[ Dead: "+players[1].length+" ]--------------------->"+ChatColor.RED+" ");
+		lines.add(line.toString());
+		
+		line = new StringBuilder();
+		if (players[1].length == 0) {
+			line.append(ChatColor.RED + "None");
+		} else {
+			for (Player p : players[1]) {
+				line.append(ChatColor.RED + p.getName() + ", ");
+			}
+			line.delete(line.lastIndexOf(","), line.lastIndexOf(" "));
 		}
-		sb.append("\n\n");
 		
-		if (sb.toString().contains(", "))
-			sb.delete(sb.lastIndexOf(","), sb.lastIndexOf(" "));
+		line.append(".");
+		lines.add(line.toString());
 		
-		return sb.toString();
+		return lines;
 	}
 }

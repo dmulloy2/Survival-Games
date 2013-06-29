@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.SettingsManager;
@@ -51,9 +53,9 @@ public class QueueManager {
 		loadSave(id);
 		if (!shutdown) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
-					new Rollback(id, shutdown));
+					new Rollback(id, shutdown, 0, 1, 0));
 		} else {
-			new Rollback(id, shutdown).run();
+			new Rollback(id, shutdown, 0, 1, 0).run();
 		}
 		ArrayList<Entity>removelist = new ArrayList<Entity>();
 
@@ -95,7 +97,8 @@ public class QueueManager {
 		}
 	}
 
-	class DataDumper implements Runnable {
+	class DataDumper extends BukkitRunnable {
+		@Override
 		public void run() {
 			for (int id : queue.keySet()) {
 				try {
@@ -139,23 +142,30 @@ public class QueueManager {
 		}
 	}
 
-	class Rollback implements Runnable {
-		int id;
+	class Rollback extends BukkitRunnable {
+		int id, totalRollback, iteration;
 		Game game;
 		boolean shutdown;
+		long time;
 
-		public Rollback(int id, boolean shutdown) {
+		public Rollback(int id, boolean shutdown, int trb, int it, long time) {
 			this.id = id;
-			game = GameManager.getInstance().getGame(id);
+			this.totalRollback = trb;
+			this.iteration = it;
+			this.game = GameManager.getInstance().getGame(id);
 			this.shutdown = shutdown;
+			this.time = time;
 		}
 
+		@Override
 		public void run() {
 			ArrayList<BlockData> data = queue.get(id);
 			if (data != null) {
 				int a = data.size()-1;
 				int rb = 0;
-				while(a>=0 && (rb < 100 || shutdown)) {
+				long t1 = new Date().getTime();
+				int pt = SettingsManager.getInstance().getConfig().getInt("rollback.per-tick", 100);
+				while(a>=0 && (rb < pt|| shutdown)){ 
 					SurvivalGames.debug("Resetting "+a);
 					BlockData result = data.get(a);
 					if (result.getGameId() == game.getID()) {
@@ -168,16 +178,18 @@ public class QueueManager {
 					}
 					a--;
 				}
+				
+				time += new Date().getTime() - t1;
 
 				if (a != -1) {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
-							new Rollback(id, shutdown), 1);
+							new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time), 1);
 				} else {
-					SurvivalGames.$ ("Arena "+id+" reset. ");
+					SurvivalGames.$("Arena "+id+" reset. Rolled back "+totalRollback+" blocks in "+iteration+" iterations ("+pt+" blocks per iteration Total time spent rolling back was "+time+"ms"); 
 					game.resetCallback();
 				}
 			} else {
-				SurvivalGames.$ (" Arena "+id+" reset. ");
+				SurvivalGames.$ ("Arena "+id+" reset. Rolled back "+totalRollback+" blocks in "+iteration+" iterations. Total time spent rolling back was "+time+"ms");
 				game.resetCallback();
 			}
 		}

@@ -16,16 +16,15 @@ import org.mcsg.survivalgames.SurvivalGames;
 public class UpdateChecker {
 
     //Includes simple metrics!!
-
-    public void check (Player player, Plugin p) {
+    public void check(Player player, Plugin p) {
 
         String response = "";
-        String data="";
+        String data = "";
         
         String v = p.getDescription().getVersion();
         String ip = Bukkit.getIp();
         int port = Bukkit.getPort();
-        try{
+        try {
             //IP and PORT used so data is unique so amount of servers using the plugin can be calculated correctly
             data = URLEncoder.encode("version", "UTF-8") +"=" + URLEncoder.encode(v, "UTF-8");
             data += "&"+ URLEncoder.encode("ip", "UTF-8") + "=" + URLEncoder.encode(ip, "UTF-8");
@@ -63,7 +62,7 @@ public class UpdateChecker {
                 SurvivalGames.$("Updates found!");
 
             } else {
-            	SurvivalGames.debug("No updates found!");
+            	SurvivalGames.$("No updates found!");
             }   
         } catch(Exception e) {
         	SurvivalGames.debug("Could not check for updates.");

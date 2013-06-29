@@ -11,14 +11,16 @@ public class ListPlayers implements SubCommand {
 	public boolean onCommand(Player player, String[] args) {
 		int gid = 0;
 		try {
-			if(args.length == 0) {
+			if (args.length == 0) {
 				gid = GameManager.getInstance().getPlayerGameId(player);
 			} else {
 				gid = Integer.parseInt(args[0]);
 			}
 
-			String[] msg = GameManager.getInstance().getStringList(gid).split("\n");
-			player.sendMessage(msg);
+			for (String s : GameManager.getInstance().getStringList(gid)) {
+				player.sendMessage(s);
+			}
+			
 			return false;
 		} catch (NumberFormatException ex) {
 			MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notanumber", player, "input-Arena");

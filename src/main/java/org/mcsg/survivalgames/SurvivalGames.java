@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.mcsg.survivalgames.events.*;
 import org.mcsg.survivalgames.hooks.HookManager;
 import org.mcsg.survivalgames.logging.LoggingManager;
@@ -61,8 +62,8 @@ public class SurvivalGames extends JavaPlugin {
 	public void onEnable() {
 		logger = p.getLogger();
 
-		//ensure that all worlds are loaded. Fixes some issues with Multiverse loading after this plugin had started
-		getServer().getScheduler().scheduleSyncDelayedTask(this, new Startup(), 10);
+		// Ensure that all worlds are loaded. Fixes some issues with Multiverse loading after this plugin had started
+		new Startup().runTaskLater(this, 10L);
 		try {
 			new Metrics(this).start();
 		} catch (IOException e) {
@@ -70,7 +71,8 @@ public class SurvivalGames extends JavaPlugin {
 		}
 	}
 
-	class Startup implements Runnable {
+	class Startup extends BukkitRunnable {
+		@Override
 		public void run() {
 			datafolder = p.getDataFolder();
 			start = System.currentTimeMillis();
@@ -82,7 +84,8 @@ public class SurvivalGames extends JavaPlugin {
 			MessageManager.getInstance().setup();
 			GameManager.getInstance().setup(p);
 
-			try { // try loading everything that uses SQL. 
+			// Try loading everything that uses SQL
+			try {
 				FileConfiguration c = SettingsManager.getInstance().getConfig();
 				if (c.getBoolean("stats.enabled")) DatabaseManager.getInstance().setup(p);
 				QueueManager.getInstance().setup();
@@ -119,8 +122,8 @@ public class SurvivalGames extends JavaPlugin {
 					p.teleport(SettingsManager.getInstance().getLobbySpawn());
 				}
 			}
-
-			//   new Webserver().start();
+			
+//			new Webserver().start();
 			
 			$(getDescription().getFullName() + " has been enabled (" + (System.currentTimeMillis() - start) + "ms)");
 		}
@@ -147,7 +150,7 @@ public class SurvivalGames extends JavaPlugin {
 		}
 	}
 
-	public static void $(String msg){
+	public static void $(String msg) {
 		logger.log(Level.INFO, msg);
 	}
 
@@ -156,8 +159,9 @@ public class SurvivalGames extends JavaPlugin {
 	}
 
 	public static void debug(String msg) {
-		if (SettingsManager.getInstance().getConfig().getBoolean("debug", false))
+		if (SettingsManager.getInstance().getConfig().getBoolean("debug", false)) {
 			$("[Debug] " + msg);
+		}
 	}
 
 	public static void debug(int a) {

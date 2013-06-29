@@ -1,7 +1,3 @@
-###########################################################
-#######################  Kits #############################
-###########################################################
-
 ##  Kits
 # the permission for each kit is sg.kits.<kitname> where
 # kit name is the name of the kit
@@ -18,7 +14,7 @@
 #     276, 1, 0, sharpness: 4 knockback: 2, killer
 #
 
-#DONT TOUCH THIS
+# DONT TOUCH THIS
 version: 1
 
 enabled: false

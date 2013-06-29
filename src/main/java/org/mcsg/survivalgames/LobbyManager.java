@@ -66,19 +66,13 @@ public class LobbyManager {
 				/*s.set("sg-system.lobby.signs." + a, null); 
 			      SettingsManager.getInstance().saveSystemConfig();*/
 			}
-		}catch(Exception e){
+		} catch(Exception e) {
 			s.set("sg-system.lobby.signs." + a, null);
 			s.set("sg-system.lobby.signno", s.getInt("sg-system.lobby.signno")-1);
 		}
 	}
 
-	/*	class updater implements Runnable{
-		public void run(){
-			updateall();
-		}
-	}*/
-
-	public void updateall() {
+	public void updateAll() {
 		for (ArrayList < LobbyWall > lws: signs.values()) {
 			for (LobbyWall lw: lws) {
 				lw.update();
@@ -87,11 +81,17 @@ public class LobbyManager {
 	}
 
 	public void updateWall(int a) {
-		if(signs.get(a) != null){
+		if (signs.get(a) != null) {
 			for (LobbyWall lw: signs.get(a)) {
 				lw.update();
 			}
 		}
+	}
+	
+	public void removeSignsForArena(int a) {
+		clearAllSigns();
+		signs.remove(a);
+		updateAll();
 	}
 
 	public void clearSigns(int a) {

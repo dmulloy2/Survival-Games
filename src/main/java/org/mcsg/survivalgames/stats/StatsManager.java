@@ -36,7 +36,7 @@ public class StatsManager {
     MessageManager msgmgr;
 
     private StatsManager() {
-    	msgmgr = MessageManager.getInstance();;
+    	msgmgr = MessageManager.getInstance();
     }
 
     public static StatsManager getInstance() {
@@ -85,10 +85,6 @@ public class StatsManager {
     }
 
     public void playerDied(Player p, int pos, int arenaid,long time) {
-        /*    System.out.println("player null "+(p == null));
-        System.out.println("arena null "+(arenas == null));
-        System.out.println("arenagetplayer null "+(arenas.get(arenaid).get(p) == null));*/
-
         arenas.get(arenaid).get(p).died(pos, time);
     }
 
@@ -109,7 +105,7 @@ public class StatsManager {
         int kslevel = s.addKill(killed);
         if (kslevel > 3) {
         	msgmgr.broadcastFMessage(PrefixType.INFO, "killstreak.level"+((kslevel>5)?5:kslevel), "player-"+p.getName());
-        } else if(kslevel > 0) {
+        } else if (kslevel > 0) {
             for (Player pl : GameManager.getInstance().getGame(arenaid).getAllPlayers()) {
             	msgmgr.sendFMessage(PrefixType.INFO, "killstreak.level"+((kslevel>5)?5:kslevel), pl, "player-"+p.getName());
             }
