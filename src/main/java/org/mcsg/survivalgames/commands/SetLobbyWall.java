@@ -1,5 +1,6 @@
 package org.mcsg.survivalgames.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.SettingsManager;
 
@@ -7,18 +8,8 @@ public class SetLobbyWall implements SubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {
-    	//player.sendMessage(ChatColor.RED+"This command has been replaced by /sg addwall <arenaid>");
-    	return true;/*
-        if(!player.hasPermission("sg.admin.setlobby") && !player.isOp()){
-            player.sendMessage(ChatColor.RED+"No Permission");
-            return true;
-        }
-        else if(args.length<1){
-        	player.sendMessage("Please Specify a gameid");
-        	return true;
-        }
-       LobbyManager.getInstance().setLobbySignsFromSelection(player, Integer.parseInt(args[0]));
-       return true;*/
+    	player.sendMessage(ChatColor.RED + "This command has been replaced by /sg addwall <arenaid>");
+    	return true;
     }
 
     @Override
@@ -31,5 +22,5 @@ public class SetLobbyWall implements SubCommand {
 		return "sg.admin.addwall";
 	}
 
-    //TODO: TAKE A W.E SELECTIONA AND SET THE LOBBY. ALSO SET LOBBY WALL
+    //TODO: TAKE A W.E SELECTION AND SET THE LOBBY. ALSO SET LOBBY WALL
 }

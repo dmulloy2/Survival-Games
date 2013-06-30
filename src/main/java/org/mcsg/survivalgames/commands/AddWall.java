@@ -30,5 +30,5 @@ public class AddWall implements SubCommand {
 		return "sg.admin.addwall";
 	}
 
-    //TODO: TAKE A W.E SELECTIONA AND SET THE LOBBY. ALSO SET LOBBY WALL
+    //TODO: TAKE A W.E SELECTION AND SET THE LOBBY. ALSO SET LOBBY WALL
 }

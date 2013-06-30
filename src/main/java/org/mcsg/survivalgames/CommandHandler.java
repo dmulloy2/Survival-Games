@@ -66,6 +66,7 @@ public class CommandHandler implements CommandExecutor {
 		commands.put("spectate", new Spectate());
 		commands.put("lq", new LeaveQueue());
 		commands.put("leavequeue", new LeaveQueue());
+        commands.put("listarenas", new ListArenas());
 		commands.put("list", new ListPlayers());
 		commands.put("tp", new Teleport());
 		commands.put("reload", new Reload());
@@ -94,7 +95,7 @@ public class CommandHandler implements CommandExecutor {
 		helpinfo.put("lq", 1);
 		helpinfo.put("leavequeue", 1);
 		helpinfo.put("list", 1);
-		commands.put("reload", new Reload());
+		helpinfo.put("reload", 3);
 
 		//helpinfo.put("sponsor", 1);
 	}

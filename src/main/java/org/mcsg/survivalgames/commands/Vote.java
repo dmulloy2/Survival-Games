@@ -7,6 +7,7 @@ import org.mcsg.survivalgames.SettingsManager;
 
 public class Vote implements SubCommand {
     
+	@Override
     public boolean onCommand(Player player, String[] args) {
         if (!player.hasPermission(permission()) && !player.isOp()) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.nopermission", player);
