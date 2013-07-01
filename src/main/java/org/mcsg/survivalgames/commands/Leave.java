@@ -10,9 +10,10 @@ public class Leave implements SubCommand {
 	@Override
     public boolean onCommand(Player player, String[] args) {
         if (GameManager.getInstance().getPlayerGameId(player) == -1) {
-            MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.nopermission", player);
+//          MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.nopermission", player);
+        	MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notingame", player);
         } else {
-            GameManager.getInstance().removePlayer(player, false);
+            GameManager.getInstance().removePlayer(player, true);
         }
         return true;
     }

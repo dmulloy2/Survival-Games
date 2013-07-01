@@ -297,6 +297,9 @@ public class Game {
 	}
 
 
+	//-------------------------//
+	// Kit Menu
+	//-------------------------//
 	public void showMenu(Player p) {
 		GameManager.getInstance().openKitMenu(p);
 		Inventory i = Bukkit.getServer().createInventory(p, 90, ChatColor.RED+""+ChatColor.BOLD+"Kit Selection");
@@ -476,14 +479,12 @@ public class Game {
 	//-------------------------//
 	// Remove a player
 	//-------------------------//
-	public void removePlayer(Player p, boolean b) {
+	public void removePlayer(Player p, boolean left) {
 		p.teleport(SettingsManager.getInstance().getLobbySpawn());
-		///$("Teleporting to lobby");
 		if (mode == GameMode.INGAME) {
-			killPlayer(p, b);
+			killPlayer(p, left);
 		} else {
 			sm.removePlayer(p, gameID);
-			//	if (!b) p.teleport(SettingsManager.getInstance().getLobbySpawn());
 			restoreInv(p);
 			activePlayers.remove(p);
 			inactivePlayers.remove(p);
@@ -492,6 +493,8 @@ public class Game {
 				if (spawns.get(in) == p) spawns.remove(in);
 			}
 			LobbyManager.getInstance().clearSigns(gameID);
+			
+			msgFall(PrefixType.INFO, "game.playerleavegame","player-"+p.getName());
 		}
 
 		HookManager.getInstance().runHook("PLAYER_REMOVED", "player-"+p.getName());
@@ -514,20 +517,23 @@ public class Game {
 		}
 		sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
 
-		if (!activePlayers.contains(p)) return;
-		else restoreInv(p);
+		if (!activePlayers.contains(p)) {
+			return;
+		} else {
+			restoreInv(p);
+		}
 
 		activePlayers.remove(p);
 		inactivePlayers.add(p);
 		if (left) {
 			PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, p, this);
 			Bukkit.getServer().getPluginManager().callEvent(leavearena); 
-			msgFall(PrefixType.INFO, "game.playerleavegame","player-"+p.getName() );
+			msgFall(PrefixType.INFO, "game.playerleavegame","player-"+p.getName());
 		} else {
 			if (mode != GameMode.WAITING && p.getLastDamageCause() != null && p.getLastDamageCause().getCause() != null) {
 				switch (p.getLastDamageCause().getCause()) {
 				case ENTITY_ATTACK:
-					if (p.getLastDamageCause().getEntityType() == EntityType.PLAYER){
+					if (p.getLastDamageCause().getEntityType() == EntityType.PLAYER) {
 						Player killer = p.getKiller();
 						PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, killer, this);
 						Bukkit.getServer().getPluginManager().callEvent(leavearena); 
@@ -566,7 +572,6 @@ public class Game {
 		}
 
 		if (getActivePlayers() <= config.getInt("endgame.players") && config.getBoolean("endgame.fire-lighting.enabled") && !endgameRunning) {
-
 			tasks.add(Bukkit.getScheduler().scheduleSyncRepeatingTask(GameManager.getInstance().getPlugin(),
 					new EndgameManager(),
 					0,
@@ -577,6 +582,7 @@ public class Game {
 			playerWin(p);
 			endGame();
 		}
+		
 		LobbyManager.getInstance().updateWall(gameID);
 	}
 
@@ -799,6 +805,7 @@ public class Game {
 			inv_store.remove(p);
 			p.updateInventory();
 		} catch (Exception e) {
+			//
 		}
 	}
 	
@@ -887,8 +894,7 @@ public class Game {
 		long t = startTime / 1000;
 		long l = config.getLong("grace-period");
 		long d = new Date().getTime() / 1000;
-		if ((d - t) < l) return true;
-		return false;
+		return((d - t) < l);
 	}
 
 	public int getID() {
