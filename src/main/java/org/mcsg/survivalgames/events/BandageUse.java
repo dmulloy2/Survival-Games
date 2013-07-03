@@ -28,18 +28,18 @@ public class BandageUse implements Listener {
 			if (stack.getType() == Material.PAPER) {
 				player.getItemInHand().setAmount(stack.getAmount() - 1);
 				
-				int amountToGive = amountToGive(player);
+				double amountToGive = amountToGive(player);
 				player.setHealth(player.getHealth() + amountToGive);
 				player.sendMessage(ChatColor.GREEN + "You used a bandage and got " + amountToGive + " hearts!");
 			}
 		}
 	}
 	
-	public int amountToGive(Player player) {
-		if ((player.getHealth() + 5) > 20) {
-			return (20 - player.getHealth());
+	public double amountToGive(Player player) {
+		if ((player.getHealth() + 5.0D) > 20.0D) {
+			return (20.0D - player.getHealth());
 		} else {
-			return 5;
+			return 5.0D;
 		}
 	}
 }

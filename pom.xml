@@ -15,14 +15,10 @@
     <repository>
       <id>bukkit-repo</id>
       <url>http://repo.bukkit.org/content/groups/public</url>
-    </repository> <!-- 
+    </repository> 
     <repository>
-        <id>mcstats-repo</id>
-        <url>http://repo.mcstats.org/content/repositories/public</url>
-    </repository> -->
-    <repository>
-      <id>drtshock-repo</id>
-      <url>http://ci.drtshock.com/plugin/repository/everything</url>
+      <id>vault-repo</id>
+	  <url>http://ci.herocraftonline.com/plugin/repository/everything</url>
     </repository>
     <repository>
       <id>sk89q-repo</id>
@@ -30,33 +26,7 @@
     </repository>
   </repositories>
   <build>
-    <plugins> <!-- 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>1.5</version>
-        <configuration>
-          <artifactSet>
-            <includes>
-              <include>org.mcstats:Metrics</include>
-            </includes>
-          </artifactSet>
-          <relocations>
-            <relocation>
-              <pattern>org.mcstats</pattern>
-              <shadedPattern>libilibigot.utilzbiznatch.metrics</shadedPattern>
-            </relocation>
-          </relocations>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin> -->
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -100,12 +70,12 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.5.2-R0.1</version>
+      <version>1.6.1-R0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.sk89q</groupId>
       <artifactId>worldedit</artifactId>
-      <version>5.5.7-SNAPSHOT</version>
+      <version>5.5.8-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
