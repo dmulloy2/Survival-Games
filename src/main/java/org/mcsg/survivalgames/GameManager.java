@@ -57,7 +57,6 @@ public class GameManager {
 		LoadGames();
 	}
 
-
 	public void LoadKits() {
 		Set<String> kits1 = SettingsManager.getInstance().getKits().getConfigurationSection("kits").getKeys(false);
 		for(String s:kits1){

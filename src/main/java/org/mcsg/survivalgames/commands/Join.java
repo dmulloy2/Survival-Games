@@ -23,7 +23,7 @@ public class Join implements SubCommand {
 			}
 		} else {
 			if (player.hasPermission("sg.player.joinlobby")) {
-				if (GameManager.getInstance().getPlayerGameId(player)!=-1) {
+				if (GameManager.getInstance().getPlayerGameId(player) != -1) {
 					MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.alreadyingame", player);
 					return true;
 				}

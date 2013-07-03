@@ -1,5 +1,8 @@
 package org.mcsg.survivalgames.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.Game;
@@ -12,25 +15,30 @@ public class ListArenas implements SubCommand {
 	
 	@Override
     public boolean onCommand(Player player, String[] args) {
-    	StringBuilder arenas = new StringBuilder();
-    	try {
-    		if(args.length == 0 || Integer.parseInt(args[0]) < 0 || Integer.parseInt(args[0]) > GameManager.getInstance().getGameCount()){
-    			MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.gamenoexist", player);
-    		}
-    		if (GameManager.getInstance().getGames().isEmpty()) {
-    			arenas.append(SettingsManager.getInstance().getMessageConfig().getString("messages.words.noarenas", "No arenas")).append(": ");
-    			player.sendMessage(ChatColor.RED + arenas.toString());
-    			return true;
-    		}
-    		arenas.append(SettingsManager.getInstance().getMessageConfig().getString("messages.words.noarenas", "Arenas")).append(": ");
-    		for (Game g : GameManager.getInstance().getGames()) {
-    			arenas.append(g.getID()).append(", ");
-    		}
-    		player.sendMessage(ChatColor.GREEN + arenas.toString());
-    	} catch(Exception e) {
-    		MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.gamenoexist", player);
-    	}
-    	return false;
+		MessageManager msgmgr = MessageManager.getInstance();
+		List<Game> games = GameManager.getInstance().getGames();
+		if (games.isEmpty()) {
+			msgmgr.sendFMessage(PrefixType.WARNING, "error.noarenasexist", player);
+		} else {
+			List<String> lines = new ArrayList<String>();
+			StringBuilder line = new StringBuilder();
+			line.append(ChatColor.BLUE + "-----[ " + ChatColor.GOLD + "Available Arenas" + ChatColor.BLUE + " ]-----");
+			lines.add(line.toString());
+			
+			for (Game game : games) {
+				line.append(ChatColor.GREEN + game.getName() + ", ");
+			}
+			
+			line.delete(line.lastIndexOf(","), line.lastIndexOf(" "));
+			line.append(".");
+			lines.add(line.toString());
+			
+			for (String s : lines) {
+				player.sendMessage(s);
+			}
+		}
+		
+		return true;
 	}
     
     @Override

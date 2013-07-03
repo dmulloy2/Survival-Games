@@ -27,6 +27,10 @@ public class BandageUse implements Listener {
 			
 			if (stack.getType() == Material.PAPER) {
 				player.getItemInHand().setAmount(stack.getAmount() - 1);
+				if (player.getItemInHand().getAmount() == 0) {
+					player.getInventory().removeItem(player.getItemInHand());
+				}
+				updateInventory(player);
 				
 				double amountToGive = amountToGive(player);
 				player.setHealth(player.getHealth() + amountToGive);
@@ -35,11 +39,16 @@ public class BandageUse implements Listener {
 		}
 	}
 	
-	public double amountToGive(Player player) {
+	private double amountToGive(Player player) {
 		if ((player.getHealth() + 5.0D) > 20.0D) {
 			return (20.0D - player.getHealth());
 		} else {
 			return 5.0D;
 		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void updateInventory(Player p) {
+		p.updateInventory();
 	}
 }

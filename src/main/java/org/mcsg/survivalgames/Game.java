@@ -8,6 +8,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -26,6 +27,7 @@ import org.mcsg.survivalgames.stats.StatsManager;
 import org.mcsg.survivalgames.util.ItemReader;
 import org.mcsg.survivalgames.util.Kit;
 import org.mcsg.survivalgames.util.LocationUtil;
+import org.mcsg.survivalgames.util.SpectatorUtil;
 
 /**
  * Data container for a game
@@ -749,21 +751,38 @@ public class Game {
 		p.setAllowFlight(true);
 		p.setFlying(true);
 		spectators.add(p.getName());
-		msgmgr.sendMessage(PrefixType.INFO, "You are now spectating! Use /sg spectate again to return to the lobby.", p);
-		msgmgr.sendMessage(PrefixType.INFO, "Right click while holding shift to teleport to the next ingame player, left click to go back.", p);
-		nextspec.put(p, 0);
+		
+		addItem(p, new ItemStack(Material.COMPASS));
+		
+//		SpectatorUtil.openInventory(p, this);
+		
+//		msgmgr.sendMessage(PrefixType.INFO, "You are now spectating! Use /sg spectate again to return to the lobby.", p);
+//		msgmgr.sendMessage(PrefixType.INFO, "Right click while holding shift to teleport to the next ingame player, left click to go back.", p);
+//		nextspec.put(p, 0);
+	}
+	
+	public List<Player> getActivePlayerList() {
+		return activePlayers;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void addItem(Player p, ItemStack stack) {
+		p.getInventory().addItem(stack);
+		p.updateInventory();
 	}
 
 	public void removeSpectator(Player p) {
-		ArrayList < Player > players = new ArrayList < Player > ();
-		players.addAll(activePlayers);
-		players.addAll(inactivePlayers);
+//		List < Player > players = new ArrayList < Player > ();
+//		players.addAll(activePlayers);
+//		players.addAll(inactivePlayers);
 
-		if(p.isOnline()){
+		if (p.isOnline()) {
 			for (Player pl: Bukkit.getOnlinePlayers()) {
 				pl.showPlayer(p);
 			}
 		}
+		
+		clearInv(p);
 		restoreInv(p);
 		p.setAllowFlight(false);
 		p.setFlying(false);
@@ -772,11 +791,12 @@ public class Game {
 		p.setFoodLevel(20);
 		p.setSaturation(20);
 		p.teleport(SettingsManager.getInstance().getLobbySpawn());
-		// Bukkit.getServer().broadcastPrefixType("Removing Spec "+p.getName()+" "+spectators.size()+" left");
+		
+		SpectatorUtil.removeSpectator(p);
+		
 		spectators.remove(p.getName());
-		// Bukkit.getServer().broadcastPrefixType("Removed");
 
-		nextspec.remove(p);
+//		nextspec.remove(p);
 	}
 
 	public void clearSpecs() {

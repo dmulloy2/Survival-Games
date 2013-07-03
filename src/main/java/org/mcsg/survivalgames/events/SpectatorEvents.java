@@ -1,21 +1,25 @@
 package org.mcsg.survivalgames.events;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
+import org.mcsg.survivalgames.util.SpectatorUtil;
 
 public class SpectatorEvents implements Listener {
     
@@ -46,7 +50,21 @@ public class SpectatorEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerClickEvent(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        try {
+        if (SpectatorUtil.isSpectating(player)) {
+        	if (player.getItemInHand().getType() == Material.COMPASS) {
+        		event.setCancelled(true);
+        		
+        		Game game = SpectatorUtil.getGame(player);
+        		if (game != null) {
+        			event.setCancelled(true);
+        			SpectatorUtil.openInventory(player, game);
+        		} else {
+        			SpectatorUtil.removeSpectator(player);
+        		}
+        	}
+        }
+        
+        /*try {
             if(GameManager.getInstance().isSpectator(player) && player.isSneaking() && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR)||
                     GameManager.getInstance().isSpectator(player) && player.isSneaking() && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_AIR)) {
                 Player[]players = GameManager.getInstance().getGame(GameManager.getInstance().getPlayerSpectateId(player)).getPlayers()[0];
@@ -77,9 +95,36 @@ public class SpectatorEvents implements Listener {
             }
         } catch(Exception e) {
         	e.printStackTrace();
-        }
+        }*/
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryClick(InventoryClickEvent event) {
+    	if (event.getWhoClicked() instanceof Player) {
+    		Player player = (Player)event.getWhoClicked();
+    		if (SpectatorUtil.isBrowsingInventory(player)) {
+    			ItemStack stack = event.getCurrentItem();
+    			if (stack.getType() == Material.SKULL_ITEM) {
+    				SkullMeta meta = (SkullMeta)stack.getItemMeta();
+    				Player p = Bukkit.getPlayerExact(meta.getOwner());
+    				if (GameManager.getInstance().isPlayerActive(p)) {
+    					event.setCancelled(true);
+    					player.teleport(p);
+    				}
+    			}
+    		}
+    	}
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryClose(InventoryCloseEvent event) {
+    	if (event.getPlayer() instanceof Player) {
+    		Player player = (Player)event.getPlayer();
+    		if (SpectatorUtil.isBrowsingInventory(player)) {
+    			SpectatorUtil.closeInventory(player);
+    		}
+    	}
+    }
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSignChange(PlayerPickupItemEvent event) {
