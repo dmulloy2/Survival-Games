@@ -26,13 +26,29 @@ public class ListArenas implements SubCommand {
 			lines.add(line.toString());
 			
 			for (Game game : games) {
-				line.append(ChatColor.GREEN + game.getName() + ", ");
+				line = new StringBuilder();
+				line.append(ChatColor.GREEN + game.getName() + "    ");
+				if (game.getMode() == Game.GameMode.INGAME) {
+					line.append(ChatColor.GREEN + "[INGAME]");
+				} else if (game.getMode() == Game.GameMode.STARTING) {
+					line.append(ChatColor.GREEN + "[STARTING]");
+				} else if (game.getMode() == Game.GameMode.FINISHING) {
+					line.append(ChatColor.GREEN + "[FINISHING]");
+				} else if (game.getMode() == Game.GameMode.INACTIVE) {
+					line.append(ChatColor.YELLOW + "[INACTIVE]");
+				} else if (game.getMode() == Game.GameMode.WAITING) {
+					line.append(ChatColor.YELLOW + "[WAITING]");
+				} else {
+					line.append(ChatColor.RED + "[" + game.getGameMode().toString() + "]");
+				}
+				line.append(ChatColor.YELLOW + "    [");
+				line.append(game.getActivePlayers() + "/");
+				line.append(game.getInactivePlayers() + "/");
+				line.append(SettingsManager.getInstance().getSpawnCount(game.getID()));
+				line.append("]");
+				lines.add(line.toString());
 			}
-			
-			line.delete(line.lastIndexOf(","), line.lastIndexOf(" "));
-			line.append(".");
-			lines.add(line.toString());
-			
+
 			for (String s : lines) {
 				player.sendMessage(s);
 			}
