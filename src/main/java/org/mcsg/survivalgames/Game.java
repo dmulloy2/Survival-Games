@@ -754,11 +754,7 @@ public class Game {
 		
 		addItem(p, new ItemStack(Material.COMPASS));
 		
-//		SpectatorUtil.openInventory(p, this);
-		
-//		msgmgr.sendMessage(PrefixType.INFO, "You are now spectating! Use /sg spectate again to return to the lobby.", p);
-//		msgmgr.sendMessage(PrefixType.INFO, "Right click while holding shift to teleport to the next ingame player, left click to go back.", p);
-//		nextspec.put(p, 0);
+		SpectatorUtil.addSpectator(p, this);
 	}
 	
 	public List<Player> getActivePlayerList() {
@@ -772,10 +768,6 @@ public class Game {
 	}
 
 	public void removeSpectator(Player p) {
-//		List < Player > players = new ArrayList < Player > ();
-//		players.addAll(activePlayers);
-//		players.addAll(inactivePlayers);
-
 		if (p.isOnline()) {
 			for (Player pl: Bukkit.getOnlinePlayers()) {
 				pl.showPlayer(p);
@@ -795,8 +787,6 @@ public class Game {
 		SpectatorUtil.removeSpectator(p);
 		
 		spectators.remove(p.getName());
-
-//		nextspec.remove(p);
 	}
 
 	public void clearSpecs() {

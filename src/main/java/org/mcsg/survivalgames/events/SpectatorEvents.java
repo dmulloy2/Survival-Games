@@ -63,39 +63,6 @@ public class SpectatorEvents implements Listener {
         		}
         	}
         }
-        
-        /*try {
-            if(GameManager.getInstance().isSpectator(player) && player.isSneaking() && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR)||
-                    GameManager.getInstance().isSpectator(player) && player.isSneaking() && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_AIR)) {
-                Player[]players = GameManager.getInstance().getGame(GameManager.getInstance().getPlayerSpectateId(player)).getPlayers()[0];
-                Game g = GameManager.getInstance().getGame(GameManager.getInstance().getPlayerSpectateId(player));
-
-                int i = g.getNextSpec().get(player);
-                if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR)) {
-                    i++;
-                } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_AIR) {
-                    i--;
-                }
-                
-                if (i>players.length-1) {
-                    i = 0;
-                }
-                if (i<0) {
-                    i = players.length-1;
-                }
-                g.getNextSpec().put(player, i);
-                Player tpto = players[i];
-                Location l = tpto.getLocation();
-                l.setYaw(0);
-                l.setPitch(0);
-                player.teleport(l);
-                player.sendMessage(ChatColor.AQUA+"You are now spectating "+tpto.getName());
-            } else if (GameManager.getInstance().isSpectator(player)) {
-                event.setCancelled(true);
-            }
-        } catch(Exception e) {
-        	e.printStackTrace();
-        }*/
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
