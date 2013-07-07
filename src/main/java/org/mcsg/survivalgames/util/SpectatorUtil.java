@@ -19,7 +19,7 @@ public class SpectatorUtil {
 
 	public static void openInventory(Player p, Game g) {
 		String name = ChatColor.RED + "" + ChatColor.BOLD + "" + ChatColor.ITALIC + "Tributes";
-		Inventory inventory = Bukkit.createInventory(p, g.getActivePlayers(), name);
+		Inventory inventory = Bukkit.createInventory(p, 27, name);
 			
 		for (Player pl : g.getActivePlayerList()) {
 			ItemStack skull = new ItemStack(Material.SKULL_ITEM);
