@@ -18,11 +18,11 @@ public class SpectatorUtil {
 	private static HashMap< String, Game > spectating = new HashMap< String, Game >();
 
 	public static void openInventory(Player p, Game g) {
-		String name = ChatColor.RED + "" + ChatColor.BOLD + "" + ChatColor.ITALIC + "Tributes";
+		String name = ChatColor.DARK_RED + "" + ChatColor.BOLD + "" + ChatColor.ITALIC + "Tributes";
 		Inventory inventory = Bukkit.createInventory(p, 27, name);
 			
 		for (Player pl : g.getActivePlayerList()) {
-			ItemStack skull = new ItemStack(Material.SKULL_ITEM);
+			ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte)3);
 			SkullMeta meta = (SkullMeta)skull.getItemMeta();
 			meta.setOwner(pl.getName());
 			skull.setItemMeta(meta);
