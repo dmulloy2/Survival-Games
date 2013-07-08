@@ -18,7 +18,7 @@ public class SpectatorUtil {
 	private static HashMap< String, Game > spectating = new HashMap< String, Game >();
 
 	public static void openInventory(Player p, Game g) {
-		String name = ChatColor.DARK_RED + "" + ChatColor.BOLD + "" + ChatColor.ITALIC + "Tributes";
+		String name = ChatColor.DARK_RED + "" + ChatColor.BOLD + "Tributes";
 		Inventory inventory = Bukkit.createInventory(p, 27, name);
 			
 		for (Player pl : g.getActivePlayerList()) {

@@ -47,13 +47,11 @@ public class SpectatorEvents implements Listener {
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerClickEvent(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (SpectatorUtil.isSpectating(player)) {
         	if (player.getItemInHand().getType() == Material.COMPASS) {
-        		event.setCancelled(true);
-        		
         		Game game = SpectatorUtil.getGame(player);
         		if (game != null) {
         			event.setCancelled(true);
@@ -73,17 +71,21 @@ public class SpectatorEvents implements Listener {
     			ItemStack stack = event.getCurrentItem();
     			if (stack.getType() == Material.SKULL_ITEM) {
     				SkullMeta meta = (SkullMeta)stack.getItemMeta();
-    				Player p = Bukkit.getPlayerExact(meta.getOwner());
-    				if (GameManager.getInstance().isPlayerActive(p)) {
-    					event.setCancelled(true);
-    					player.teleport(p);
+    				if (meta.hasOwner()) {
+    					Player p = Bukkit.getPlayerExact(meta.getOwner());
+    					if (p != null) {
+    						if (GameManager.getInstance().isPlayerActive(p)) {
+    							event.setCancelled(true);
+    							player.teleport(p);
+    						}
+    					}
     				}
     			}
     		}
     	}
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
     	if (event.getPlayer() instanceof Player) {
     		Player player = (Player)event.getPlayer();
@@ -103,39 +105,21 @@ public class SpectatorEvents implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        Player player = null;
-        if (event.getDamager() instanceof Player) {
-            player = (Player)event.getDamager();
-        } else {
-        	return;
-        }
-        if (GameManager.getInstance().isSpectator(player)) {
-            event.setCancelled(true);
-        }
+    	if (event.getDamager() instanceof Player) {
+    		Player player = (Player)event.getDamager();
+    		if (GameManager.getInstance().isSpectator(player)) {
+    			event.setCancelled(true);
+    		}
+    	}
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamage(EntityDamageEvent event) {
-        Player player = null;
-        if (event.getEntity() instanceof Player) {
-            player = (Player)event.getEntity();
-        } else {
-        	return;
-        }
-        if (GameManager.getInstance().isSpectator(player)) {
-            event.setCancelled(true);
-        }
+    	if (event.getEntity() instanceof Player) {
+    		Player player = (Player)event.getEntity();
+    		if (GameManager.getInstance().isSpectator(player)) {
+    			event.setCancelled(true);
+    		}
+    	}
     }
-    
-   /* @EventHandler(priority = EventPriority.HIGHEST)
-    public void onEntityTarget(EntityTargetEvent event) {
-        Player player = null;
-        if (event.getTarget() instanceof Player) {
-            player = (Player)event.getTarget();
-        }
-        else return;
-        if (GameManager.getInstance().isSpectator(player)) {
-            event.setCancelled(true);
-        }
-    }*/
 }

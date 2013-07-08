@@ -114,6 +114,8 @@ public class Game {
 		hookvars.put("activeplayers", "0");
 
 		mode = GameMode.WAITING;
+		
+		LobbyManager.getInstance().updateWall(gameID);
 	}
 
 	public void reloadFlags() {
@@ -157,7 +159,7 @@ public class Game {
 	//-------------------------//
 	public void enable() {
 		mode = GameMode.WAITING;
-		if(disabled){
+		if (disabled) {
 			MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameenabled", "arena-"+gameID);
 		}
 		disabled = false;
@@ -685,8 +687,7 @@ public class Game {
 	// Reset
 	//-------------------------//
 	public void resetArena() {
-
-		for(Integer i : tasks){
+		for (Integer i : tasks) {
 			Bukkit.getScheduler().cancelTask(i);
 		}
 
@@ -705,10 +706,12 @@ public class Game {
 	}
 
 	public void resetCallback() {
-		if (!disabled){
+		if (! disabled) {
 			enable();
+		} else {
+			mode = GameMode.DISABLED;
 		}
-		else mode = GameMode.DISABLED;
+		
 		LobbyManager.getInstance().updateWall(gameID);
 	}
 
