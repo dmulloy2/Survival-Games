@@ -13,7 +13,6 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.mcsg.survivalgames.Game.GameMode;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
 import org.mcsg.survivalgames.api.PlayerLeaveArenaEvent;
@@ -24,14 +23,13 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
 public class GameManager {
-
-	static GameManager instance = new GameManager();
-	private ArrayList < Game > games = new ArrayList < Game > ();
+	private static GameManager instance = new GameManager();
+	private List < Game > games = new ArrayList < Game > ();
 	private SurvivalGames p;
 	public static HashMap < Integer, HashSet < Block >> openedChest = new HashMap < Integer, HashSet < Block >> ();
-	private ArrayList<Kit>kits = new ArrayList<Kit>();
-	private HashSet<Player>kitsel = new HashSet<Player>();
-	MessageManager msgmgr = MessageManager.getInstance();
+	private List<Kit> kits = new ArrayList<Kit>();
+	private HashSet<Player> kitsel = new HashSet<Player>();
+	private MessageManager msgmgr = MessageManager.getInstance();
 
 	private GameManager() {
 	}
@@ -49,7 +47,7 @@ public class GameManager {
 		}
 	}
 
-	public Plugin getPlugin() {
+	public SurvivalGames getPlugin() {
 		return p;
 	}
 
@@ -96,6 +94,7 @@ public class GameManager {
 				return g.getID();
 			}
 		}
+		
 		return -1;
 	}
 
@@ -105,6 +104,7 @@ public class GameManager {
 				return g.getID();
 			}
 		}
+		
 		return -1;
 	}
 
@@ -114,6 +114,7 @@ public class GameManager {
 				return g.getID();
 			}
 		}
+		
 		return -1;
 	}
 
@@ -123,6 +124,7 @@ public class GameManager {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 
@@ -132,6 +134,7 @@ public class GameManager {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 
@@ -141,6 +144,7 @@ public class GameManager {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 
@@ -168,15 +172,15 @@ public class GameManager {
 	@SuppressWarnings("deprecation")
 	public void selectKit(Player p, int i) {
 		p.getInventory().clear();
-		ArrayList<Kit>kits = getKits(p);
+		List<Kit> kits = getKits(p);
 		if (i <= kits.size()) {
 			Kit k = getKits(p).get(i);
 			if (k !=null) {
 				p.getInventory().setContents(k.getContents().toArray(new ItemStack[0]));
 			}
 		}
+		
 		p.updateInventory();
-
 	}
 
 	public int getGameCount() {
@@ -190,6 +194,7 @@ public class GameManager {
 				return g;
 			}
 		}
+		
 		return null;
 	}
 
@@ -200,6 +205,7 @@ public class GameManager {
 				Bukkit.getServer().getPluginManager().callEvent(leavearena);
 			}
 		}
+		
 		getGame(getPlayerGameId(p)).removePlayer(p, b);
 	}
 
@@ -215,7 +221,7 @@ public class GameManager {
 		getGame(id).enable();
 	}
 
-	public ArrayList < Game > getGames() {
+	public List < Game > getGames() {
 		return games;
 	}
 
@@ -225,16 +231,18 @@ public class GameManager {
 				return g.getMode();
 			}
 		}
+		
 		return null;
 	}
 
-	public ArrayList<Kit> getKits(Player p){
-		ArrayList<Kit>k = new ArrayList<Kit>();
-		for(Kit kit: kits){
-			if(kit.canUse(p)){
+	public List<Kit> getKits(Player p){
+		List<Kit> k = new ArrayList<Kit>();
+		for (Kit kit : kits) {
+			if (kit.canUse(p)) {
 				k.add(kit);
 			}
 		}
+		
 		return k;
 	}
 
@@ -249,20 +257,24 @@ public class GameManager {
 			MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.input",p, "message-No game by this ID exist!");
 			return;
 		}
+		
 		getGame(g).addPlayer(p);
 	}
 
 	public void autoAddPlayer(Player pl) {
-		ArrayList < Game > qg = new ArrayList < Game > (5);
+		List < Game > qg = new ArrayList < Game > (5);
 		for (Game g : games) {
-			if (g.getMode() == Game.GameMode.WAITING) qg.add(g);
+			if (g.getMode() == Game.GameMode.WAITING) 
+				qg.add(g);
 		}
+		
 		//TODO: fancy auto balance algorithm
 		if (qg.size() == 0) {
 			pl.sendMessage(ChatColor.RED + "No games to join");
 			msgmgr.sendMessage(PrefixType.WARNING, "No games to join!", pl);
 			return;
 		}
+		
 		qg.get(0).addPlayer(pl);
 	}
 
@@ -272,7 +284,6 @@ public class GameManager {
 
 	public void createArenaFromSelection(Player pl) {
 		FileConfiguration c = SettingsManager.getInstance().getSystemConfig();
-		//SettingsManager s = SettingsManager.getInstance();
 
 		WorldEditPlugin we = p.getWorldEdit();
 		Selection sel = we.getSelection(pl);
@@ -280,13 +291,9 @@ public class GameManager {
 			msgmgr.sendMessage(PrefixType.WARNING, "You must make a WorldEdit Selection first!", pl);
 			return;
 		}
+		
 		Location max = sel.getMaximumPoint();
 		Location min = sel.getMinimumPoint();
-
-		/* if(max.getWorld()!=SettingsManager.getGameWorld() || min.getWorld()!=SettingsManager.getGameWorld()){
-            pl.sendMessage(ChatColor.RED+"Wrong World!");
-            return;
-        }*/
 
 		int no = c.getInt("sg-system.arenano") + 1;
 		c.set("sg-system.arenano", no);
@@ -295,6 +302,7 @@ public class GameManager {
 		} else {
 			no = games.get(games.size() - 1).getID() + 1;
 		}
+		
 		SettingsManager.getInstance().getSpawns().set(("spawns." + no), null);
 		c.set("sg-system.arenas." + no + ".world", max.getWorld().getName());
 		c.set("sg-system.arenas." + no + ".x1", max.getBlockX());
@@ -308,14 +316,12 @@ public class GameManager {
 		SettingsManager.getInstance().saveSystemConfig();
 		hotAddArena(no);
 		pl.sendMessage(ChatColor.GREEN + "Arena ID " + no + " Succesfully added");
-
 	}
 
 	private void hotAddArena(int no) {
 		Game game = new Game(no);
 		games.add(game);
 		StatsManager.getInstance().addArena(no);
-		//SurvivalGames.$("game added "+ games.size()+" "+SettingsManager.getInstance().getSystemConfig().getInt("gs-system.arenano"));
 	}
 
 	public void hotRemoveArena(int no) {

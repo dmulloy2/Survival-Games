@@ -17,8 +17,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 public class SettingsManager {
-
-	//makes the config easily accessible
 	private static SettingsManager instance = new SettingsManager();
 	private static Plugin p;
 	private FileConfiguration spawns;
@@ -38,7 +36,6 @@ public class SettingsManager {
 	private static final int CHEST_VERSION = 0;
 	private static final int SPAWN_VERSION = 0;
 	private static final int SYSTEM_VERSION = 0;
-	
 	
 	private SettingsManager() {
 	}

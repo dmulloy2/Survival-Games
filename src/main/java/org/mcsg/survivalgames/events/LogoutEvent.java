@@ -10,7 +10,7 @@ import org.mcsg.survivalgames.GameManager;
 public class LogoutEvent implements Listener {
 
     @EventHandler
-    public void PlayerLoggout(PlayerQuitEvent e ){
+    public void PlayerLoggout(PlayerQuitEvent e) {
         Player p = e.getPlayer();
         GameManager.getInstance().removeFromOtherQueues(p, -1);
         int id = GameManager.getInstance().getPlayerGameId(p);
@@ -22,7 +22,7 @@ public class LogoutEvent implements Listener {
         	return;
         }
         
-        if (GameManager.getInstance().getGameMode(id)==Game.GameMode.INGAME) {
+        if (GameManager.getInstance().getGameMode(id) == Game.GameMode.INGAME) {
             GameManager.getInstance().getGame(id).killPlayer(p, true);
         } else {
             GameManager.getInstance().getGame(id).removePlayer(p, true);

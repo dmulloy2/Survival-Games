@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -14,18 +15,21 @@ import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 
+import com.sk89q.worldedit.blocks.BlockID;
+
 public class LoggingManager implements Listener {
-	public static HashMap<String, Integer>i = new HashMap<String, Integer>();
+	public static HashMap<String, Integer> i = new HashMap<String, Integer>();
 
 	private static LoggingManager instance = new LoggingManager();
 
 	private LoggingManager() {
-
 		i.put("BCHANGE",1);
 		i.put("BPLACE", 1);
 		i.put("BFADE", 1);
@@ -34,6 +38,7 @@ public class LoggingManager implements Listener {
 		i.put("BBURN",1);
 		i.put("BREDSTONE",1);
 		i.put("LDECAY",1);
+		i.put("BSPREAD", 1);
 		i.put("BPISTION", 1);
 	}
 
@@ -123,6 +128,34 @@ public class LoggingManager implements Listener {
 		logBlockDestoryed(e.getBlock());
 		i.put("LDECAY", i.get("LDECAY")+1);
 	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void blockChanged(BlockSpreadEvent e) {
+		if(e.isCancelled())return;
+		
+		logBlockCreated(e.getBlock());
+		i.put("BSPREAD", i.get("BSPREAD")+1);
+		
+		//    System.out.println(9);
+	
+	}
+	  
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void blockChanged(PlayerInteractEvent e) {
+		if (e.isCancelled() || e.getAction() != Action.LEFT_CLICK_BLOCK) {
+			return;
+		}
+	
+		if (e.getClickedBlock().getTypeId() != BlockID.FIRE) {
+			return;
+		}
+	              
+		logBlockDestoryed(e.getClickedBlock());
+		i.put("BCHANGE", i.get("BCHANGE")+1);
+		
+		//    System.out.println(9);
+
+	} 
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void blockChange(BlockPistonExtendEvent e) {
@@ -155,7 +188,7 @@ public class LoggingManager implements Listener {
 						b.getY(),
 						b.getZ(),
 						null)
-				);
+		);
 	}
 
 
@@ -165,7 +198,8 @@ public class LoggingManager implements Listener {
 		
 		if (GameManager.getInstance().getGameMode(GameManager.getInstance().getBlockGameId(b.getLocation())) == Game.GameMode.DISABLED)
 			return;
-		if(b.getTypeId() == 51)
+		
+		if (b.getTypeId() == 51)
 			return;
 		
 		QueueManager.getInstance().add(
@@ -180,7 +214,7 @@ public class LoggingManager implements Listener {
 						b.getY(),
 						b.getZ(),
 						null)
-				);
+		);
 	}
 
 }

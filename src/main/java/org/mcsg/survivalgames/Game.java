@@ -33,7 +33,6 @@ import org.mcsg.survivalgames.util.SpectatorUtil;
  * Data container for a game
  */
 public class Game {
-
 	public static enum GameMode {
 		DISABLED, LOADING, INACTIVE, WAITING,
 		STARTING, INGAME, FINISHING, RESETTING, ERROR
@@ -311,8 +310,7 @@ public class Game {
 		int a = 0;
 		int b = 0;
 
-		
-		ArrayList<Kit>kits = GameManager.getInstance().getKits(p);
+		List<Kit> kits = GameManager.getInstance().getKits(p);
 		SurvivalGames.debug(kits+"");
 		if (kits == null || kits.size() == 0 || !SettingsManager.getInstance().getKits().getBoolean("enabled")) {
 			GameManager.getInstance().leaveKitMenu(p);
@@ -554,7 +552,27 @@ public class Game {
 								+ p.getName(), "killer-"+p.getLastDamageCause().getEntityType());
 					}
 					break;
-				default:
+				case FIRE:
+				case FIRE_TICK:
+				case MAGIC:
+				case THORNS:
+				case PROJECTILE:
+					if(p.getKiller() != null) {
+						Player killer = p.getKiller();
+						PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, killer, this);
+						Bukkit.getServer().getPluginManager().callEvent(leavearena);
+						msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getCause(), 
+								"player-" + (SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), 
+								"killer-" + p.getKiller().getName());
+						if(killer != null && p != null)
+							sm.addKill(killer, p, gameID);
+					} else {
+						msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getCause(), 
+								"player-" + (SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), 
+								"killer-" + p.getLastDamageCause().getCause());
+					}
+					break;
+				default: 
 					msgFall(PrefixType.INFO, "death."+p.getLastDamageCause().getCause(), 
 							"player-"+(SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), 
 							"killer-"+p.getLastDamageCause().getCause());
@@ -655,7 +673,6 @@ public class Game {
 
 		for (int a = 0; a < activePlayers.size(); a = 0) {
 			try {
-
 				Player p = activePlayers.get(a);
 				msgmgr.sendMessage(PrefixType.WARNING, "Game disabled!", p);
 				removePlayer(p, false);

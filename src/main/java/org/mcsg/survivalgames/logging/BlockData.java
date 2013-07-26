@@ -13,18 +13,11 @@ public class BlockData implements Serializable {
     private int x,y,z;
     private int gameid;
     private ItemStack[] items;
-    
+
     /**
-     * 
-     * @param previd
-     * @param newid
-     * @param x
-     * @param y
-     * @param z
-     * 
-     * Provides a object for holding the data for block changes
+     * Provides a new object for handling the data for block changes
      */
-    public BlockData(int gameid, String world, int previd,byte prevdata, int newid,byte newdata, int x, int y, int z, ItemStack[] items) {
+    public BlockData(int gameid, String world, int previd, byte prevdata, int newid, byte newdata, int x, int y, int z, ItemStack[] items) {
         this.gameid = gameid;
         this.world = world;
         this.previd = previd;
@@ -73,7 +66,7 @@ public class BlockData implements Serializable {
         return z;
     }
     
-    public ItemStack[] getItems(){
+    public ItemStack[] getItems() {
     	return items;
     }
 }

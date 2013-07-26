@@ -6,7 +6,6 @@ import org.bukkit.event.HandlerList;
 import org.mcsg.survivalgames.Game;
 
 public class PlayerWinEvent extends Event {
-
 	private static final HandlerList handlers = new HandlerList();
     private Player winner;
 	private Player killer;

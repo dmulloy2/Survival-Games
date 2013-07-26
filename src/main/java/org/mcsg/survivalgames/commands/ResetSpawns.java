@@ -19,7 +19,7 @@ public class ResetSpawns implements SubCommand {
         } catch (NumberFormatException e) {
         	MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notanumber", player, "input-Arena");
         } catch (NullPointerException e) {
-        	MessageManager.getInstance().sendMessage(MessageManager.PrefixType.ERROR, "error.gamenoexist", player);
+        	MessageManager.getInstance().sendMessage(MessageManager.PrefixType.ERROR, "error.gamenotexist", player);
         }
         return true;
 	}   

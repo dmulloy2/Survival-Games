@@ -6,7 +6,6 @@ import org.bukkit.event.HandlerList;
 import org.mcsg.survivalgames.Game;
 
 public class PlayerJoinArenaEvent extends Event {
-
 	private static final HandlerList handlers = new HandlerList();
     private Player player;
     private Game game;

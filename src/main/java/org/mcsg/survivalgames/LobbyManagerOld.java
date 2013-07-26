@@ -2,6 +2,7 @@ package org.mcsg.survivalgames;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -329,7 +330,8 @@ public class LobbyManagerOld implements Listener {
             return;
 
         }
-        ArrayList < Game > games = GameManager.getInstance().getGames();
+        
+        List < Game > games = GameManager.getInstance().getGames();
         // System.out.println(games.toString());
         for (int a = 0; a < games.size(); a++) {
             try {

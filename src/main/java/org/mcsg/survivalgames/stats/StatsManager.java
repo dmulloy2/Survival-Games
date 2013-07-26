@@ -25,15 +25,12 @@ public class StatsManager {
     private ArrayList<PreparedStatement> queue = new ArrayList<PreparedStatement>();
     private DatabaseDumper dumper = new DatabaseDumper();
     private DatabaseManager dbman = DatabaseManager.getInstance();
-    
-    //private HashMap<Player, PlayerStatsSession>pstats = new HashMap<Player, PlayerStatsSession>();
-    
+
     private HashMap<Integer, HashMap<Player, PlayerStatsSession>>arenas  = new HashMap<Integer, HashMap<Player, PlayerStatsSession>>();
-    
     
     private boolean enabled = true;
     
-    MessageManager msgmgr;
+    private MessageManager msgmgr;
 
     private StatsManager() {
     	msgmgr = MessageManager.getInstance();

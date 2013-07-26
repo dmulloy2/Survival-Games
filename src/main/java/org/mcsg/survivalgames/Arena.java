@@ -3,9 +3,9 @@ package org.mcsg.survivalgames;
 import org.bukkit.Location;
 
 public class Arena {
-
     private Location min;
     private Location max;
+    
     public Arena(Location min, Location max) {
         this.max = max;
         this.min = min;
@@ -20,7 +20,6 @@ public class Arena {
     }
 
     public Location getMax() {
-//    	Runtime.getRuntime().freeMemory(); Umm why..?
         return max;
     }
 

@@ -12,10 +12,11 @@ public class AddWall implements SubCommand {
         if (!player.hasPermission(permission()) && !player.isOp()) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.nopermission", player);
             return true;
-        } else if(args.length<1) {
+        } else if(args.length < 1) {
         	MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notspecified", player, "input-Arena");
         	return true;
         }
+        
         LobbyManager.getInstance().setLobbySignsFromSelection(player, Integer.parseInt(args[0]));
         return true;
     }
@@ -29,6 +30,4 @@ public class AddWall implements SubCommand {
 	public String permission() {
 		return "sg.admin.addwall";
 	}
-
-    //TODO: TAKE A W.E SELECTION AND SET THE LOBBY. ALSO SET LOBBY WALL
 }

@@ -15,7 +15,6 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
 public class LobbyManager {
-
 	private static LobbyManager instance = new LobbyManager();
 	private HashMap < Integer, ArrayList < LobbyWall >> signs = new HashMap < Integer, ArrayList < LobbyWall >> ();
 	public static HashSet < Chunk > lobbychunks = new HashSet < Chunk > ();

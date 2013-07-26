@@ -4,13 +4,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+import org.bukkit.ChatColor;
 import org.mcsg.survivalgames.SurvivalGames;
 
 public class MessageUtil {
 	private static HashMap<String, String>varcache = new HashMap<String, String>();
 
 	public static String replaceColors(String s) {
-		return s.replaceAll("(&([a-fk-or0-9]))", "\u00A7$2");
+		return ChatColor.translateAlternateColorCodes('&', s);
 	}
 
 	public static String replaceVars(String msg, HashMap<String, String>vars) {

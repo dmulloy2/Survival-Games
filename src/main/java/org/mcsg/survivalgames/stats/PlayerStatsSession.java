@@ -3,6 +3,7 @@ package org.mcsg.survivalgames.stats;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -21,10 +22,9 @@ public class PlayerStatsSession {
     int position = 0;
     int pppoints = 0;
 
-    private ArrayList<Player>killed = new ArrayList<Player>();
+    private List<Player> killed = new ArrayList<Player>();
 
-
-    private HashMap<Integer, Integer>kslist = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> kslist = new HashMap<Integer, Integer>();
 
     public PlayerStatsSession(Player p, int arenaid) {
         this.player = p;
@@ -89,7 +89,7 @@ public class PlayerStatsSession {
     }
 
     public boolean checkKS() {
-        if(15000 > new Date().getTime() - lastkill) {
+        if (15000 > new Date().getTime() - lastkill) {
             kslevel++;
             addkillStreak(kslevel);
 
@@ -100,21 +100,18 @@ public class PlayerStatsSession {
         return false;
     }
 
-
     public String createQuery() {
         calcPoints();
         String query= "INSERT INTO "+SettingsManager.getSqlPrefix()+"playerstats VALUES(NULL,";
         query = query + gameno+","+/*SettingsManager.getInstance().getConfig().getString("sql.server-prefix")+*/arenaid+",'"+player.getName()+"',"+points+","+position+","+kills+","+death+",";
         String killeds = "'";
-        for(Player p:killed){
+        
+        for (Player p : killed) {
             killeds = killeds + ((killeds.length()>2)?":":"")+p.getName();
         }
-        // killeds = killeds.replaceFirst(":", "");
+
         query = query + killeds +"',"+time;
         query = query + ","+kslist.get(1)+ ","+kslist.get(2)+ ","+kslist.get(3)+ ","+kslist.get(4)+ ","+kslist.get(5)+")";
-
-
-       // System.out.println(query);
 
         return query;
     }

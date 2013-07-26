@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -25,7 +23,6 @@ import org.mcsg.survivalgames.util.DatabaseManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class SurvivalGames extends JavaPlugin {
-	public static Logger logger;
 	private static File datafolder;
 	private static boolean disabling = false;
 	public static boolean dbcon = false;
@@ -39,7 +36,23 @@ public class SurvivalGames extends JavaPlugin {
 			"nickm140",  "chaseoes", "Oceangrass", "GrailMore", "iAngelic", "Lexonia", "ChaskyT", "Anon232", "KHobbits", "dmulloy2"
 	});
 
-	SurvivalGames p = this;
+	private static SurvivalGames p;
+
+	@Override
+	public void onEnable() {
+		p = this;
+
+		// Ensure that all worlds are loaded. Fixes some issues with Multiverse loading after this plugin had started
+		new Startup().runTaskLater(this, 10L);
+		
+		try {
+			new Metrics(this).start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
 	public void onDisable() {
 		disabling = false;
 		start = System.currentTimeMillis();
@@ -59,19 +72,8 @@ public class SurvivalGames extends JavaPlugin {
 		$(getDescription().getFullName() + " has been disabled (" + (System.currentTimeMillis() - start) + "ms)");
 	}
 
-	public void onEnable() {
-		logger = p.getLogger();
-
-		// Ensure that all worlds are loaded. Fixes some issues with Multiverse loading after this plugin had started
-		new Startup().runTaskLater(this, 10L);
-		try {
-			new Metrics(this).start();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	class Startup extends BukkitRunnable {
+	public class Startup extends BukkitRunnable {
+		
 		@Override
 		public void run() {
 			datafolder = p.getDataFolder();
@@ -94,7 +96,7 @@ public class SurvivalGames extends JavaPlugin {
 			} catch (Exception e) {
 				dbcon = false;
 				e.printStackTrace();
-				logger.severe("!!!Failed to connect to the database. Please check the settings and try again!!!");
+				$(Level.SEVERE, "!!!Failed to connect to the database. Please check the settings and try again!!!");
 				return;
 			} finally {
 				LobbyManager.getInstance().setup(p);
@@ -117,20 +119,18 @@ public class SurvivalGames extends JavaPlugin {
 			pm.registerEvents(new BandageUse(), p);
 			pm.registerEvents(new KitEvents(), p);
 
-			for (Player p: Bukkit.getOnlinePlayers()) {
-				if (GameManager.getInstance().getBlockGameId(p.getLocation()) != -1) {
-					p.teleport(SettingsManager.getInstance().getLobbySpawn());
+			for (Player pl : p.getServer().getOnlinePlayers()) {
+				if (GameManager.getInstance().getBlockGameId(pl.getLocation()) != -1) {
+					pl.teleport(SettingsManager.getInstance().getLobbySpawn());
 				}
 			}
-			
-//			new Webserver().start();
-			
+
 			$(getDescription().getFullName() + " has been enabled (" + (System.currentTimeMillis() - start) + "ms)");
 		}
 	}
 
 	public void setCommands() {
-		getCommand("survivalgames").setExecutor(new CommandHandler(p));
+		getCommand("survivalgames").setExecutor(new CommandHandler());
 	}
 
 	public static File getPluginDataFolder() {
@@ -142,20 +142,23 @@ public class SurvivalGames extends JavaPlugin {
 	}
 
 	public WorldEditPlugin getWorldEdit() {
-		Plugin worldEdit = getServer().getPluginManager().getPlugin("WorldEdit");
-		if (worldEdit instanceof WorldEditPlugin) {
-			return (WorldEditPlugin) worldEdit;
-		} else {
-			return null;
+		PluginManager pm = getServer().getPluginManager();
+		if (pm.isPluginEnabled("WorldEdit")) {
+			Plugin worldEdit = pm.getPlugin("WorldEdit");
+			if (worldEdit instanceof WorldEditPlugin) {
+				return (WorldEditPlugin)worldEdit;
+			}
 		}
+		
+		return null;
 	}
 
 	public static void $(String msg) {
-		logger.log(Level.INFO, msg);
+		p.getLogger().log(Level.INFO, msg);
 	}
 
 	public static void $(Level l, String msg){
-		logger.log(l, msg);
+		p.getLogger().log(l, msg);
 	}
 
 	public static void debug(String msg) {
@@ -166,5 +169,9 @@ public class SurvivalGames extends JavaPlugin {
 
 	public static void debug(int a) {
 		debug(String.valueOf(a));
+	}
+	
+	public static SurvivalGames getInstance() {
+		return p;
 	}
 }

@@ -1,7 +1,7 @@
 name: SurvivalGames
 version: "${project.version}"
 main: org.mcsg.survivalgames.SurvivalGames
-authors: [Double0negative]
+authors: [Double0negative, dmulloy2]
 description: Fully Automated Hunger Games Plugin!
 
 commands:

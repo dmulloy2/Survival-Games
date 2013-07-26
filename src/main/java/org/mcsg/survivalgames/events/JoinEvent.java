@@ -5,7 +5,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.SettingsManager;
@@ -13,9 +12,9 @@ import org.mcsg.survivalgames.SurvivalGames;
 import org.mcsg.survivalgames.util.UpdateChecker;
 
 public class JoinEvent implements Listener {
-
-	private Plugin plugin;
-	public JoinEvent(Plugin plugin) {
+	private SurvivalGames plugin;
+	
+	public JoinEvent(SurvivalGames plugin) {
 		this.plugin = plugin;
 	}
 	
@@ -27,7 +26,8 @@ public class JoinEvent implements Listener {
         	new TeleportTask(p).runTaskLater(plugin, 5L);
         }
         
-        if ((p.isOp() || p.hasPermission("sg.admin.reload")) && SettingsManager.getInstance().getConfig().getBoolean("check-for-update", true)){
+        if ((p.isOp() || p.hasPermission("sg.admin.reload")) 
+        		&& SettingsManager.getInstance().getConfig().getBoolean("check-for-update", true)) {
         	new UpdateNotifyTask(p).runTaskLater(plugin, 60L);
         }
     }
@@ -52,7 +52,6 @@ public class JoinEvent implements Listener {
 		
 		@Override
 		public void run() {
-			SurvivalGames.$("Checking for updates");
             new UpdateChecker().check(player, plugin);
 		}
 	}

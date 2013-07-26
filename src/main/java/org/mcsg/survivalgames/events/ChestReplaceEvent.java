@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.event.EventHandler;
@@ -24,7 +25,7 @@ public class ChestReplaceEvent implements Listener {
         try {
             HashSet<Block> openedChest3 = new HashSet<Block>();
 
-            if (!(e.getAction()==Action.RIGHT_CLICK_BLOCK)) {
+            if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
             	return;
             }
 
@@ -55,30 +56,34 @@ public class ChestReplaceEvent implements Listener {
             Inventory inv;
             int size = 0;
             
-            if (clickedBlock.getState() instanceof Chest) {
+            BlockState state = clickedBlock.getState();
+            if (state instanceof Chest) {
                 size = 1;
-                inv  = ((Chest) clickedBlock.getState()).getInventory();
-
-            } else if (clickedBlock.getState() instanceof DoubleChest) {
+                inv  = ((Chest)state).getInventory();
+            } else if (state instanceof DoubleChest) {
                 size = 2;
-                inv = ((DoubleChest) clickedBlock.getState()).getInventory();
+                inv = ((Chest)state).getInventory();
             } else {
             	return;
             }
 
             inv.clear();
+            
             Random r = new Random();
 
-            for (ItemStack i: ChestRatioStorage.getInstance().getItems()) {
+            for (ItemStack i : ChestRatioStorage.getInstance().getItems()) {
                 int l = r.nextInt(26 * size);
 
-                while(inv.getItem(l) != null)
+                while (inv.getItem(l) != null) {
                     l = r.nextInt(26 * size);
+                }
+                
                 inv.setItem(l, i);
             }
+            
             openedChest3.add(clickedBlock);
             GameManager.openedChest.put(gameid, openedChest3);
-        } catch(Exception e5) {
+        } catch (Exception ex) {
         	//
         }
     }

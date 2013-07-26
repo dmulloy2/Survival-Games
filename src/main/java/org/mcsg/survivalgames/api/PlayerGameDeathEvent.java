@@ -6,7 +6,6 @@ import org.bukkit.event.HandlerList;
 import org.mcsg.survivalgames.Game;
 
 public class PlayerGameDeathEvent extends Event {
-
 	private static final HandlerList handlers = new HandlerList();
     private Player dead;
 	private Player killer;

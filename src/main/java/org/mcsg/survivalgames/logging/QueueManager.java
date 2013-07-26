@@ -7,13 +7,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.mcsg.survivalgames.Game;
@@ -23,8 +25,8 @@ import org.mcsg.survivalgames.SurvivalGames;
 
 public class QueueManager {
 	private static QueueManager instance = new QueueManager();
-	private ConcurrentHashMap<Integer, ArrayList<BlockData>> queue = new ConcurrentHashMap<Integer, ArrayList<BlockData>>();
-	File baseDir;
+	private ConcurrentHashMap<Integer, List<BlockData>> queue = new ConcurrentHashMap<Integer, List<BlockData>>();
+	private File baseDir;
 
 	private QueueManager() {
 	}
@@ -36,7 +38,7 @@ public class QueueManager {
 	public void setup() {
 		baseDir = new File(SurvivalGames.getPluginDataFolder() + "/ArenaData/");
 		try {
-			if(!baseDir.exists()) {
+			if(! baseDir.exists()) {
 				baseDir.mkdirs();
 			}
 			for (Game g : GameManager.getInstance().getGames()) {
@@ -46,37 +48,37 @@ public class QueueManager {
 			//
 		}
 
-		Bukkit.getScheduler().runTaskTimerAsynchronously(GameManager.getInstance().getPlugin(), new DataDumper(), 100, 100);
+		new DataDumper().runTaskTimer(SurvivalGames.getInstance(), 100, 100);
 	}
 
 	public void rollback(final int id, final boolean shutdown) {
 		loadSave(id);
-		if (!shutdown) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
+		if (! shutdown) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SurvivalGames.getInstance(),
 					new Rollback(id, shutdown, 0, 1, 0));
 		} else {
 			new Rollback(id, shutdown, 0, 1, 0).run();
 		}
-		ArrayList<Entity>removelist = new ArrayList<Entity>();
+		
+		List<Entity> removelist = new ArrayList<Entity>();
 
 		for (Entity e : SettingsManager.getGameWorld(id).getEntities()) {
-			if ((!(e instanceof Player)) && (!(e instanceof HumanEntity))) {
-				if( GameManager.getInstance().getBlockGameId(e.getLocation()) == id) {
+			if (!(e instanceof Player) && (!(e instanceof NPC))) {
+				if (GameManager.getInstance().getBlockGameId(e.getLocation()) == id) {
 					removelist.add(e);
 				}
 			}
 		}
-		for (int a = 0; a < removelist.size(); a = 0) {
-			try {
-				removelist.remove(0).remove();
-			} catch(Exception e) {
-				//
-			}
+		
+		if (! shutdown) {
+			new EntityRemoveTask(removelist.iterator()).runTaskLater(SurvivalGames.getInstance(), 2);
+		} else {
+			new EntityRemoveTask(removelist.iterator()).run();
 		}
 	}
 	
 	public void add(BlockData data) {
-		ArrayList<BlockData>dat = queue.get(data.getGameId());
+		List<BlockData> dat = queue.get(data.getGameId());
 		if (dat == null) {
 			dat = new ArrayList<BlockData>();
 			ensureFile(data.getGameId());
@@ -97,12 +99,12 @@ public class QueueManager {
 		}
 	}
 
-	class DataDumper extends BukkitRunnable {
+	public class DataDumper extends BukkitRunnable {
 		@Override
 		public void run() {
 			for (int id : queue.keySet()) {
 				try {
-					ArrayList<BlockData> data = queue.get(id);
+					List<BlockData> data = queue.get(id);
 					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(baseDir, "Arena"+id+".dat")));
 
 					out.writeObject(data);
@@ -122,9 +124,9 @@ public class QueueManager {
 		try {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(baseDir, "Arena"+id+".dat")));
 
-			ArrayList<BlockData> input = (ArrayList<BlockData>) in.readObject();
+			List<BlockData> input = (ArrayList<BlockData>) in.readObject();
 
-			ArrayList<BlockData> data = queue.get(id); 
+			List<BlockData> data = queue.get(id); 
 			if (data == null) {
 				data = new ArrayList<BlockData>();
 			}
@@ -142,7 +144,7 @@ public class QueueManager {
 		}
 	}
 
-	class Rollback extends BukkitRunnable {
+	public class Rollback extends BukkitRunnable {
 		int id, totalRollback, iteration;
 		Game game;
 		boolean shutdown;
@@ -159,20 +161,20 @@ public class QueueManager {
 
 		@Override
 		public void run() {
-			ArrayList<BlockData> data = queue.get(id);
+			List<BlockData> data = queue.get(id);
 			if (data != null) {
 				int a = data.size()-1;
 				int rb = 0;
 				long t1 = new Date().getTime();
 				int pt = SettingsManager.getInstance().getConfig().getInt("rollback.per-tick", 100);
-				while(a>=0 && (rb < pt|| shutdown)){ 
+				while (a >= 0 && (rb < pt || shutdown)){ 
 					SurvivalGames.debug("Resetting "+a);
 					BlockData result = data.get(a);
 					if (result.getGameId() == game.getID()) {
 						data.remove(a);
 						Location l = new Location(Bukkit.getWorld(result.getWorld()), result.getX(), result.getY(), result.getZ());
 						Block b = l.getBlock();
-						b.setTypeIdAndData(result.getPrevid(), result.getPrevdata(), false);
+						b.setTypeIdAndData(result.getPrevid(), result.getPrevdata(), true);
 						b.getState().update();
 						rb++;
 					}
@@ -191,6 +193,22 @@ public class QueueManager {
 			} else {
 				SurvivalGames.$ ("Arena "+id+" reset. Rolled back "+totalRollback+" blocks in "+iteration+" iterations. Total time spent rolling back was "+time+"ms");
 				game.resetCallback();
+			}
+		}
+	}
+	
+	public class EntityRemoveTask extends BukkitRunnable {
+		final Iterator<Entity> iter;
+		public EntityRemoveTask(final Iterator<Entity> iter) {
+			this.iter = iter;
+		}
+		
+		@Override
+		public void run() {
+			while (iter.hasNext()) {
+				Entity e = iter.next();
+				e.remove();
+				iter.remove();
 			}
 		}
 	}

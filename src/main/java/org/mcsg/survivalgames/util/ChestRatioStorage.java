@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.mcsg.survivalgames.SettingsManager;
 
 public class ChestRatioStorage {
-	HashMap<Integer, ArrayList<ItemStack>>lvlstore = new HashMap<Integer, ArrayList<ItemStack>>();
+	private HashMap<Integer, List<ItemStack>> lvlstore = new HashMap<Integer, List<ItemStack>>();
 	public static ChestRatioStorage instance = new ChestRatioStorage();
 	int ratio = 2;
 
@@ -41,9 +41,9 @@ public class ChestRatioStorage {
 		return instance;
 	}
 
-	public ArrayList<ItemStack> getItems() {
+	public List<ItemStack> getItems() {
 		Random r = new Random();
-		ArrayList<ItemStack>items = new ArrayList<ItemStack>();
+		List<ItemStack> items = new ArrayList<ItemStack>();
 		for (int a = 0; a< r.nextInt(7)+5; a++) {
 			if (r.nextBoolean() == true) {
 				int i = 1;
@@ -51,13 +51,13 @@ public class ChestRatioStorage {
 					i++;
 				}
 
-				ArrayList<ItemStack>lvl = lvlstore.get(i);
+				List<ItemStack> lvl = lvlstore.get(i);
 				ItemStack item = lvl.get(r.nextInt(lvl.size()));
 				
 				items.add(item);
 			}
-
 		}
+		
 		return items;
 	}
 }

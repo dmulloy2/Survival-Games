@@ -9,8 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
 import org.mcsg.survivalgames.commands.AddWall;
 import org.mcsg.survivalgames.commands.CreateArena;
@@ -35,12 +33,11 @@ import org.mcsg.survivalgames.commands.Teleport;
 import org.mcsg.survivalgames.commands.Vote;
 
 public class CommandHandler implements CommandExecutor {
-	private Plugin plugin;
 	private HashMap < String, SubCommand > commands;
 	private HashMap < String, Integer > helpinfo;
 	private MessageManager msgmgr = MessageManager.getInstance();
-	public CommandHandler(Plugin plugin) {
-		this.plugin = plugin;
+	
+	public CommandHandler() {
 		commands = new HashMap < String, SubCommand > ();
 		helpinfo = new HashMap < String, Integer > ();
 		loadCommands();
@@ -102,7 +99,6 @@ public class CommandHandler implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd1, String commandLabel, String[] args) {
-		PluginDescriptionFile pdfFile = plugin.getDescription();
 		if (!(sender instanceof Player)) {
 			msgmgr.logMessage(PrefixType.WARNING, "Only in-game players can use SurvivalGames commands!");
 			return true;
@@ -121,11 +117,10 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		if (cmd1.getName().equalsIgnoreCase("survivalgames")) {
-			if (args == null || args.length < 1) {
-				msgmgr.sendMessage(PrefixType.INFO, "Version " + pdfFile.getVersion() + " by Double0negative", player);
-				msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for command information", player);
-				return true;
+			if (args.length == 0) {
+				msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for plugin help", player);
 			}
+
 			if (args[0].equalsIgnoreCase("help")) {
 				if (args.length == 1) {
 					help(player, 1);
@@ -143,8 +138,10 @@ public class CommandHandler implements CommandExecutor {
 						msgmgr.sendMessage(PrefixType.WARNING, args[1] + " is not a valid page! Valid pages are Player, Staff, and Admin.", player);
 					}
 				}
+				
 				return true;
 			}
+			
 			String sub = args[0];
 			Vector < String > l = new Vector < String > ();
 			l.addAll(Arrays.asList(args));
@@ -152,22 +149,25 @@ public class CommandHandler implements CommandExecutor {
 			args = (String[]) l.toArray(new String[0]);
 			if (!commands.containsKey(sub)) {
 				msgmgr.sendMessage(PrefixType.WARNING, "Command doesn't exist.", player);
-				msgmgr.sendMessage(PrefixType.INFO, "Type /sg help for command information", player);
+				msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for plugin help", player);
 				return true;
 			}
+			
 			try {
 				commands.get(sub).onCommand(player, args);
 			} catch (Exception e) {
 				e.printStackTrace();
 				msgmgr.sendFMessage(PrefixType.ERROR, "error.command", player, "command-["+sub+"] "+Arrays.toString(args));
-				msgmgr.sendMessage(PrefixType.INFO, "Type /sg help for command information", player);
+				msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for plugin help", player);
 			}
+			
 			return true;
 		}
+		
 		return false;
 	}
 
-	public void help (Player p, int page) {
+	public void help(Player p, int page) {
 		if (page == 1) {
 			p.sendMessage(ChatColor.BLUE + "------------[ " + ChatColor.DARK_AQUA + "Player Commands" + ChatColor.BLUE + " ]------------");
 		}

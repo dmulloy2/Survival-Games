@@ -16,6 +16,7 @@ public class LobbyWall {
     private ArrayList < Sign > signs = new ArrayList < Sign > ();
     private ArrayList < String > msgqueue = new ArrayList < String > ();
     private int gameid;
+    
     public LobbyWall(int gid) {
         gameid = gid;
     }
