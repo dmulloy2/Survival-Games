@@ -235,7 +235,7 @@ public class GameManager {
 		return null;
 	}
 
-	public List<Kit> getKits(Player p){
+	public List<Kit> getKits(Player p) {
 		List<Kit> k = new ArrayList<Kit>();
 		for (Kit kit : kits) {
 			if (kit.canUse(p)) {
