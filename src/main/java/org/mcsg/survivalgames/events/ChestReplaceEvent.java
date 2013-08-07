@@ -62,7 +62,7 @@ public class ChestReplaceEvent implements Listener {
                 inv  = ((Chest)state).getInventory();
             } else if (state instanceof DoubleChest) {
                 size = 2;
-                inv = ((Chest)state).getInventory();
+                inv = ((DoubleChest)state).getInventory();
             } else {
             	return;
             }

@@ -119,6 +119,7 @@ public class CommandHandler implements CommandExecutor {
 		if (cmd1.getName().equalsIgnoreCase("survivalgames")) {
 			if (args.length == 0) {
 				msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for plugin help", player);
+				return true;
 			}
 
 			if (args[0].equalsIgnoreCase("help")) {
