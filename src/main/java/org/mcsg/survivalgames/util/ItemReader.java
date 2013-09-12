@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.mcsg.survivalgames.SurvivalGames;
 
+@SuppressWarnings("deprecation")
 public class ItemReader {
 	private static HashMap<String, Enchantment> encids;
 

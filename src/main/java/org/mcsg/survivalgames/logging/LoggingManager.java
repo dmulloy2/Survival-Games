@@ -24,6 +24,7 @@ import org.mcsg.survivalgames.GameManager;
 
 import com.sk89q.worldedit.blocks.BlockID;
 
+@SuppressWarnings("deprecation")
 public class LoggingManager implements Listener {
 	public static HashMap<String, Integer> i = new HashMap<String, Integer>();
 

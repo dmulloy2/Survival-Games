@@ -29,7 +29,8 @@ public class PlayerWinEvent extends Event {
     	return game;
     }
  
-    public HandlerList getHandlers() {
+    @Override
+	public HandlerList getHandlers() {
         return handlers;
     }
  

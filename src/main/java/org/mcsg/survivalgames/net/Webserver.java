@@ -6,7 +6,8 @@ import java.net.Socket;
 import org.mcsg.survivalgames.SurvivalGames;
 
 public class Webserver extends Thread {
-    public void run() {
+    @Override
+	public void run() {
         try {
         	ServerSocket st =  new ServerSocket(880);
 

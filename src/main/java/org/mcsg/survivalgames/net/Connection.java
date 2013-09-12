@@ -24,7 +24,8 @@ public class Connection extends Thread {
         }
     }
 
-    public void run() {
+    @Override
+	public void run() {
         try {
             write("ADFSADFDSAF",out, in.readLine());
             skt.close();

@@ -75,6 +75,8 @@ public class ArenaDuplicator {
 
         }
 
+        @Override
+		@SuppressWarnings("deprecation")
         public void run() {
             Location l1;
             Location l2;
@@ -126,7 +128,8 @@ public class ArenaDuplicator {
             fin++; 
         }
 
-        public void run() {
+        @Override
+		public void run() {
             while(true) {
                 System.out.println(fin+"/"+x+" "+((fin - prev) / 2 )+" "+((fin + 0.0)/(x + 0.0))*100);
                 prev = fin;

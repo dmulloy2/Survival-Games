@@ -23,7 +23,8 @@ public class SetSpawn implements SubCommand {
         }
     }
     
-    public boolean onCommand(Player player, String[] args) {
+    @Override
+	public boolean onCommand(Player player, String[] args) {
         if (!player.hasPermission(permission()) && !player.isOp()) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.nopermission", player);
             return true;

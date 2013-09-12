@@ -11,7 +11,8 @@ public class SetStatsWall implements SubCommand {
         return false;
     }
 
-    public String help(Player p){
+    @Override
+	public String help(Player p){
         return "/sg setstatswall - "+ SettingsManager.getInstance().getMessageConfig().getString("messages.help.setstatswall", "Sets the stats wall");
     }
 

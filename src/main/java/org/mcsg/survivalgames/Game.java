@@ -417,6 +417,7 @@ public class Game {
 					msgmgr.sendMessage(PrefixType.INFO, "You have a " + config.getInt("grace-period") + " second grace period!", play);
 				}
 				Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new BukkitRunnable() {
+					@Override
 					public void run() {
 						for (Player play: activePlayers) {
 							msgmgr.sendMessage(PrefixType.INFO, "Grace period has ended!", play);
@@ -455,6 +456,7 @@ public class Game {
 		if (mode == GameMode.WAITING || mode == GameMode.STARTING) {
 			mode  = GameMode.STARTING;
 			tid = Bukkit.getScheduler().scheduleSyncRepeatingTask(GameManager.getInstance().getPlugin(), new Runnable() {
+				@Override
 				public void run() {
 					if (count > 0) {
 						if (count % 10 == 0) {
@@ -861,6 +863,7 @@ public class Game {
 	class NightChecker extends BukkitRunnable {
 		boolean reset = false;
 		int tgc = gcount;
+		@Override
 		public void run() {
 			if (SettingsManager.getGameWorld(gameID).getTime() > 14000) {
 				for (Player pl : activePlayers) {

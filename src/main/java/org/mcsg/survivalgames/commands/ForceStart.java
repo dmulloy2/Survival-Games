@@ -11,6 +11,7 @@ public class ForceStart implements SubCommand {
 
 	MessageManager msgmgr = MessageManager.getInstance();
 
+	@Override
 	public boolean onCommand(Player player, String[] args) {
 		if (!player.hasPermission(permission()) && !player.isOp()) {
 			MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.nopermission", player);

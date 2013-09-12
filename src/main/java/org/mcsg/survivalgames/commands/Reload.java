@@ -7,8 +7,8 @@ import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.MessageManager;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
-import org.mcsg.survivalgames.logging.QueueManager;
 import org.mcsg.survivalgames.SettingsManager;
+import org.mcsg.survivalgames.logging.QueueManager;
 
 public class Reload implements SubCommand {
 

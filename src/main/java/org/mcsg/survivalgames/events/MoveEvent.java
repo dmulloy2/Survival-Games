@@ -10,8 +10,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 import org.mcsg.survivalgames.Game;
-import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.Game.GameMode;
+import org.mcsg.survivalgames.GameManager;
 
 public class MoveEvent implements Listener {
     private HashMap<Player, Vector> playerpos = new HashMap<Player,Vector>();

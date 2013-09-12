@@ -14,8 +14,8 @@ import org.bukkit.plugin.Plugin;
 import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.MessageManager;
-import org.mcsg.survivalgames.SettingsManager;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
+import org.mcsg.survivalgames.SettingsManager;
 import org.mcsg.survivalgames.SurvivalGames;
 import org.mcsg.survivalgames.util.DatabaseManager;
 
@@ -154,7 +154,8 @@ public class StatsManager {
     }
 
     class DatabaseDumper extends Thread {
-        public void run() {
+        @Override
+		public void run() {
             while(queue.size() > 0) {
                 PreparedStatement s = queue.remove(0);
                 try {

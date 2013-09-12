@@ -19,7 +19,8 @@ public class PlaceEvent implements Listener {
         allowedPlace.addAll(SettingsManager.getInstance().getConfig().getIntegerList("block.place.whitelist"));
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
         int id  = GameManager.getInstance().getPlayerGameId(p);

@@ -160,6 +160,7 @@ public class QueueManager {
 		}
 
 		@Override
+		@SuppressWarnings("deprecation")
 		public void run() {
 			List<BlockData> data = queue.get(id);
 			if (data != null) {

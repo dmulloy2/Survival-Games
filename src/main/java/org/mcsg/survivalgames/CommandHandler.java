@@ -147,7 +147,7 @@ public class CommandHandler implements CommandExecutor {
 			Vector < String > l = new Vector < String > ();
 			l.addAll(Arrays.asList(args));
 			l.remove(0);
-			args = (String[]) l.toArray(new String[0]);
+			args = l.toArray(new String[0]);
 			if (!commands.containsKey(sub)) {
 				msgmgr.sendMessage(PrefixType.WARNING, "Command doesn't exist.", player);
 				msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for plugin help", player);

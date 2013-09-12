@@ -14,8 +14,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.Game.GameMode;
+import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.util.ChestRatioStorage;
 
 public class ChestReplaceEvent implements Listener {
