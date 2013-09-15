@@ -1,8 +1,9 @@
 name: SurvivalGames
+main: net.dmulloy2.survivalgames.SurvivalGames
 version: "${project.version}"
-main: org.mcsg.survivalgames.SurvivalGames
-authors: [Double0negative, dmulloy2]
+author: dmulloy2
 description: Fully Automated Hunger Games Plugin!
+softdepend: [Multiverse-Core]
 
 commands:
     survivalgames:
