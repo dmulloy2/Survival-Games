@@ -6,116 +6,106 @@ description: Fully Automated Hunger Games Plugin!
 softdepend: [Multiverse-Core]
 
 commands:
-    survivalgames:
-        description: Survival Games Command
-        usage: /sg <command> <args>
-        aliases: [sg, hungergames, hg]
-
-# Extra permissions:
-# sg.arena.<arena> - Needed to join a specific
-# sg.kit.<kit> - Needed to use a kit
+  survivalgames:
+    description: Survival Games Command
+    usage: /sg <command> <args>
+    aliases: [sg, hungergames, hg]
 
 permissions:
-    sg.player.*:
-        default: true
-        description: SurvivalGames Player Commands
-        children:
-            sg.player.play: true
-            sg.player.vote: true
-            sg.player.spectate: true
-            sg.player.joinlobby: true
-            sg.player.sponsor: true
-            sg.player.listarenas: true
-            sg.player.list: true
-            sg.arenas.join.*: true
-    sg.player.play:
-        description: Allows the user to click a sign to join a game.
-        default: true
-    sg.player.vote:
-        description: Allows the user to vote to start a game.
-        default: true
-    sg.player.spectate:
-        description:  Allows the user to spectate a game.
-        default: true
-    sg.player.joinlobby:
-        description: Allows the use of /sg join to join the lobby.
-        default: true
-    sg.player.sponsor:
-        description: Sponsor a player!
-        default: true
-    sg.player.listarenas:
-        description: List all arenas set up.
-        default: true
-    sg.player.list:
-        description: List all players in the arena you are playing in.
-        default: true
-    sg.arena.join.*:
-        description: Allows the joining of all arenas
-        default: true
+# Player Permissions
+  sg.player.*:
+    default: true
+    description: SurvivalGames player commands
+    children:
+      sg.player.list: true
+      sg.player.listarenas: true
+      sg.player.join: true
+      sg.player.join.lobby: true
+      sg.player.spectate: true
+      sg.player.version: true
+      sg.player.vote: true
+      sg.arenas.join.*: true
+  sg.player.list:
+    description: Allows access to '/sg list'
+    default: true
+  sg.player.listarenas:
+    description: Allows access to '/sg listarenas'
+    default: true
+  sg.player.join:
+    description: Allows access to '/sg join'
+    default: true
+  sg.player.join.lobby:
+    description: Allows the joining of lobbies
+    default: true
+  sg.player.spectate:
+    description: Allows access to '/sg spectate'
+    default: true
+  sg.player.version:
+    description: Allows access to '/sg version'
+    default: true
+  sg.player.vote:
+    description: Allows access to '/sg vote'
+    default: true
+  sg.arenas.join.*:
+    description: Allows the joining of all arenas
+    default: true
 
-    sg.staff.*:
-        default: op
-        description: SurvivalGames Staff Commands
-        children:
-            sg.player.*: true
-            sg.staff.forcestart: true
-            sg.staff.disablearena: true
-            sg.staff.enablearena: true
-            sg.staff.nocmdblock: true
-    sg.staff.forcestart:
-        description: Allows the user to force start a game.
-        default: op
-    sg.staff.disablearena:
-        description: Allows the user to disable an arena.
-        default: op
-    sg.staff.enablearena:
-        description: Allows the user to enable an arena.
-        default: op
-    sg.staff.nocmdblock:
-        description: Allows user to bypass in-game command block.
-        default: op
-    sg.staff.teleport:
-        description: Teleport to arena
-        default: op
+# Staff Permissions
+  sg.staff.*:
+    description: SurvivalGames staff commands
+    children:
+      sg.player.*: true
+      sg.staff.enable: true
+      sg.staff.disable: true
+      sg.staff.teleport: true
+  sg.staff.enable:
+    description: Allows access to '/sg enable'
+    default: false
+  sg.staff.disable:
+    description: Allows access to '/sg disable'
+    default: false
+  sg.staff.teleport:
+    description: Allows access to '/sg teleport'
+    default: false
 
-    sg.admin.*:
-        default: op
-        description: SurvivalGames Admin Commands
-        children:
-            sg.staff.*: true
-            sg.admin.createarena: true
-            sg.admin.setarenaspawns: true
-            sg.admin.resetspawns: true
-            sg.admin.deletearena: true
-            sg.admin.setlobby: true
-            sg.admin.flag: true
-            sg.admin.addwall: true
-            sg.admin.restart: true
-            sg.admin.reload: true
-    sg.admin.createarena:
-        description: Allows the user to create an arena.
-        default: op
-    sg.admin.setarenaspawns:
-        description: Allows user to set arena spawns.
-        default: op
-    sg.admin.resetspawns:
-        description: Allows the user to reset all spawnpoints.
-        default: op
-    sg.admin.deletearena:
-        description: Allows a user to delete an arena.
-        default: op
-    sg.admin.setlobby:
-        description: Allows the user to set the lobby spawn and wall.
-        default: op
-    sg.admin.flag:
-        description: Allows the user to modify per-arena flags.
-        default: op
-    sg.admin.addwall:
-        description: Add a wall
-        default: op
-    sg.admin.restart:
-        description: Restart a game
-        default: op
-    sg.admin.reload:
-        description: Reload the config
-        default: op
+# Admin Permissions
+  sg.admin.*:
+    default: op
+    description: SurvivalGames admin commands
+    children:
+      sg.admin.addwall: true
+      sg.admin.createarena: true
+      sg.admin.forcestart: true
+      sg.admin.flag: true
+      sg.admin.delarena: true
+      sg.admin.reload: true
+      sg.admin.resetspawns: true
+      sg.admin.setlobbyspawn: true
+      sg.admin.setspawn: true
+  sg.admin.addwall:
+    description: Allows access to '/sg addwall'
+    default: false
+  sg.admin.createarena:
+    description: Allows access to '/sg createarena'
+    default: false
+  sg.admin.forcestart:
+    description: Allows access to '/sg forcestart'
+    default: false
+  sg.admin.flag:
+    description: Allows access to '/sg flag'
+    default: false
+  sg.admin.delarena:
+    description: Allows access to '/sg delarena'
+    default: false
+  sg.admin.reload:
+    description: Allows access to '/sg reload'
+    default: false
+  sg.admin.resetspawns:
+    description: Allows access to '/sg resetspawns'
+    default: false
+  sg.admin.setlobbyspawn:
+    description: Allows access to '/sg setlobbyspawn'
+    default: false
+  sg.admin.setspawn:
+    description: Allows access to '/sg setspawn'
+    default: false
