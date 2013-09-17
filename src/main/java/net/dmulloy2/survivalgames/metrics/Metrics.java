@@ -1,6 +1,4 @@
-package net.dmulloy2.survivalgames.metrics;
-
-/*
+/**
  * Copyright 2011 Tyler Blair. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -27,6 +25,7 @@ package net.dmulloy2.survivalgames.metrics;
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
+package net.dmulloy2.survivalgames.metrics;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -51,6 +50,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * <p>
@@ -233,7 +233,6 @@ public class Metrics
 	 * 
 	 * @return True if statistics measuring is running, otherwise false.
 	 */
-	@SuppressWarnings("deprecation")
 	public boolean start()
 	{
 		synchronized (optOutLock)
@@ -249,13 +248,13 @@ public class Metrics
 			{
 				return true;
 			}
-			System.out.println("METRICS STARTING");
-			// Begin hitting the server with glorious data
-			taskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
+			
+			plugin.getLogger().info("Metrics starting!");
+			
+			this.taskId = new BukkitRunnable()
 			{
-
 				private boolean firstPost = true;
-
+				
 				@Override
 				public void run()
 				{
@@ -296,8 +295,8 @@ public class Metrics
 						Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
 					}
 				}
-			}, 0, PING_INTERVAL * 1200);
-
+			}.runTaskTimerAsynchronously(plugin, 0, PING_INTERVAL * 1200).getTaskId();
+			
 			return true;
 		}
 	}
@@ -318,14 +317,15 @@ public class Metrics
 			}
 			catch (IOException ex)
 			{
-				Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
+				plugin.getServer().getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 				return true;
 			}
 			catch (InvalidConfigurationException ex)
 			{
-				Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
+				plugin.getServer().getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 				return true;
 			}
+			
 			return configuration.getBoolean("opt-out", false);
 		}
 	}

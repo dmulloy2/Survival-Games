@@ -45,6 +45,7 @@ import net.dmulloy2.survivalgames.hooks.HookManager;
 import net.dmulloy2.survivalgames.logging.LoggingManager;
 import net.dmulloy2.survivalgames.logging.QueueManager;
 import net.dmulloy2.survivalgames.managers.DatabaseManager;
+import net.dmulloy2.survivalgames.managers.EconomyManager;
 import net.dmulloy2.survivalgames.managers.GameManager;
 import net.dmulloy2.survivalgames.managers.LobbyManager;
 import net.dmulloy2.survivalgames.managers.MessageManager;
@@ -66,9 +67,10 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class SurvivalGames extends JavaPlugin
 {
-	private @Getter boolean disabling = false;
-	private @Getter boolean dbcon = false;
-	private @Getter boolean configUpToDate = false;
+	private @Getter boolean dbcon;
+	private @Getter boolean disabling;
+	private @Getter boolean configUpToDate;
+
 	private @Getter int configVersion = 3;
 
 	private @Getter GameManager gameManager;
@@ -76,6 +78,7 @@ public class SurvivalGames extends JavaPlugin
 	private @Getter	StatsManager statsManager;
 	private @Getter	LobbyManager lobbyManager;
 	private @Getter	QueueManager queueManager;
+	private @Getter EconomyManager economyManager;
 	private @Getter	LoggingManager loggingManager;
 	private @Getter	MessageManager messageManager;
 	private @Getter DatabaseManager databaseManager;
@@ -156,6 +159,7 @@ public class SurvivalGames extends JavaPlugin
 		}
 
 		chestRatioStorage = new ChestRatioStorage(this);
+		economyManager = new EconomyManager(this);
 		lobbyManager = new LobbyManager(this);
 		hookManager = new HookManager(this);
 
@@ -173,6 +177,7 @@ public class SurvivalGames extends JavaPlugin
 
 		loggingManager = new LoggingManager(this);
 		pm.registerEvents(loggingManager, this);
+
 		pm.registerEvents(new SpectatorEvents(this), this);
 		pm.registerEvents(new BandageUse(this), this);
 		pm.registerEvents(new KitEvents(this), this);

@@ -5,13 +5,11 @@ import java.util.HashMap;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.util.MessageUtil;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class HookManager
 {
 	private final SurvivalGames plugin;
-
 	public HookManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
@@ -21,32 +19,27 @@ public class HookManager
 
 	public void setup()
 	{
-		hooks.put("c", new CommandHook());
+		hooks.put("c", new CommandHook(plugin));
 	}
 
 	public void runHook(String hook, String... args)
 	{
-		// System.out.println("RUNNING HOOK");
 		FileConfiguration c = plugin.getSettingsManager().getConfig();
-		// System.out.println(c.getStringList("hooks."+hook));
 
 		for (String str : c.getStringList("hooks." + hook))
 		{
-			// System.out.println(str);
 			String[] split = str.split("!");
 			String p = MessageUtil.replaceVars(split[0], args);
 			String[] commands = MessageUtil.replaceVars(split[1], args).split(";");
 			if (checkConditions(split[2], args))
 			{
-				if (p.equalsIgnoreCase("console") || (split.length == 4 && Bukkit.getPlayer(p).hasPermission(split[3]))
+				if (p.equalsIgnoreCase("console") || (split.length == 4 && plugin.getServer().getPlayer(p).hasPermission(split[3]))
 						|| (split.length == 3))
 				{
 					for (String s1 : commands)
 					{
-						// System.out.println(s1);
 						String[] s2 = s1.split("#");
-						// System.out.println("Executing "+s2[0]+" "+s2[1]);
-						hooks.get(s2[0]).executehook(p, s2);
+						hooks.get(s2[0]).executeHook(p, s2);
 					}
 				}
 			}

@@ -1,40 +1,32 @@
 package net.dmulloy2.survivalgames.managers;
 
+import net.dmulloy2.survivalgames.SurvivalGames;
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class EconomyManager
 {
-	private static EconomyManager instance = new EconomyManager();
 	private Economy economy;
-	private boolean enabled = false;
+	private boolean enabled;
 
-	private EconomyManager()
+	private final SurvivalGames plugin;
+	public EconomyManager(SurvivalGames plugin)
 	{
-
-	}
-
-	public static EconomyManager getInstance()
-	{
-		return instance;
-	}
-
-	public void setup()
-	{
-		enabled = setupEconomy();
+		this.plugin = plugin;
+		
+		this.enabled = setupEconomy();
 	}
 
 	private boolean setupEconomy()
 	{
-		RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+		RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(Economy.class);
 		if (economyProvider != null)
 		{
-			economy = economyProvider.getProvider();
+			this.economy = economyProvider.getProvider();
 		}
 
-		return (economy != null);
+		return economy != null;
 	}
 
 	public Economy getEcon()

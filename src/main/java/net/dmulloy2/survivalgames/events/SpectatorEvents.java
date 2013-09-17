@@ -4,7 +4,6 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.util.SpectatorUtil;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -96,7 +95,7 @@ public class SpectatorEvents implements Listener
 					SkullMeta meta = (SkullMeta) stack.getItemMeta();
 					if (meta.hasOwner())
 					{
-						Player p = Bukkit.getPlayerExact(meta.getOwner());
+						Player p = plugin.getServer().getPlayerExact(meta.getOwner());
 						if (p != null)
 						{
 							if (plugin.getGameManager().isPlayerActive(p))

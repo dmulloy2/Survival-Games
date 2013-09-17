@@ -14,7 +14,6 @@ import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Game.GameMode;
 import net.dmulloy2.survivalgames.util.Kit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -27,16 +26,12 @@ import com.sk89q.worldedit.bukkit.selections.Selection;
 
 public class GameManager
 {
-	private @Getter
-	List<Kit> kits;
-	private @Getter
-	List<Game> games;
+	private @Getter List<Kit> kits;
+	private @Getter List<Game> games;
 
-	private @Getter
-	HashSet<Player> kitsel;
+	private @Getter HashSet<Player> kitsel;
 
-	public @Getter
-	HashMap<Integer, HashSet<Block>> openedChest;
+	public @Getter HashMap<Integer, HashSet<Block>> openedChest;
 
 	private MessageManager msgmgr;
 
@@ -55,8 +50,9 @@ public class GameManager
 
 		this.msgmgr = plugin.getMessageManager();
 
-		LoadGames();
-		LoadKits();
+		loadGames();
+		loadKits();
+		
 		for (Game g : getGames())
 		{
 			openedChest.put(g.getID(), new HashSet<Block>());
@@ -70,10 +66,10 @@ public class GameManager
 
 	public void reloadGames()
 	{
-		LoadGames();
+		loadGames();
 	}
 
-	public void LoadKits()
+	public void loadKits()
 	{
 		Set<String> kits1 = plugin.getSettingsManager().getKits().getConfigurationSection("kits").getKeys(false);
 		for (String s : kits1)
@@ -82,7 +78,7 @@ public class GameManager
 		}
 	}
 
-	public void LoadGames()
+	public void loadGames()
 	{
 		FileConfiguration c = plugin.getSettingsManager().getSystemConfig();
 		games.clear();
@@ -93,19 +89,14 @@ public class GameManager
 		{
 			if (c.isSet("sg-system.arenas." + a + ".x1"))
 			{
-				// c.set("sg-system.arenas."+a+".enabled",c.getBoolean("sg-system.arena."+a+".enabled",
-				// true));
 				if (c.getBoolean("sg-system.arenas." + a + ".enabled"))
 				{
-					// plugin.$(c.getString("sg-system.arenas."+a+".enabled"));
-					// c.set("sg-system.arenas."+a+".vip",c.getBoolean("sg-system.arenas."+a+".vip",
-					// false));
-					plugin.$("Loading Arena: " + a);
 					loaded++;
 					games.add(new Game(this, a));
 					plugin.getStatsManager().addArena(a);
 				}
 			}
+			
 			a++;
 		}
 
@@ -262,7 +253,7 @@ public class GameManager
 			if (g.getAllPlayers().contains(p))
 			{
 				PlayerLeaveArenaEvent leavearena = new PlayerLeaveArenaEvent(p, g);
-				Bukkit.getServer().getPluginManager().callEvent(leavearena);
+				plugin.getServer().getPluginManager().callEvent(leavearena);
 			}
 		}
 
@@ -311,7 +302,6 @@ public class GameManager
 		return k;
 	}
 
-	// TODO: Actually make this countdown correctly
 	public void startGame(int a)
 	{
 		getGame(a).countdown(10);
@@ -338,10 +328,9 @@ public class GameManager
 				qg.add(g);
 		}
 
-		// TODO: fancy auto balance algorithm
-		if (qg.size() == 0)
+		if (qg.isEmpty())
 		{
-			pl.sendMessage(ChatColor.RED + "No games to join");
+//			pl.sendMessage(ChatColor.RED + "No games to join");
 			msgmgr.sendMessage(PrefixType.WARNING, "No games to join!", pl);
 			return;
 		}
@@ -349,16 +338,15 @@ public class GameManager
 		qg.get(0).addPlayer(pl);
 	}
 
-	public WorldEditPlugin getWorldEdit()
-	{
-		return plugin.getWorldEdit();
-	}
-
 	public void createArenaFromSelection(Player pl)
 	{
-		FileConfiguration c = plugin.getSettingsManager().getSystemConfig();
+		WorldEditPlugin we = plugin.getWorldEdit();
+		if (we == null)
+		{
+			msgmgr.sendMessage(PrefixType.WARNING, "WorldEdit is not installed! Please install it!", pl);
+			return;
+		}
 
-		WorldEditPlugin we = getWorldEdit();
 		Selection sel = we.getSelection(pl);
 		if (sel == null)
 		{
@@ -368,6 +356,8 @@ public class GameManager
 
 		Location max = sel.getMaximumPoint();
 		Location min = sel.getMinimumPoint();
+		
+		FileConfiguration c = plugin.getSettingsManager().getSystemConfig();
 
 		int no = c.getInt("sg-system.arenano") + 1;
 		c.set("sg-system.arenano", no);

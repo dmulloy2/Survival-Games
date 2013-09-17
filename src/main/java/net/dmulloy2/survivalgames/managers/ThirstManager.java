@@ -1,4 +1,4 @@
-package net.dmulloy2.survivalgames.util;
+package net.dmulloy2.survivalgames.managers;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
