@@ -3,7 +3,7 @@ main: net.dmulloy2.survivalgames.SurvivalGames
 version: "${project.version}"
 author: dmulloy2
 description: Fully Automated Hunger Games Plugin!
-softdepend: [Multiverse-Core]
+softdepend: [Multiverse-Core, WorldEdit]
 
 commands:
   survivalgames:

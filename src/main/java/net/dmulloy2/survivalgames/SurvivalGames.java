@@ -97,16 +97,17 @@ public class SurvivalGames extends JavaPlugin
 	public void onEnable()
 	{
 		long start = System.currentTimeMillis();
+		
+		permissionHandler = new PermissionHandler(this);
+		commandHandler = new CommandHandler(this);
+		logHandler = new LogHandler(this);
 
 		settingsManager = new SettingsManager(this);
 		messageManager = new MessageManager(this);
 		statsManager = new StatsManager(this);
+		lobbyManager = new LobbyManager(this);
 		gameManager = new GameManager(this);
 
-		permissionHandler = new PermissionHandler(this);
-		commandHandler = new CommandHandler(this);
-		logHandler = new LogHandler(this);
-		
 		new MessageUtil(this); // Initialize message util
 
 		commandHandler.setCommandPrefix("survivalgames");
@@ -160,7 +161,6 @@ public class SurvivalGames extends JavaPlugin
 
 		chestRatioStorage = new ChestRatioStorage(this);
 		economyManager = new EconomyManager(this);
-		lobbyManager = new LobbyManager(this);
 		hookManager = new HookManager(this);
 
 		PluginManager pm = getServer().getPluginManager();
