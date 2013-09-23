@@ -6,6 +6,7 @@ import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,13 +25,9 @@ import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.sk89q.worldedit.blocks.BlockID;
-
-@SuppressWarnings("deprecation")
 public class LoggingManager implements Listener
 {
-	private @Getter
-	HashMap<String, Integer> i = new HashMap<String, Integer>();
+	private @Getter HashMap<String, Integer> i = new HashMap<String, Integer>();
 
 	private final SurvivalGames plugin;
 
@@ -164,7 +161,7 @@ public class LoggingManager implements Listener
 			return;
 		}
 
-		if (e.getClickedBlock().getTypeId() != BlockID.FIRE)
+		if (e.getClickedBlock().getType() != Material.FIRE)
 		{
 			return;
 		}
@@ -199,8 +196,8 @@ public class LoggingManager implements Listener
 			return;
 
 		plugin.getQueueManager().add(
-				new BlockData(plugin.getGameManager().getBlockGameId(b.getLocation()), b.getWorld().getName(), 0, (byte) 0, b.getTypeId(), b
-						.getData(), b.getX(), b.getY(), b.getZ(), null));
+				new BlockData(plugin.getGameManager().getBlockGameId(b.getLocation()),
+						b.getWorld().getName(), null, null, b.getType(), b.getState().getData(), b.getX(), b.getY(), b.getZ(), null));
 	}
 
 	public void logBlockDestoryed(Block b)
@@ -211,12 +208,11 @@ public class LoggingManager implements Listener
 		if (plugin.getGameManager().getGameMode(plugin.getGameManager().getBlockGameId(b.getLocation())) == Game.GameMode.DISABLED)
 			return;
 
-		if (b.getTypeId() == 51)
+		if (b.getType() == Material.FIRE)
 			return;
 
 		plugin.getQueueManager().add(
-				new BlockData(plugin.getGameManager().getBlockGameId(b.getLocation()), b.getWorld().getName(), b.getTypeId(), b.getData(), 0,
-						(byte) 0, b.getX(), b.getY(), b.getZ(), null));
+				new BlockData(plugin.getGameManager().getBlockGameId(b.getLocation()),
+						b.getWorld().getName(), null, null, b.getType(), b.getState().getData(), b.getX(), b.getY(), b.getZ(), null));
 	}
-
 }

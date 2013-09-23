@@ -5,7 +5,9 @@ import java.util.List;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
+import net.dmulloy2.survivalgames.util.MaterialUtil;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,17 +16,19 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 public class BreakEvent implements Listener
 {
-	public List<Integer> allowedBreak = new ArrayList<Integer>();
+	public List<Material> allowedBreak = new ArrayList<Material>();
 
 	private final SurvivalGames plugin;
 	public BreakEvent(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
-
-		allowedBreak.addAll(plugin.getSettingsManager().getConfig().getIntegerList("block.break.whitelist"));
+		
+		for (String s : plugin.getSettingsManager().getConfig().getStringList("block.break.whitelist"))
+		{
+			allowedBreak.add(MaterialUtil.getMaterial(s));
+		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event)
 	{
@@ -59,7 +63,7 @@ public class BreakEvent implements Listener
 			return;
 		}
 
-		if (!allowedBreak.contains(event.getBlock().getTypeId()))
+		if (!allowedBreak.contains(event.getBlock().getType()))
 		{
 			event.setCancelled(true);
 		}

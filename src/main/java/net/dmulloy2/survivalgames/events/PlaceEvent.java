@@ -5,7 +5,9 @@ import java.util.List;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
+import net.dmulloy2.survivalgames.util.MaterialUtil;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,17 +16,19 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class PlaceEvent implements Listener
 {
-	public List<Integer> allowedPlace = new ArrayList<Integer>();
+	public List<Material> allowedPlace = new ArrayList<Material>();
 
 	private final SurvivalGames plugin;
 	public PlaceEvent(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
-
-		allowedPlace.addAll(plugin.getSettingsManager().getConfig().getIntegerList("block.place.whitelist"));
+		
+		for (String s : plugin.getSettingsManager().getConfig().getStringList("block.place.whitelist"))
+		{
+			allowedPlace.add(MaterialUtil.getMaterial(s));
+		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent event)
 	{
@@ -60,7 +64,7 @@ public class PlaceEvent implements Listener
 
 		}
 
-		if (!allowedPlace.contains(event.getBlock().getTypeId()))
+		if (!allowedPlace.contains(event.getBlock().getType()))
 		{
 			event.setCancelled(true);
 		}

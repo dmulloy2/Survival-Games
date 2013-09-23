@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -126,26 +125,6 @@ public class Util
 		int ydist = y1 - y2;
 		int zdist = z1 - z2;
 		return Math.sqrt(xdist * xdist + ydist * ydist + zdist * zdist);
-	}
-
-	/**
-	 * Plays an effect to all online players
-	 * 
-	 * @param effect
-	 *            - Effect type to play
-	 * @param loc
-	 *            - Location where the effect should be played
-	 * @param i
-	 *            - Data
-	 */
-
-	@SuppressWarnings("deprecation")
-	public static void playEffect(Effect effect, Location loc, int i)
-	{
-		for (Player player : Bukkit.getOnlinePlayers())
-		{
-			player.playEffect(loc, effect, i);
-		}
 	}
 
 	/**

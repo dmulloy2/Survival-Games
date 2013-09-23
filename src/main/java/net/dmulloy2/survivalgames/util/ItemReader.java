@@ -8,7 +8,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-@SuppressWarnings("deprecation")
 public class ItemReader
 {
 	private static HashMap<String, Enchantment> encids;
@@ -44,19 +43,19 @@ public class ItemReader
 		}
 		else if (split.length == 1)
 		{
-			return new ItemStack(Integer.parseInt(split[0]));
+			return new ItemStack(MaterialUtil.getMaterial(split[0]));
 		}
 		else if (split.length == 2)
 		{
-			return new ItemStack(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+			return new ItemStack(MaterialUtil.getMaterial(split[0]), Integer.parseInt(split[1]));
 		}
 		else if (split.length == 3)
 		{
-			return new ItemStack(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Short.parseShort(split[2]));
+			return new ItemStack(MaterialUtil.getMaterial(split[0]), Integer.parseInt(split[1]), Short.parseShort(split[2]));
 		}
 		else
 		{
-			ItemStack i = new ItemStack(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Short.parseShort(split[2]));
+			ItemStack i = new ItemStack(MaterialUtil.getMaterial(split[0]), Integer.parseInt(split[1]), Short.parseShort(split[2]));
 			String encs[] = split[3].split(" ");
 			for (String enc : encs)
 			{

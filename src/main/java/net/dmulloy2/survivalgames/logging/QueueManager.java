@@ -196,7 +196,6 @@ public class QueueManager
 		}
 
 		@Override
-		@SuppressWarnings("deprecation")
 		public void run()
 		{
 			List<BlockData> data = queue.get(id);
@@ -215,7 +214,8 @@ public class QueueManager
 						data.remove(a);
 						Location l = new Location(Bukkit.getWorld(result.getWorld()), result.getX(), result.getY(), result.getZ());
 						Block b = l.getBlock();
-						b.setTypeIdAndData(result.getPrevid(), result.getPrevdata(), true);
+						b.setType(result.getPrevmat());
+						b.getState().setData(result.getPrevdata());
 						b.getState().update();
 						rb++;
 					}

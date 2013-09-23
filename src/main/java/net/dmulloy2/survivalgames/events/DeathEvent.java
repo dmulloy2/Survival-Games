@@ -4,6 +4,7 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,8 +20,7 @@ public class DeathEvent implements Listener
 	{
 		this.plugin = plugin;
 	}
-	
-	@SuppressWarnings("deprecation")
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDieEvent(EntityDamageEvent event)
 	{
@@ -67,7 +67,7 @@ public class DeathEvent implements Listener
 			}
 			for (ItemStack i : inv.getArmorContents())
 			{
-				if (i != null && i.getTypeId() != 0)
+				if (i != null && i.getType() != Material.AIR)
 				{
 					l.getWorld().dropItemNaturally(l, i);
 				}

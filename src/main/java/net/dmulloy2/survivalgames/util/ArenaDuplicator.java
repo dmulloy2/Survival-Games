@@ -88,7 +88,6 @@ public class ArenaDuplicator
 		}
 
 		@Override
-		@SuppressWarnings("deprecation")
 		public void run()
 		{
 			Location l1;
@@ -108,7 +107,7 @@ public class ArenaDuplicator
 						// if(w.getBlockTypeIdAt(l1) != w.getBlockTypeIdAt(l2)){
 						try
 						{
-							if (l1.getBlock().getTypeId() != l2.getBlock().getTypeId())
+							if (l1.getBlock().getType() != l2.getBlock().getType())
 							{
 
 								// Chunk c = l2.getChunk();

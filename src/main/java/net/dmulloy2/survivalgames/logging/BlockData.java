@@ -2,15 +2,16 @@ package net.dmulloy2.survivalgames.logging;
 
 import java.io.Serializable;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 public class BlockData implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	private String world;
-	private int previd;
-	private int newid;
-	private byte prevdata, newdata;
+	private Material prevmat, newmat;
+	private MaterialData prevdata, newdata;
 	private int x, y, z;
 	private int gameid;
 	private ItemStack[] items;
@@ -18,13 +19,13 @@ public class BlockData implements Serializable
 	/**
 	 * Provides a new object for handling the data for block changes
 	 */
-	public BlockData(int gameid, String world, int previd, byte prevdata, int newid, byte newdata, int x, int y, int z, ItemStack[] items)
+	public BlockData(int gameid, String world, Material prevmat, MaterialData prevdata, Material newmat, MaterialData newdata, int x, int y, int z, ItemStack[] items)
 	{
 		this.gameid = gameid;
 		this.world = world;
-		this.previd = previd;
+		this.prevmat = prevmat;
 		this.prevdata = prevdata;
-		this.newid = newid;
+		this.newmat = newmat;
 		this.newdata = newdata;
 		this.x = x;
 		this.y = y;
@@ -42,24 +43,24 @@ public class BlockData implements Serializable
 		return world;
 	}
 
-	public byte getPrevdata()
+	public MaterialData getPrevdata()
 	{
 		return prevdata;
 	}
 
-	public byte getNewdata()
+	public MaterialData getNewdata()
 	{
 		return newdata;
 	}
 
-	public int getPrevid()
+	public Material getPrevmat()
 	{
-		return previd;
+		return prevmat;
 	}
-
-	public int getNewid()
+	
+	public Material getNewmat()
 	{
-		return newid;
+		return newmat;
 	}
 
 	public int getX()

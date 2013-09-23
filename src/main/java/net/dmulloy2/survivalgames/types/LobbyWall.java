@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -34,8 +35,7 @@ public class LobbyWall
 		boolean usingx = (x1 == x2) ? false : true;
 		plugin.debug(w + " " + x1 + " " + x2 + " " + z1 + " " + z2 + " " + y1 + " " + usingx);
 
-		@SuppressWarnings("deprecation")
-		int dir = new Location(w, x1, y1, z1).getBlock().getData();
+		BlockState state = new Location(w, x1, y1, z1).getBlock().getState();
 
 		if (usingx)
 		{
@@ -76,13 +76,17 @@ public class LobbyWall
 				}
 			}
 		}
-		plugin.debug("dir: " + dir);
-		if (dir == 3 || dir == 5)
+		
+		org.bukkit.material.Sign signDat = (org.bukkit.material.Sign) state.getData();
+
+		BlockFace dir = signDat.getAttachedFace();
+		if (dir == BlockFace.NORTH || dir == BlockFace.WEST)
 		{
 			Collections.reverse(signs);
 		}
+
 		addMsg("SurvivalGames");
-		addMsg("Double0negative");
+		addMsg("dmulloy2");
 		addMsg("mc-sg.org");
 		addMsg("Game id: " + gameid);
 		update();
