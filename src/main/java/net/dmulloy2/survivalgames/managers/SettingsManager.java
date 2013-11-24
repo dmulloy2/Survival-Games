@@ -59,8 +59,9 @@ public class SettingsManager
 			config.delete();
 		}
 
-		plugin.getConfig().options().copyDefaults(true);
+//		plugin.getConfig().options().copyDefaults(true);
 		plugin.saveDefaultConfig();
+		plugin.reloadConfig();
 
 		f = new File(plugin.getDataFolder(), "spawns.yml");
 		f2 = new File(plugin.getDataFolder(), "system.yml");

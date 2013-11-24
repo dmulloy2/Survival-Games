@@ -4,12 +4,13 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Reloadable;
 
 /**
  * @author dmulloy2
  */
 
-public class CmdReload extends SurvivalGamesCommand
+public class CmdReload extends SurvivalGamesCommand implements Reloadable
 {
 	public CmdReload(SurvivalGames plugin)
 	{
@@ -25,6 +26,12 @@ public class CmdReload extends SurvivalGamesCommand
 
 	@Override
 	public void perform()
+	{
+		reload();
+	}
+
+	@Override
+	public void reload()
 	{
 		if (args.length != 1)
 		{
@@ -68,8 +75,7 @@ public class CmdReload extends SurvivalGamesCommand
 		}
 		else if (args[0].equalsIgnoreCase("all"))
 		{
-			plugin.getServer().getPluginManager().disablePlugin(plugin);
-			plugin.getServer().getPluginManager().enablePlugin(plugin);
+			plugin.reload();
 
 			messageManager.sendMessage(PrefixType.INFO, "Plugin reloaded", player);
 			return;

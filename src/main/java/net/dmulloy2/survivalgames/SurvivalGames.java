@@ -53,6 +53,7 @@ import net.dmulloy2.survivalgames.managers.SettingsManager;
 import net.dmulloy2.survivalgames.metrics.Metrics;
 import net.dmulloy2.survivalgames.stats.StatsManager;
 import net.dmulloy2.survivalgames.types.Game;
+import net.dmulloy2.survivalgames.types.Reloadable;
 import net.dmulloy2.survivalgames.util.ChestRatioStorage;
 import net.dmulloy2.survivalgames.util.FormatUtil;
 import net.dmulloy2.survivalgames.util.MessageUtil;
@@ -65,7 +66,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
-public class SurvivalGames extends JavaPlugin
+/**
+ * @author dmulloy2
+ */
+
+public class SurvivalGames extends JavaPlugin implements Reloadable
 {
 	private @Getter boolean dbcon;
 	private @Getter boolean disabling;
@@ -261,5 +266,13 @@ public class SurvivalGames extends JavaPlugin
 	public void setConfigUpToDate(boolean upToDate)
 	{
 		this.configUpToDate = upToDate;
+	}
+
+	@Override
+	public void reload()
+	{
+		PluginManager pm = getServer().getPluginManager();
+		pm.disablePlugin(this);
+		pm.enablePlugin(this);
 	}
 }
