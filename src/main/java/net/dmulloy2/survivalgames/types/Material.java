@@ -63,7 +63,7 @@ import com.google.common.collect.Maps;
  * @author dmulloy2
  */
 
-public enum Material 
+public enum Material
 {
     AIR(0, 0),
     STONE(1),
