@@ -24,6 +24,6 @@ public class CmdVersion extends SurvivalGamesCommand
 	{
 		sendMessage("&3====[ &eSurvivalGames &3]====");
 		sendMessage("&bAuthor: &edmulloy2");
-		sendMessage("&bVersion: &e{0}", plugin.getDescription().getVersion());
+		sendMessage("&bVersion: &e" + plugin.getDescription().getVersion());
 	}
 }

@@ -34,7 +34,7 @@ public abstract class PaginatedCommand extends SurvivalGamesCommand
 			}
 			catch (NumberFormatException ex)
 			{
-				err("{0} is not a valid number!", args[0]);
+				err(args[0] + "is not a valid number!");
 				return;
 			}
 			catch (IndexOutOfBoundsException ex)

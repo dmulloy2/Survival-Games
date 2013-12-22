@@ -84,7 +84,7 @@ public class MessageManager
 
 	public void logMessage(PrefixType type, String msg)
 	{
-		Logger logger = Bukkit.getServer().getLogger();
+		Logger logger = plugin.getLogger();
 		switch (type)
 		{
 			case INFO:

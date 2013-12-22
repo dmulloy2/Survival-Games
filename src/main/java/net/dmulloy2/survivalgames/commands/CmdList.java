@@ -45,7 +45,7 @@ public class CmdList extends SurvivalGamesCommand
 		}
 		catch (NullPointerException ex)
 		{
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.gamenotexist", player);
+			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.gamedoesnotexist", player);
 		}
 	}
 }

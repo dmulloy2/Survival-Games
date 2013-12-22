@@ -8,8 +8,10 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.managers.GameManager;
 import net.dmulloy2.survivalgames.managers.LobbyManager;
 import net.dmulloy2.survivalgames.managers.MessageManager;
+import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.Permission;
 import net.dmulloy2.survivalgames.util.FormatUtil;
+import net.dmulloy2.survivalgames.util.Util;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.command.Command;
@@ -72,7 +74,7 @@ public abstract class SurvivalGamesCommand implements CommandExecutor
 		if (sender instanceof Player)
 			player = (Player) sender;
 
-		if (mustBePlayer && !isPlayer())
+		if (mustBePlayer && ! isPlayer())
 		{
 			err("You must be a player to execute this command!");
 			return;
@@ -84,14 +86,22 @@ public abstract class SurvivalGamesCommand implements CommandExecutor
 			return;
 		}
 
-		if (!hasPermission())
+		if (! hasPermission())
 		{
 			err("You do not have permission to perform this command!");
 			log(Level.WARNING, sender.getName() + " was denied access to a command!");
 			return;
 		}
 
-		perform();
+		try
+		{
+			perform();
+		}
+		catch (Throwable e)
+		{
+			err("Encountered an exception executing this command: " + e.getMessage());
+			plugin.getLogHandler().debug(Util.getUsefulStack(e, "executing command " + name));
+		}
 	}
 
 	public abstract void perform();
@@ -141,19 +151,19 @@ public abstract class SurvivalGamesCommand implements CommandExecutor
 		return FormatUtil.format(ret.toString());
 	}
 
-	protected final void sendpMessage(String message, Object... objects)
+	protected final void sendMessage(PrefixType prefix, String message)
 	{
-		sender.sendMessage(plugin.getPrefix() + FormatUtil.format(message, objects));
+		messageManager.sendMessage(prefix, message, player);
 	}
 
-	protected final void sendMessage(String message, Object... objects)
+	protected final void sendMessage(String message)
 	{
-		sender.sendMessage(FormatUtil.format(message, objects));
+		sendMessage(PrefixType.INFO, message);
 	}
 
-	protected final void err(String string, Object... objects)
+	protected final void err(String message)
 	{
-		sendpMessage("&c" + string, objects);
+		sendMessage(PrefixType.ERROR, message);
 	}
 
 	protected final void invalidArgs()
