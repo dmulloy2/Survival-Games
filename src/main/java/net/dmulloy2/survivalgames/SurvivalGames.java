@@ -65,7 +65,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 /**
- * @author dmulloy2
+ * This plugin was forked from Double0Negative's original SurvivalGames plugin:
+ * https://github.com/Double0negative/Survival-Games
+ * <p>
+ * The goal of this SurvivalGames fork is to fix a multitude of bugs, massive
+ * code cleanup and optimization, and provide support for future Minecraft and
+ * Bukkit updates.
+ * <p>
+ * At the time of the fork, there was no license attached to the GitHub
+ * repository linked above.
+ * <p>
+ * Currently maintained by dmulloy2
  */
 
 public class SurvivalGames extends JavaPlugin implements Reloadable
