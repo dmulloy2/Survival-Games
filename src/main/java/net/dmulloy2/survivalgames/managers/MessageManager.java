@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.util.MessageUtil;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -23,7 +22,6 @@ public class MessageManager
 	}
 
 	private final SurvivalGames plugin;
-
 	public MessageManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
@@ -107,7 +105,7 @@ public class MessageManager
 		boolean enabled = plugin.getSettingsManager().getMessageConfig().getBoolean("messages." + input + "_enabled", true);
 		if (msg == null)
 		{
-			Bukkit.broadcastMessage(ChatColor.RED + "Failed to load message for messages." + input);
+			plugin.getServer().broadcastMessage(ChatColor.RED + "Failed to load message for messages." + input);
 			return;
 		}
 		if (!enabled)
@@ -119,11 +117,11 @@ public class MessageManager
 			msg = MessageUtil.replaceVars(msg, args);
 		}
 		msg = MessageUtil.replaceColors(msg);
-		Bukkit.broadcastMessage(prefix.get(PrefixType.MAIN) + prefix.get(type) + " " + msg);
+		plugin.getServer().broadcastMessage(prefix.get(PrefixType.MAIN) + prefix.get(type) + " " + msg);
 	}
 
 	public void broadcastMessage(PrefixType type, String msg, Player player)
 	{
-		Bukkit.broadcastMessage(prefix.get(PrefixType.MAIN) + " " + prefix.get(type) + " " + msg);
+		plugin.getServer().broadcastMessage(prefix.get(PrefixType.MAIN) + " " + prefix.get(type) + " " + msg);
 	}
 }

@@ -45,7 +45,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -68,7 +67,6 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class Metrics
 {
-
 	/**
 	 * The current revision number
 	 */
@@ -292,7 +290,7 @@ public class Metrics
 					}
 					catch (IOException e)
 					{
-						Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
+						plugin.getServer().getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
 					}
 				}
 			}.runTaskTimerAsynchronously(plugin, 0, PING_INTERVAL * 1200).getTaskId();
@@ -420,8 +418,8 @@ public class Metrics
 		final StringBuilder data = new StringBuilder();
 		data.append(encode("guid")).append('=').append(encode(guid));
 		encodeDataPair(data, "version", description.getVersion());
-		encodeDataPair(data, "server", Bukkit.getVersion());
-		encodeDataPair(data, "players", Integer.toString(Bukkit.getServer().getOnlinePlayers().length));
+		encodeDataPair(data, "server", plugin.getServer().getVersion());
+		encodeDataPair(data, "players", Integer.toString(plugin.getServer().getOnlinePlayers().length));
 		encodeDataPair(data, "revision", String.valueOf(REVISION));
 
 		// If we're pinging, append it

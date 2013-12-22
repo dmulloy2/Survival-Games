@@ -11,7 +11,6 @@ import java.util.HashMap;
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -343,8 +342,9 @@ public class SettingsManager
 	{
 		try
 		{
-			return new Location(Bukkit.getWorld(system.getString("sg-system.lobby.spawn.world")), system.getInt("sg-system.lobby.spawn.x"),
-					system.getInt("sg-system.lobby.spawn.y"), system.getInt("sg-system.lobby.spawn.z"));
+			return new Location(plugin.getServer().getWorld(system.getString("sg-system.lobby.spawn.world")),
+					system.getInt("sg-system.lobby.spawn.x"), system.getInt("sg-system.lobby.spawn.y"),
+					system.getInt("sg-system.lobby.spawn.z"));
 		}
 		catch (Exception e)
 		{
