@@ -75,7 +75,7 @@ public class CommandHandler implements CommandExecutor
 				}
 			}
 
-			sender.sendMessage(plugin.getPrefix() + ChatColor.RED + "Unknown SurvivalGames command \"" + args[0] + "\". Try /ua help!");
+			sender.sendMessage(plugin.getPrefix() + ChatColor.RED + "Unknown SurvivalGames command \"" + args[0] + "\". Try /hg help!");
 		}
 		else
 		{
