@@ -106,7 +106,7 @@ public class QueueManager
 		try
 		{
 			File f2 = new File(baseDir, "Arena" + id + ".dat");
-			if (!f2.exists())
+			if (! f2.exists())
 			{
 				f2.createNewFile();
 			}

@@ -6,7 +6,6 @@ import java.util.Collections;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.util.NameUtil;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -14,6 +13,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class LobbyWall
 {
@@ -26,7 +26,6 @@ public class LobbyWall
 	public LobbyWall(SurvivalGames plugin, int gid)
 	{
 		this.plugin = plugin;
-
 		this.gameid = gid;
 	}
 
@@ -87,7 +86,7 @@ public class LobbyWall
 
 		addMsg("SurvivalGames");
 		addMsg("dmulloy2");
-		addMsg("mc-sg.org");
+		addMsg("ShadowvoltMC");
 		addMsg("Game id: " + gameid);
 		update();
 		return true;
@@ -95,21 +94,30 @@ public class LobbyWall
 
 	public void update()
 	{
-		// System.out.println(gameid);
 		if (msgqueue.size() > 0)
 		{
 			display();
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+			if (! plugin.isDisabling())
 			{
-				@Override
-				public void run()
+				display();
+				update();
+			}
+			else
+			{
+				new BukkitRunnable()
 				{
-					display();
-					update();
-				}
-			}, 20L);
+					@Override
+					public void run()
+					{
+						display();
+						update();
+					}
+				}.runTaskLater(plugin, 20L);
+			}
+
 			return;
 		}
+
 		clear();
 		Game game = plugin.getGameManager().getGame(gameid);
 		Sign s0 = signs.get(0);

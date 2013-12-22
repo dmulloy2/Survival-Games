@@ -101,7 +101,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 	private @Getter	PermissionHandler permissionHandler;
 	private @Getter	CommandHandler commandHandler;
 	private @Getter	LogHandler logHandler;
-	
+
 	private @Getter WorldEditPlugin worldEdit;
 
 	private @Getter	String prefix = FormatUtil.format("&4[&6&lSG&4]&3 ");
@@ -110,7 +110,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 	public void onEnable()
 	{
 		long start = System.currentTimeMillis();
-		
+
 		permissionHandler = new PermissionHandler(this);
 		commandHandler = new CommandHandler(this);
 		logHandler = new LogHandler(this);
@@ -145,7 +145,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 		commandHandler.registerCommand(new CmdTeleport(this));
 		commandHandler.registerCommand(new CmdVersion(this));
 		commandHandler.registerCommand(new CmdVote(this));
-		
+
 		worldEdit = hookIntoWorldEdit();
 		if (worldEdit == null)
 		{
@@ -167,7 +167,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 		catch (Exception e)
 		{
 			$(Level.SEVERE, "Could not connect to the database ({0}). Check your settings!", e.getMessage());
-			
+
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -203,16 +203,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 				pl.teleport(settingsManager.getLobbySpawn());
 			}
 		}
-		
-//		try
-//		{
-//			new Metrics(this).start();
-//		}
-//		catch (IOException e)
-//		{
-//			e.printStackTrace();
-//		}
-		
+
 		$("{0} has been enabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
 	}
 
@@ -227,7 +218,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 
 		settingsManager.saveSpawns();
 		settingsManager.saveSystemConfig();
-		
+
 		for (Game g : gameManager.getGames())
 		{
 			g.disable();
@@ -237,7 +228,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 
 		$("{0} has been disabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
 	}
-	
+
 	public WorldEditPlugin hookIntoWorldEdit()
 	{
 		PluginManager pm = getServer().getPluginManager();
@@ -249,10 +240,10 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 				return (WorldEditPlugin) worldEdit;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public void $(Level l, String msg, Object... obj)
 	{
 		logHandler.log(l, msg, obj);
