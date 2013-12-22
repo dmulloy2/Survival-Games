@@ -14,7 +14,6 @@ public class EconomyManager
 	public EconomyManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
-		
 		this.enabled = setupEconomy();
 	}
 

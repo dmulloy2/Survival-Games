@@ -1,6 +1,5 @@
 package net.dmulloy2.survivalgames;
 
-import java.io.IOException;
 import java.util.logging.Level;
 
 import lombok.Getter;
@@ -50,7 +49,6 @@ import net.dmulloy2.survivalgames.managers.GameManager;
 import net.dmulloy2.survivalgames.managers.LobbyManager;
 import net.dmulloy2.survivalgames.managers.MessageManager;
 import net.dmulloy2.survivalgames.managers.SettingsManager;
-import net.dmulloy2.survivalgames.metrics.Metrics;
 import net.dmulloy2.survivalgames.stats.StatsManager;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Reloadable;
@@ -196,14 +194,14 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 			}
 		}
 		
-		try
-		{
-			new Metrics(this).start();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+//		try
+//		{
+//			new Metrics(this).start();
+//		}
+//		catch (IOException e)
+//		{
+//			e.printStackTrace();
+//		}
 		
 		$("{0} has been enabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
 	}
@@ -213,7 +211,9 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 	{
 		long start = System.currentTimeMillis();
 
-		this.disabling = true;
+		disabling = true;
+
+		getServer().getScheduler().cancelTasks(this);
 
 		settingsManager.saveSpawns();
 		settingsManager.saveSystemConfig();

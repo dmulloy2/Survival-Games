@@ -20,10 +20,8 @@ public class DatabaseManager
 	public DatabaseManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
-
 		this.log = plugin.getLogger();
-		
-		connect();
+		this.connect();
 	}
 
 	public Connection getMysqlConnection()

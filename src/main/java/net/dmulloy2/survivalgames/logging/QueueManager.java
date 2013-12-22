@@ -7,14 +7,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -32,17 +30,15 @@ public class QueueManager
 	public QueueManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
-	}
+		this.baseDir = new File(plugin.getDataFolder(), "ArenaData");
 
-	public void setup()
-	{
-		baseDir = new File(plugin.getDataFolder() + "/ArenaData/");
 		try
 		{
-			if (!baseDir.exists())
+			if (! baseDir.exists())
 			{
 				baseDir.mkdirs();
 			}
+
 			for (Game g : plugin.getGameManager().getGames())
 			{
 				ensureFile(g.getID());
@@ -59,20 +55,21 @@ public class QueueManager
 	public void rollback(final int id, final boolean shutdown)
 	{
 		loadSave(id);
-		if (!shutdown)
+
+		if (! shutdown)
 		{
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Rollback(id, shutdown, 0, 1, 0));
+			new Rollback(id, shutdown, 0, 1, 0).runTaskLater(plugin, 2L);
 		}
 		else
 		{
-			new Rollback(id, shutdown, 0, 1, 0).run();
+			rollback(id, shutdown, 0, 1, 0);
 		}
 
 		List<Entity> removelist = new ArrayList<Entity>();
 
 		for (Entity e : plugin.getSettingsManager().getGameWorld(id).getEntities())
 		{
-			if (!(e instanceof Player) && (!(e instanceof NPC)))
+			if (! (e instanceof Player) && ! (e instanceof NPC))
 			{
 				if (plugin.getGameManager().getBlockGameId(e.getLocation()) == id)
 				{
@@ -81,13 +78,13 @@ public class QueueManager
 			}
 		}
 
-		if (!shutdown)
+		if (! shutdown)
 		{
-			new EntityRemoveTask(removelist.iterator()).runTaskLater(plugin, 2);
+			new EntityRemoveTask(removelist).runTaskLater(plugin, 2L);
 		}
 		else
 		{
-			new EntityRemoveTask(removelist.iterator()).run();
+			removeEntites(removelist);
 		}
 	}
 
@@ -149,6 +146,7 @@ public class QueueManager
 	public void loadSave(int id)
 	{
 		ensureFile(id);
+
 		try
 		{
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(baseDir, "Arena" + id + ".dat")));
@@ -180,17 +178,15 @@ public class QueueManager
 
 	public class Rollback extends BukkitRunnable
 	{
-		int id, totalRollback, iteration;
-		Game game;
-		boolean shutdown;
-		long time;
+		private int id, totalRollback, iteration;
+		private boolean shutdown;
+		private long time;
 
 		public Rollback(int id, boolean shutdown, int trb, int it, long time)
 		{
 			this.id = id;
 			this.totalRollback = trb;
 			this.iteration = it;
-			this.game = plugin.getGameManager().getGame(id);
 			this.shutdown = shutdown;
 			this.time = time;
 		}
@@ -198,71 +194,81 @@ public class QueueManager
 		@Override
 		public void run()
 		{
-			List<BlockData> data = queue.get(id);
-			if (data != null)
+			rollback(id, shutdown, totalRollback, iteration, time);
+		}
+	}
+
+	public final void rollback(int id, boolean shutdown, int totalRollback, int iteration, long time)
+	{
+		Game game = plugin.getGameManager().getGame(id);
+		List<BlockData> data = queue.get(id);
+		if (data != null)
+		{
+			int a = data.size() - 1;
+			int rb = 0;
+			long t1 = new Date().getTime();
+			int pt = plugin.getSettingsManager().getConfig().getInt("rollback.per-tick", 100);
+			while (a >= 0 && (rb < pt || shutdown))
 			{
-				int a = data.size() - 1;
-				int rb = 0;
-				long t1 = new Date().getTime();
-				int pt = plugin.getSettingsManager().getConfig().getInt("rollback.per-tick", 100);
-				while (a >= 0 && (rb < pt || shutdown))
+				plugin.debug("Resetting " + a);
+				BlockData result = data.get(a);
+				if (result.getGameId() == game.getID())
 				{
-					plugin.debug("Resetting " + a);
-					BlockData result = data.get(a);
-					if (result.getGameId() == game.getID())
-					{
-						data.remove(a);
-						Location l = new Location(Bukkit.getWorld(result.getWorld()), result.getX(), result.getY(), result.getZ());
-						Block b = l.getBlock();
-						b.setType(result.getPrevmat());
-						b.getState().setData(result.getPrevdata());
-						b.getState().update();
-						rb++;
-					}
-					a--;
+					data.remove(a);
+					Location l = new Location(plugin.getServer().getWorld(result.getWorld()), result.getX(), result.getY(), result.getZ());
+					Block b = l.getBlock();
+					b.setType(result.getPrevmat());
+					b.getState().setData(result.getPrevdata());
+					b.getState().update();
+					rb++;
 				}
+				a--;
+			}
 
-				time += new Date().getTime() - t1;
+			time += new Date().getTime() - t1;
 
-				if (a != -1)
-				{
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin.getGameManager().getPlugin(),
-							new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time), 1);
-				}
-				else
-				{
-					plugin.$("Arena " + id + " reset. Rolled back " + totalRollback + " blocks in " + iteration + " iterations (" + pt
-							+ " blocks per iteration Total time spent rolling back was " + time + "ms");
-					game.resetCallback();
-				}
+			if (a != -1)
+			{
+				plugin.getServer()
+						.getScheduler()
+						.scheduleSyncDelayedTask(plugin.getGameManager().getPlugin(),
+								new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time), 1);
 			}
 			else
 			{
-				plugin.$("Arena " + id + " reset. Rolled back " + totalRollback + " blocks in " + iteration
-						+ " iterations. Total time spent rolling back was " + time + "ms");
+				plugin.$("Arena " + id + " reset. Rolled back " + totalRollback + " blocks in " + iteration + " iterations (" + pt
+						+ " blocks per iteration Total time spent rolling back was " + time + "ms");
 				game.resetCallback();
 			}
+		}
+		else
+		{
+			plugin.$("Arena " + id + " reset. Rolled back " + totalRollback + " blocks in " + iteration
+					+ " iterations. Total time spent rolling back was " + time + "ms");
+			game.resetCallback();
 		}
 	}
 
 	public class EntityRemoveTask extends BukkitRunnable
 	{
-		final Iterator<Entity> iter;
-
-		public EntityRemoveTask(final Iterator<Entity> iter)
+		private final List<Entity> entities;
+		public EntityRemoveTask(List<Entity> entities)
 		{
-			this.iter = iter;
+			this.entities = entities;
 		}
 
 		@Override
 		public void run()
 		{
-			while (iter.hasNext())
-			{
-				Entity e = iter.next();
-				e.remove();
-				iter.remove();
-			}
+			removeEntites(entities);
+		}
+	}
+
+	public final void removeEntites(List<Entity> entities)
+	{
+		for (Entity entity : entities)
+		{
+			entity.remove();
 		}
 	}
 }

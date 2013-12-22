@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,55 +12,67 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChestRatioStorage
 {
-	private HashMap<Integer, List<ItemStack>> lvlstore = new HashMap<Integer, List<ItemStack>>();
+	private final HashMap<Integer, List<ItemStack>> lvlstore = new HashMap<Integer, List<ItemStack>>();
 
-	private @Getter
-	int ratio = 2;
-
-	private final SurvivalGames plugin;
+	private int ratio = 2;
+	private int maxlevel = 0;
 
 	public ChestRatioStorage(SurvivalGames plugin)
 	{
-		this.plugin = plugin;
-	}
-
-	public void setup()
-	{
 		FileConfiguration conf = plugin.getSettingsManager().getChest();
 
-		for (int a = 1; a < 5; a++)
+		for (int clevel = 1; clevel <= 16; clevel++)
 		{
 			List<ItemStack> lvl = new ArrayList<ItemStack>();
-			List<String> list = conf.getStringList("chest.lvl" + a);
+			List<String> list = conf.getStringList("chest.lvl" + clevel);
 
-			for (int b = 0; b < list.size(); b++)
+			if (! list.isEmpty())
 			{
-				ItemStack i = ItemReader.read(list.get(b));
-				lvl.add(i);
+				for (int b = 0; b < list.size(); b++)
+				{
+					ItemStack i = ItemReader.read(list.get(b));
+					lvl.add(i);
+				}
+
+				lvlstore.put(clevel, lvl);
 			}
-
-			lvlstore.put(a, lvl);
-
+			else
+			{
+				maxlevel = clevel - 1;
+				break;
+			}
 		}
 
-		ratio = conf.getInt("chest.ratio") + 1;
+		ratio = conf.getInt("chest.ratio", ratio);
 	}
 
-	public List<ItemStack> getItems()
+	public int getLevel(int base)
+	{
+		Random rand = new Random();
+		int max = Math.min(base + 5, maxlevel);
+		while (rand.nextInt(ratio) == 0 && base < max)
+		{
+			base++;
+		}
+
+		return base;
+	}
+
+	public List<ItemStack> getItems(int level)
 	{
 		Random r = new Random();
 		List<ItemStack> items = new ArrayList<ItemStack>();
-		for (int a = 0; a < r.nextInt(7) + 5; a++)
+
+		for (int a = 0; a < r.nextInt(7) + 10; a++)
 		{
-			if (r.nextBoolean() == true)
+			if (r.nextBoolean())
 			{
-				int i = 1;
-				while (i < 6 && r.nextInt(ratio) == 1)
+				while (level < level + 5 && level < maxlevel && r.nextInt(ratio) == 1)
 				{
-					i++;
+					level++;
 				}
 
-				List<ItemStack> lvl = lvlstore.get(i);
+				List<ItemStack> lvl = lvlstore.get(level);
 				ItemStack item = lvl.get(r.nextInt(lvl.size()));
 
 				items.add(item);

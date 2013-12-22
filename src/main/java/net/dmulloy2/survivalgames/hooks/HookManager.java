@@ -9,17 +9,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class HookManager
 {
+	private HashMap<String, HookBase> hooks;
+	
 	private final SurvivalGames plugin;
 	public HookManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
-	}
-
-	private HashMap<String, HookBase> hooks = new HashMap<String, HookBase>();
-
-	public void setup()
-	{
-		hooks.put("c", new CommandHook(plugin));
+		this.hooks = new HashMap<String, HookBase>();
+		this.hooks.put("c", new CommandHook(plugin));
 	}
 
 	public void runHook(String hook, String... args)

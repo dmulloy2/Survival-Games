@@ -44,11 +44,6 @@ public class SettingsManager
 	{
 		this.plugin = plugin;
 
-		setup();
-	}
-
-	public void setup()
-	{
 		if (plugin.getConfig().getInt("config-version") == plugin.getConfigVersion())
 		{
 			plugin.setConfigUpToDate(true);
@@ -59,7 +54,6 @@ public class SettingsManager
 			config.delete();
 		}
 
-//		plugin.getConfig().options().copyDefaults(true);
 		plugin.saveDefaultConfig();
 		plugin.reloadConfig();
 
