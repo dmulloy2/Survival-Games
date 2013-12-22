@@ -40,6 +40,7 @@ public class Game
 		DISABLED, LOADING, INACTIVE, WAITING, STARTING, INGAME, FINISHING, RESETTING, ERROR
 	}
 
+	// TODO: Don't store references to players in lists, instead use their names
 	private GameMode mode = GameMode.DISABLED;
 	private List<Player> activePlayers = new ArrayList<Player>();
 	private List<Player> inactivePlayers = new ArrayList<Player>();

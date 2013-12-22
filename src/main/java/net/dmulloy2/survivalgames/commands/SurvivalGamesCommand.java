@@ -124,7 +124,7 @@ public abstract class SurvivalGamesCommand implements CommandExecutor
 	public final String getUsageTemplate(final boolean displayHelp)
 	{
 		StringBuilder ret = new StringBuilder();
-		ret.append("&b/ua ");
+		ret.append("&b/hg ");
 
 		ret.append(name);
 

@@ -26,6 +26,7 @@ public class CmdResetSpawns extends SurvivalGamesCommand
 		try
 		{
 			plugin.getSettingsManager().getSpawns().set("spawns." + Integer.parseInt(args[0]), null);
+			messageManager.sendMessage(MessageManager.PrefixType.INFO, "&aSpawns reset for arena &e" + args[0], player);
 		}
 		catch (NumberFormatException e)
 		{

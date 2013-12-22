@@ -29,7 +29,7 @@ public class GameManager
 	private @Getter List<Kit> kits;
 	private @Getter List<Game> games;
 
-	private @Getter HashSet<Player> kitsel;
+	private @Getter HashSet<String> kitsel;
 
 	public @Getter HashMap<Integer, HashSet<Block>> openedChest;
 
@@ -44,7 +44,7 @@ public class GameManager
 		this.games = new ArrayList<Game>();
 		this.kits = new ArrayList<Kit>();
 
-		this.kitsel = new HashSet<Player>();
+		this.kitsel = new HashSet<String>();
 
 		this.openedChest = new HashMap<Integer, HashSet<Block>>();
 
@@ -197,17 +197,17 @@ public class GameManager
 
 	public boolean isInKitMenu(Player p)
 	{
-		return kitsel.contains(p);
+		return kitsel.contains(p.getName());
 	}
 
 	public void leaveKitMenu(Player p)
 	{
-		kitsel.remove(p);
+		kitsel.remove(p.getName());
 	}
 
 	public void openKitMenu(Player p)
 	{
-		kitsel.add(p);
+		kitsel.add(p.getName());
 	}
 
 	@SuppressWarnings("deprecation")

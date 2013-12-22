@@ -27,10 +27,7 @@ public class MessageManager
 	public MessageManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
-	}
 
-	public void setup()
-	{
 		FileConfiguration f = plugin.getSettingsManager().getMessageConfig();
 		prefix.put(PrefixType.MAIN, MessageUtil.replaceColors(f.getString("prefix.main")));
 		prefix.put(PrefixType.INFO, MessageUtil.replaceColors(f.getString("prefix.states.info")));
