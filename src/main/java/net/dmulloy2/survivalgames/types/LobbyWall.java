@@ -97,7 +97,7 @@ public class LobbyWall
 		if (msgqueue.size() > 0)
 		{
 			display();
-			if (! plugin.isDisabling())
+			if (plugin.isDisabling())
 			{
 				display();
 				update();
@@ -234,11 +234,4 @@ public class LobbyWall
 		}
 
 	}
-
-	/*
-	 * int aniline = 0; class AniSign implements Runnable { public void run() {
-	 * 
-	 * 
-	 * } }
-	 */
 }
