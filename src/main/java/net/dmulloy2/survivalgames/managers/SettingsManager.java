@@ -210,7 +210,7 @@ public class SettingsManager
 		{
 			moveFile(f4);
 			loadFile("messages.yml");
-			reloadKits();
+			reloadMessages();
 		}
 		messages.set("version", MESSAGE_VERSION);
 		saveMessages();
@@ -223,7 +223,7 @@ public class SettingsManager
 		{
 			moveFile(f5);
 			loadFile("chest.yml");
-			reloadKits();
+			reloadChest();
 		}
 	}
 
@@ -364,6 +364,7 @@ public class SettingsManager
 		system.set("sg-system.lobby.spawn.x", l.getBlockX());
 		system.set("sg-system.lobby.spawn.y", l.getBlockY());
 		system.set("sg-system.lobby.spawn.z", l.getBlockZ());
+		saveSystemConfig();
 	}
 
 	public void setSpawn(int gameid, int spawnid, Vector v)

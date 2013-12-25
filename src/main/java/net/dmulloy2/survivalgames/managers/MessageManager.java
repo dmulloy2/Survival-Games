@@ -27,10 +27,10 @@ public class MessageManager
 		this.plugin = plugin;
 
 		FileConfiguration f = plugin.getSettingsManager().getMessageConfig();
-		prefix.put(PrefixType.MAIN, MessageUtil.replaceColors(f.getString("prefix.main")));
-		prefix.put(PrefixType.INFO, MessageUtil.replaceColors(f.getString("prefix.states.info")));
-		prefix.put(PrefixType.WARNING, MessageUtil.replaceColors(f.getString("prefix.states.warning")));
-		prefix.put(PrefixType.ERROR, MessageUtil.replaceColors(f.getString("prefix.states.error")));
+		prefix.put(PrefixType.MAIN, MessageUtil.replaceColors(f.getString("prefix.main", "&6[&4&lSG&6]")));
+		prefix.put(PrefixType.INFO, MessageUtil.replaceColors(f.getString("prefix.states.info", "")));
+		prefix.put(PrefixType.WARNING, MessageUtil.replaceColors(f.getString("prefix.states.warning", "&c[Warning] ")));
+		prefix.put(PrefixType.ERROR, MessageUtil.replaceColors(f.getString("prefix.states.error", "&4[Error] ")));
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class MessageManager
 	 */
 	public void sendMessage(PrefixType type, String msg, Player player)
 	{
-		player.sendMessage(prefix.get(PrefixType.MAIN) + " " + prefix.get(type) + msg);
+		player.sendMessage(prefix.get(PrefixType.MAIN) + " " + prefix.get(type) + ChatColor.translateAlternateColorCodes('&', msg));
 	}
 
 	public void logMessage(PrefixType type, String msg)
@@ -122,6 +122,7 @@ public class MessageManager
 
 	public void broadcastMessage(PrefixType type, String msg, Player player)
 	{
-		plugin.getServer().broadcastMessage(prefix.get(PrefixType.MAIN) + " " + prefix.get(type) + " " + msg);
+		plugin.getServer().broadcastMessage(
+				prefix.get(PrefixType.MAIN) + " " + prefix.get(type) + ChatColor.translateAlternateColorCodes('&', msg));
 	}
 }

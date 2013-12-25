@@ -869,7 +869,7 @@ public class Game
 
 		plugin.getServer().getScheduler().cancelTask(endgameTaskID);
 		gm.gameEndCallBack(gameID);
-		plugin.getQueueManager().rollback(gameID, false);
+		plugin.getQueueManager().rollback(gameID, plugin.isDisabling());
 		plugin.getLobbyManager().updateWall(gameID);
 
 	}

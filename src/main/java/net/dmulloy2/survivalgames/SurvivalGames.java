@@ -223,7 +223,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 		{
 			g.disable();
 
-			queueManager.rollback(g.getID(), true);
+//			queueManager.rollback(g.getID(), true);
 		}
 
 		$("{0} has been disabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
