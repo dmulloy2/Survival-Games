@@ -1,8 +1,8 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 /**
  * @author dmulloy2
@@ -33,7 +33,7 @@ public class CmdJoin extends SurvivalGamesCommand
 			}
 			catch (NumberFormatException e)
 			{
-				messageManager.sendFMessage(PrefixType.ERROR, "error.notanumber", player, "input-" + args[0]);
+				plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notanumber", player, "input-" + args[0]);
 			}
 		}
 		else
@@ -42,7 +42,7 @@ public class CmdJoin extends SurvivalGamesCommand
 			{
 				if (gameManager.getPlayerGameId(player) != -1)
 				{
-					messageManager.sendFMessage(PrefixType.ERROR, "error.alreadyingame", player);
+					plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.alreadyingame", player);
 					return;
 				}
 				
@@ -50,7 +50,7 @@ public class CmdJoin extends SurvivalGamesCommand
 			}
 			else
 			{
-				messageManager.sendFMessage(PrefixType.WARNING, "error.nopermission", player);
+				plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.nopermission", player);
 			}
 		}
 	}

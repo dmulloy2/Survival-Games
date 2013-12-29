@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 import org.bukkit.ChatColor;
 
@@ -31,7 +31,7 @@ public class CmdListArenas extends SurvivalGamesCommand
 		List<Game> games = gameManager.getGames();
 		if (games.isEmpty())
 		{
-			messageManager.sendFMessage(PrefixType.WARNING, "error.noarenasexist", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.noarenasexist", player);
 			return;
 		}
 

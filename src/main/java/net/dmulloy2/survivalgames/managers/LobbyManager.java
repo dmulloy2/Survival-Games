@@ -7,8 +7,8 @@ import java.util.List;
 
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.LobbyWall;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -149,14 +149,14 @@ public class LobbyManager
 		WorldEditPlugin we = plugin.getWorldEdit();
 		if (we == null)
 		{
-			plugin.getMessageManager().sendMessage(PrefixType.WARNING, "You must have WorldEdit installed to do this!", pl);
+			plugin.getMessageHandler().sendMessage(Prefix.WARNING, "You must have WorldEdit installed to do this!", pl);
 			return;
 		}
 		
 		Selection sel = we.getSelection(pl);
 		if (sel == null)
 		{
-			plugin.getMessageManager().sendMessage(PrefixType.WARNING, "You must make a WorldEdit Selection first", pl);
+			plugin.getMessageHandler().sendMessage(Prefix.WARNING, "You must make a WorldEdit Selection first", pl);
 			return;
 		}
 		
@@ -171,7 +171,7 @@ public class LobbyManager
 		if ((sel.getNativeMaximumPoint().getBlockX() - sel.getNativeMinimumPoint().getBlockX()) != 0
 				&& (sel.getNativeMinimumPoint().getBlockZ() - sel.getNativeMaximumPoint().getBlockZ() != 0))
 		{
-			plugin.getMessageManager().sendMessage(PrefixType.WARNING, "Must be in a straight line!", pl);
+			plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Must be in a straight line!", pl);
 			return;
 		}
 		
@@ -188,7 +188,7 @@ public class LobbyManager
 		c.set("sg-system.lobby.signs." + i + ".y2", min.getBlockY());
 		c.set("sg-system.lobby.signs." + i + ".z2", min.getBlockZ());
 		
-		plugin.getMessageManager().sendMessage(PrefixType.INFO, "Added Lobby Wall", pl);
+		plugin.getMessageHandler().sendMessage(Prefix.INFO, "Added Lobby Wall", pl);
 		
 		s.saveSystemConfig();
 		loadSign(i);

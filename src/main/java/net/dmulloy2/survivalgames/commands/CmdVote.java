@@ -1,8 +1,8 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 /**
  * @author dmulloy2
@@ -25,7 +25,7 @@ public class CmdVote extends SurvivalGamesCommand
 		int game = gameManager.getPlayerGameId(player);
 		if (game == -1)
 		{
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.notinarena", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinarena", player);
 			return;
 		}
 

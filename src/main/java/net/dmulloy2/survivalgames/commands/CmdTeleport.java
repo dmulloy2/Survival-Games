@@ -1,9 +1,8 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 /**
  * @author dmulloy2
@@ -33,12 +32,12 @@ public class CmdTeleport extends SurvivalGamesCommand
 			}
 			catch (Exception e)
 			{
-				messageManager.sendMessage(MessageManager.PrefixType.ERROR, "error.nospawns", player);
+				plugin.getMessageHandler().sendMessage(Prefix.ERROR, "error.nospawns", player);
 			}
 		}
 		catch (NumberFormatException e)
 		{
-			messageManager.sendFMessage(PrefixType.ERROR, "error.notanumber", player, "input-" + args[0]);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notanumber", player, "input-" + args[0]);
 		}
 	}
 }

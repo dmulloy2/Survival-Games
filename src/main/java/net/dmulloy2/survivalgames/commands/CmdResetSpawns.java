@@ -1,8 +1,8 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 /**
  * @author dmulloy2
@@ -26,15 +26,15 @@ public class CmdResetSpawns extends SurvivalGamesCommand
 		try
 		{
 			plugin.getSettingsManager().getSpawns().set("spawns." + Integer.parseInt(args[0]), null);
-			messageManager.sendMessage(MessageManager.PrefixType.INFO, "&aSpawns reset for arena &e" + args[0], player);
+			plugin.getMessageHandler().sendMessage(Prefix.INFO, "&aSpawns reset for arena &e" + args[0], player);
 		}
 		catch (NumberFormatException e)
 		{
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.notanumber", player, "input-Arena");
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notanumber", player, "input-Arena");
 		}
 		catch (NullPointerException e)
 		{
-			messageManager.sendMessage(MessageManager.PrefixType.ERROR, "error.gamenotexist", player);
+			plugin.getMessageHandler().sendMessage(Prefix.ERROR, "error.gamenotexist", player);
 		}
 	}
 }

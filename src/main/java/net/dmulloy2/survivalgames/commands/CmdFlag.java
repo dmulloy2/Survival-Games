@@ -3,9 +3,9 @@ package net.dmulloy2.survivalgames.commands;
 import java.util.HashMap;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 /**
  * @author dmulloy2
@@ -31,7 +31,7 @@ public class CmdFlag extends SurvivalGamesCommand
 		Game g = gameManager.getGame(Integer.parseInt(args[0]));
 		if (g == null)
 		{
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.gamedoesntexist", player, "arena-" + args[0]);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gamedoesntexist", player, "arena-" + args[0]);
 			return;
 		}
 

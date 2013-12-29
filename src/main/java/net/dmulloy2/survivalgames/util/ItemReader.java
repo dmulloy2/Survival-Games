@@ -3,6 +3,7 @@ package net.dmulloy2.survivalgames.util;
 import java.util.HashMap;
 
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -65,7 +66,7 @@ public class ItemReader
 			if (split.length == 5)
 			{
 				ItemMeta im = i.getItemMeta();
-				im.setDisplayName(MessageUtil.replaceColors(split[4]));
+				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', split[4]));
 				i.setItemMeta(im);
 			}
 			return i;

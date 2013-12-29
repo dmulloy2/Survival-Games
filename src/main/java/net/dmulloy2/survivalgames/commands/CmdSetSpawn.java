@@ -3,9 +3,9 @@ package net.dmulloy2.survivalgames.commands;
 import java.util.HashMap;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 import org.bukkit.Location;
 
@@ -35,7 +35,7 @@ public class CmdSetSpawn extends SurvivalGamesCommand
 
 		if (game == -1)
 		{
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.notinarena", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinarena", player);
 			return;
 		}
 		
@@ -52,7 +52,7 @@ public class CmdSetSpawn extends SurvivalGamesCommand
 				i = Integer.parseInt(args[0]);
 				if (i > next.get(game) + 1 || i < 1)
 				{
-					messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.between", player,
+					plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.between", player,
 							"num-" + next.get(game));
 					return;
 				}
@@ -63,19 +63,19 @@ public class CmdSetSpawn extends SurvivalGamesCommand
 			}
 			catch (Exception e)
 			{
-				messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.badinput", player);
+				plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.badinput", player);
 				return;
 			}
 		}
 		
 		if (i == -1)
 		{
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.notinside", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinside", player);
 			return;
 		}
 		
 		plugin.getSettingsManager().setSpawn(game, i, l.toVector());
-		messageManager.sendFMessage(MessageManager.PrefixType.INFO, "info.spawnset", player, "num-" + i, "arena-" + game);
+		plugin.getMessageHandler().sendFMessage(Prefix.INFO, "info.spawnset", player, "num-" + i, "arena-" + game);
 		return;
 	}
 	

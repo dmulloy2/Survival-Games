@@ -1,8 +1,8 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 /**
  * @author dmulloy2
@@ -23,6 +23,6 @@ public class CmdSetLobbySpawn extends SurvivalGamesCommand
 	public void perform()
 	{
 		plugin.getSettingsManager().setLobbySpawn(player.getLocation());
-		messageManager.sendFMessage(MessageManager.PrefixType.INFO, "info.lobbyspawn", player);
+		plugin.getMessageHandler().sendFMessage(Prefix.INFO, "info.lobbyspawn", player);
 	}
 }

@@ -9,10 +9,6 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.api.PlayerGameDeathEvent;
 import net.dmulloy2.survivalgames.api.PlayerJoinArenaEvent;
 import net.dmulloy2.survivalgames.api.PlayerWinEvent;
-import net.dmulloy2.survivalgames.managers.GameManager;
-import net.dmulloy2.survivalgames.managers.MessageManager;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
-import net.dmulloy2.survivalgames.stats.StatsManager;
 import net.dmulloy2.survivalgames.util.ItemReader;
 import net.dmulloy2.survivalgames.util.Kit;
 import net.dmulloy2.survivalgames.util.LocationUtil;
@@ -69,20 +65,13 @@ public class Game
 
 	private HashMap<String, String> hookvars = new HashMap<String, String>();
 
-	private MessageManager msgmgr;
-	private GameManager gm;
-	private StatsManager sm;
-
 	private final SurvivalGames plugin;
 
-	public Game(GameManager manager, int gameID)
+	public Game(SurvivalGames plugin, int gameID)
 	{
-		this.gm = manager;
-
-		this.plugin = gm.getPlugin();
-		this.sm = plugin.getStatsManager();
-
+		this.plugin = plugin;
 		this.gameID = gameID;
+
 		reloadConfig();
 		setup();
 	}
@@ -174,11 +163,6 @@ public class Game
 		return arena;
 	}
 
-	public StatsManager getStatsManager()
-	{
-		return sm;
-	}
-
 	// -------------------------//
 	// Enable
 	// -------------------------//
@@ -187,7 +171,7 @@ public class Game
 		mode = GameMode.WAITING;
 		if (disabled)
 		{
-			msgmgr.broadcastFMessage(PrefixType.INFO, "broadcast.gameenabled", "arena-" + gameID);
+			plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gameenabled", "arena-" + gameID);
 		}
 		disabled = false;
 		int b = (plugin.getSettingsManager().getSpawnCount(gameID) > queue.size()) ? queue.size() : plugin.getSettingsManager()
@@ -199,13 +183,13 @@ public class Game
 		int c = 1;
 		for (Player p : queue)
 		{
-			msgmgr.sendMessage(PrefixType.INFO, "You are now #" + c + " in line for arena " + gameID, p);
+			plugin.getMessageHandler().sendMessage(Prefix.INFO, "You are now #" + c + " in line for arena " + gameID, p);
 			c++;
 		}
 
 		plugin.getLobbyManager().updateWall(gameID);
 
-		msgmgr.broadcastFMessage(PrefixType.INFO, "broadcast.gamewaiting", "arena-" + gameID);
+		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamewaiting", "arena-" + gameID);
 
 	}
 
@@ -216,27 +200,27 @@ public class Game
 	{
 		if (plugin.getSettingsManager().getLobbySpawn() == null)
 		{
-			msgmgr.sendFMessage(PrefixType.WARNING, "error.nolobbyspawn", p);
+			plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.nolobbyspawn", p);
 			return false;
 		}
 
 		if (!canJoinArena(p, gameID))
 		{
 			debug("permission needed to join arena: " + "sg.arena.join." + gameID);
-			msgmgr.sendFMessage(PrefixType.WARNING, "game.nopermission", p, "arena-" + gameID);
+			plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "game.nopermission", p, "arena-" + gameID);
 			return false;
 		}
 
 		plugin.getHookManager().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + spawns.size(),
 				"players-" + activePlayers.size());
 
-		gm.removeFromOtherQueues(p, gameID);
+		plugin.getGameManager().removeFromOtherQueues(p, gameID);
 
-		if (gm.getPlayerGameId(p) != -1)
+		if (plugin.getGameManager().getPlayerGameId(p) != -1)
 		{
-			if (gm.isPlayerActive(p))
+			if (plugin.getGameManager().isPlayerActive(p))
 			{
-				msgmgr.sendMessage(PrefixType.ERROR, "Cannot join multiple games!", p);
+				plugin.getMessageHandler().sendMessage(Prefix.ERROR, "Cannot join multiple games!", p);
 				return false;
 			}
 		}
@@ -251,8 +235,8 @@ public class Game
 		{
 			if (activePlayers.size() < plugin.getSettingsManager().getSpawnCount(gameID))
 			{
-				msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, p);
-				PlayerJoinArenaEvent joinarena = new PlayerJoinArenaEvent(p, gm.getGame(gameID));
+				plugin.getMessageHandler().sendMessage(Prefix.INFO, "Joining Arena " + gameID, p);
+				PlayerJoinArenaEvent joinarena = new PlayerJoinArenaEvent(p, plugin.getGameManager().getGame(gameID));
 				plugin.getServer().getPluginManager().callEvent(joinarena);
 				boolean placed = false;
 				int spawnCount = plugin.getSettingsManager().getSpawnCount(gameID);
@@ -275,7 +259,7 @@ public class Game
 						clearInv(p);
 
 						activePlayers.add(p);
-						sm.addPlayer(p, gameID);
+						plugin.getStatsManager().addPlayer(p, gameID);
 
 						hookvars.put("activeplayers", activePlayers.size() + "");
 						plugin.getLobbyManager().updateWall(gameID);
@@ -293,23 +277,23 @@ public class Game
 
 				if (!placed)
 				{
-					msgmgr.sendFMessage(PrefixType.ERROR, "error.gamefull", p, "arena-" + gameID);
+					plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gamefull", p, "arena-" + gameID);
 					return false;
 				}
 
 			}
 			else if (plugin.getSettingsManager().getSpawnCount(gameID) == 0)
 			{
-				msgmgr.sendMessage(PrefixType.WARNING, "No spawns set for Arena " + gameID + "!", p);
+				plugin.getMessageHandler().sendMessage(Prefix.WARNING, "No spawns set for Arena " + gameID + "!", p);
 				return false;
 			}
 			else
 			{
-				msgmgr.sendFMessage(PrefixType.WARNING, "error.gamefull", p, "arena-" + gameID);
+				plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.gamefull", p, "arena-" + gameID);
 				return false;
 			}
 
-			msgFall(PrefixType.INFO, "game.playerjoingame", "player-" + p.getName(), "activeplayers-" + getActivePlayers(), "maxplayers-"
+			msgFall(Prefix.INFO, "game.playerjoingame", "player-" + p.getName(), "activeplayers-" + getActivePlayers(), "maxplayers-"
 					+ plugin.getSettingsManager().getSpawnCount(gameID));
 			if (activePlayers.size() >= config.getInt("auto-start-players") && !countdownRunning)
 				countdown(config.getInt("auto-start-time"));
@@ -323,14 +307,14 @@ public class Game
 				if (!queue.contains(p))
 				{
 					queue.add(p);
-					msgmgr.sendFMessage(PrefixType.INFO, "game.playerjoinqueue", p, "queuesize-" + queue.size());
+					plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playerjoinqueue", p, "queuesize-" + queue.size());
 				}
 				int a = 1;
 				for (Player qp : queue)
 				{
 					if (qp == p)
 					{
-						msgmgr.sendFMessage(PrefixType.INFO, "game.playercheckqueue", p, "queuepos-" + a);
+						plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playercheckqueue", p, "queuepos-" + a);
 						break;
 					}
 					a++;
@@ -340,19 +324,19 @@ public class Game
 
 		if (mode == GameMode.INGAME)
 		{
-			msgmgr.sendFMessage(PrefixType.WARNING, "error.alreadyingame", p);
+			plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.alreadyingame", p);
 		}
 		else if (mode == GameMode.DISABLED)
 		{
-			msgmgr.sendFMessage(PrefixType.WARNING, "error.gamedisabled", p, "arena-" + gameID);
+			plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.gamedisabled", p, "arena-" + gameID);
 		}
 		else if (mode == GameMode.RESETTING)
 		{
-			msgmgr.sendFMessage(PrefixType.WARNING, "error.gameresetting", p);
+			plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.gameresetting", p);
 		}
 		else
 		{
-			msgmgr.sendMessage(PrefixType.INFO, "Cannot join game!", p);
+			plugin.getMessageHandler().sendMessage(Prefix.INFO, "Cannot join game!", p);
 		}
 
 		plugin.getLobbyManager().updateWall(gameID);
@@ -369,17 +353,17 @@ public class Game
 	// -------------------------//
 	public void showMenu(Player p)
 	{
-		gm.openKitMenu(p);
+		plugin.getGameManager().openKitMenu(p);
 		Inventory i = plugin.getServer().createInventory(p, 90, ChatColor.RED + "" + ChatColor.BOLD + "Kit Selection");
 
 		int a = 0;
 		int b = 0;
 
-		List<Kit> kits = gm.getKits(p);
+		List<Kit> kits = plugin.getGameManager().getKits(p);
 		plugin.debug(kits + "");
 		if (kits == null || kits.size() == 0 || !plugin.getSettingsManager().getKits().getBoolean("enabled"))
 		{
-			gm.leaveKitMenu(p);
+			plugin.getGameManager().leaveKitMenu(p);
 			return;
 		}
 
@@ -429,17 +413,17 @@ public class Game
 	{
 		if (GameMode.STARTING == mode)
 		{
-			msgmgr.sendMessage(PrefixType.WARNING, "Game already starting!", pl);
+			plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Game already starting!", pl);
 			return;
 		}
 		if (GameMode.WAITING != mode)
 		{
-			msgmgr.sendMessage(PrefixType.WARNING, "Game already started!", pl);
+			plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Game already started!", pl);
 			return;
 		}
 		if (voted.contains(pl))
 		{
-			msgmgr.sendMessage(PrefixType.WARNING, "You already voted!", pl);
+			plugin.getMessageHandler().sendMessage(Prefix.WARNING, "You already voted!", pl);
 			return;
 		}
 
@@ -448,8 +432,8 @@ public class Game
 
 		for (Player player : activePlayers)
 		{
-			msgmgr.sendFMessage(PrefixType.INFO, "game.playervote", player, "player-" + pl.getName(), "voted-" + vote, "players-"
-					+ getActivePlayers());
+			plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playervote", player, "player-" + pl.getName(), "voted-" + vote,
+					"players-" + getActivePlayers());
 		}
 
 		plugin.getHookManager().runHook("PLAYER_VOTE", "player-" + pl.getName());
@@ -474,7 +458,7 @@ public class Game
 		{
 			for (Player pl : activePlayers)
 			{
-				msgmgr.sendMessage(PrefixType.WARNING, "Not enough players!", pl);
+				plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Not enough players!", pl);
 				mode = GameMode.WAITING;
 				plugin.getLobbyManager().updateWall(gameID);
 
@@ -488,42 +472,44 @@ public class Game
 			{
 				pl.setHealth(pl.getMaxHealth());
 				// clearInv(pl);
-				msgmgr.sendFMessage(PrefixType.INFO, "game.goodluck", pl);
+				plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.goodluck", pl);
 			}
 			if (config.getBoolean("restock-chest"))
 			{
 				plugin.getSettingsManager().getGameWorld(gameID).setTime(0);
 				gcount++;
-				tasks.add(plugin.getServer().getScheduler().scheduleSyncDelayedTask(gm.getPlugin(), new NightChecker(), 14400));
+				tasks.add(plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new NightChecker(), 14400));
 			}
 			if (config.getInt("grace-period") != 0)
 			{
 				for (Player play : activePlayers)
 				{
-					msgmgr.sendMessage(PrefixType.INFO, "You have a " + config.getInt("grace-period") + " second grace period!", play);
+					plugin.getMessageHandler().sendMessage(Prefix.INFO,
+							"You have a " + config.getInt("grace-period") + " second grace period!", play);
 				}
-				plugin.getServer().getScheduler().scheduleSyncDelayedTask(gm.getPlugin(), new BukkitRunnable()
+
+				new BukkitRunnable()
 				{
 					@Override
 					public void run()
 					{
 						for (Player play : activePlayers)
 						{
-							msgmgr.sendMessage(PrefixType.INFO, "Grace period has ended!", play);
+							plugin.getMessageHandler().sendMessage(Prefix.INFO, "Grace period has ended!", play);
 						}
 					}
-				}, config.getInt("grace-period") * 20);
+				}.runTaskLater(plugin, config.getInt("grace-period") * 20);
 			}
 			if (config.getBoolean("deathmatch.enabled"))
 			{
 				tasks.add(plugin.getServer().getScheduler()
-						.scheduleSyncDelayedTask(gm.getPlugin(), new DeathMatch(), config.getInt("deathmatch.time") * 20 * 60));
+						.scheduleSyncDelayedTask(plugin, new DeathMatch(), config.getInt("deathmatch.time") * 20 * 60));
 			}
 		}
 
 		mode = GameMode.INGAME;
 		plugin.getLobbyManager().updateWall(gameID);
-		msgmgr.broadcastFMessage(PrefixType.INFO, "broadcast.gamestarted", "arena-" + gameID);
+		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamestarted", "arena-" + gameID);
 
 	}
 
@@ -541,7 +527,7 @@ public class Game
 	public void countdown(int time)
 	{
 		// plugin.getServer().broadcastMessage(""+time);
-		msgmgr.broadcastFMessage(PrefixType.INFO, "broadcast.gamestarting", "arena-" + gameID, "t-" + time);
+		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamestarting", "arena-" + gameID, "t-" + time);
 		countdownRunning = true;
 		count = time;
 		plugin.getServer().getScheduler().cancelTask(tid);
@@ -549,7 +535,7 @@ public class Game
 		if (mode == GameMode.WAITING || mode == GameMode.STARTING)
 		{
 			mode = GameMode.STARTING;
-			tid = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(gm.getPlugin(), new Runnable()
+			tid = new BukkitRunnable()
 			{
 				@Override
 				public void run()
@@ -558,11 +544,11 @@ public class Game
 					{
 						if (count % 10 == 0)
 						{
-							msgFall(PrefixType.INFO, "game.countdown", "t-" + count);
+							msgFall(Prefix.INFO, "game.countdown", "t-" + count);
 						}
 						if (count < 6)
 						{
-							msgFall(PrefixType.INFO, "game.countdown", "t-" + count);
+							msgFall(Prefix.INFO, "game.countdown", "t-" + count);
 
 						}
 						count--;
@@ -575,8 +561,7 @@ public class Game
 						countdownRunning = false;
 					}
 				}
-			}, 0, 20);
-
+			}.runTaskTimer(plugin, 0, 20).getTaskId();
 		}
 	}
 
@@ -592,7 +577,7 @@ public class Game
 		}
 		else
 		{
-			sm.removePlayer(p, gameID);
+			plugin.getStatsManager().removePlayer(p, gameID);
 			restoreInv(p);
 			activePlayers.remove(p);
 			inactivePlayers.remove(p);
@@ -604,7 +589,7 @@ public class Game
 			}
 			plugin.getLobbyManager().clearSigns(gameID);
 
-			msgFall(PrefixType.INFO, "game.playerleavegame", "player-" + p.getName());
+			msgFall(Prefix.INFO, "game.playerleavegame", "player-" + p.getName());
 		}
 
 		plugin.getHookManager().runHook("PLAYER_REMOVED", "player-" + p.getName());
@@ -627,7 +612,7 @@ public class Game
 		{
 			p.teleport(plugin.getSettingsManager().getLobbySpawn());
 		}
-		sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
+		plugin.getStatsManager().playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
 
 		if (!activePlayers.contains(p))
 		{
@@ -644,7 +629,7 @@ public class Game
 		{
 			PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, p, this);
 			plugin.getServer().getPluginManager().callEvent(leavearena);
-			msgFall(PrefixType.INFO, "game.playerleavegame", "player-" + p.getName());
+			msgFall(Prefix.INFO, "game.playerleavegame", "player-" + p.getName());
 		}
 		else
 		{
@@ -658,7 +643,7 @@ public class Game
 							Player killer = p.getKiller();
 							PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, killer, this);
 							plugin.getServer().getPluginManager().callEvent(leavearena);
-							msgFall(PrefixType.INFO,
+							msgFall(Prefix.INFO,
 									"death." + p.getLastDamageCause().getEntityType(),
 									"player-" + (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
 											+ p.getName(), "killer-"
@@ -669,11 +654,11 @@ public class Game
 											+ ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType())
 													: "Unknown Item"));
 							if (killer != null && p != null)
-								sm.addKill(killer, p, gameID);
+								plugin.getStatsManager().addKill(killer, p, gameID);
 						}
 						else
 						{
-							msgFall(PrefixType.INFO,
+							msgFall(Prefix.INFO,
 									"death." + p.getLastDamageCause().getEntityType(),
 									"player-" + (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
 											+ p.getName(), "killer-" + p.getLastDamageCause().getEntityType());
@@ -689,23 +674,23 @@ public class Game
 							Player killer = p.getKiller();
 							PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, killer, this);
 							plugin.getServer().getPluginManager().callEvent(leavearena);
-							msgFall(PrefixType.INFO,
+							msgFall(Prefix.INFO,
 									"death." + p.getLastDamageCause().getCause(),
 									"player-" + (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
 											+ p.getName(), "killer-" + p.getKiller().getName());
 							if (killer != null && p != null)
-								sm.addKill(killer, p, gameID);
+								plugin.getStatsManager().addKill(killer, p, gameID);
 						}
 						else
 						{
-							msgFall(PrefixType.INFO,
+							msgFall(Prefix.INFO,
 									"death." + p.getLastDamageCause().getCause(),
 									"player-" + (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
 											+ p.getName(), "killer-" + p.getLastDamageCause().getCause());
 						}
 						break;
 					default:
-						msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getCause(), "player-"
+						msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-"
 								+ (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(),
 								"killer-" + p.getLastDamageCause().getCause());
 						break;
@@ -714,8 +699,10 @@ public class Game
 				{
 					for (Player pl : getAllPlayers())
 					{
-						msgmgr.sendMessage(PrefixType.INFO, ChatColor.DARK_AQUA + "There are " + ChatColor.YELLOW + "" + getActivePlayers()
-								+ ChatColor.DARK_AQUA + " players remaining!", pl);
+						plugin.getMessageHandler().sendMessage(
+								Prefix.INFO,
+								ChatColor.DARK_AQUA + "There are " + ChatColor.YELLOW + "" + getActivePlayers() + ChatColor.DARK_AQUA
+										+ " players remaining!", pl);
 					}
 				}
 			}
@@ -730,8 +717,7 @@ public class Game
 
 		if (getActivePlayers() <= config.getInt("endgame.players") && config.getBoolean("endgame.fire-lighting.enabled") && !endgameRunning)
 		{
-			tasks.add(plugin.getServer().getScheduler()
-					.scheduleSyncRepeatingTask(gm.getPlugin(), new EndgameManager(), 0, config.getInt("endgame.fire-lighting.interval") * 20));
+			tasks.add(new EndgameManager().runTaskTimer(plugin, 0, config.getInt("endgame.fire-lighting.interval") * 20).getTaskId());
 		}
 
 		if (activePlayers.size() < 2 && mode != GameMode.WAITING)
@@ -754,7 +740,8 @@ public class Game
 		// clearInv(p);
 		win.teleport(plugin.getSettingsManager().getLobbySpawn());
 		restoreInv(win);
-		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin", "arena-" + gameID, "victim-" + p.getName(), "player-" + win.getName());
+		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "game.playerwin", "arena-" + gameID, "victim-" + p.getName(),
+				"player-" + win.getName());
 		plugin.getLobbyManager().display(new String[] { win.getName(), "", "Won the ", "Survival Games!" }, gameID);
 
 		mode = GameMode.FINISHING;
@@ -777,8 +764,8 @@ public class Game
 		PlayerWinEvent winEvent = new PlayerWinEvent(win, p, this);
 		plugin.getServer().getPluginManager().callEvent(winEvent);
 
-		sm.playerWin(win, gameID, new Date().getTime() - startTime);
-		sm.saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
+		plugin.getStatsManager().playerWin(win, gameID, new Date().getTime() - startTime);
+		plugin.getStatsManager().saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
 
 		activePlayers.clear();
 		inactivePlayers.clear();
@@ -786,7 +773,7 @@ public class Game
 
 		loadspawns();
 		plugin.getLobbyManager().updateWall(gameID);
-		msgmgr.broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-" + gameID);
+		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gameend", "arena-" + gameID);
 
 	}
 
@@ -796,10 +783,9 @@ public class Game
 	public void endGame()
 	{
 		mode = GameMode.WAITING;
-		
-		if (! plugin.isDisabling())
-			resetArena();
-		
+
+		resetArena();
+
 		plugin.getLobbyManager().clearSigns(gameID);
 		plugin.getLobbyManager().updateWall(gameID);
 
@@ -818,7 +804,7 @@ public class Game
 			try
 			{
 				Player p = activePlayers.get(a);
-				msgmgr.sendMessage(PrefixType.WARNING, "Game disabled!", p);
+				plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Game disabled!", p);
 				removePlayer(p, false);
 			}
 			catch (Exception e)
@@ -832,7 +818,7 @@ public class Game
 			try
 			{
 				Player p = inactivePlayers.remove(a);
-				msgmgr.sendMessage(PrefixType.WARNING, "Game disabled!", p);
+				plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Game disabled!", p);
 			}
 			catch (Exception e)
 			{
@@ -846,7 +832,7 @@ public class Game
 
 		endGame();
 		plugin.getLobbyManager().updateWall(gameID);
-		msgmgr.broadcastFMessage(PrefixType.INFO, "broadcast.gamedisabled", "arena-" + gameID);
+		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamedisabled", "arena-" + gameID);
 
 	}
 
@@ -868,8 +854,8 @@ public class Game
 		endgameRunning = false;
 
 		plugin.getServer().getScheduler().cancelTask(endgameTaskID);
-		gm.gameEndCallBack(gameID);
-		plugin.getQueueManager().rollback(gameID, plugin.isDisabling());
+		plugin.getGameManager().gameEndCallBack(gameID);
+		plugin.getQueueManager().rollback(gameID);
 		plugin.getLobbyManager().updateWall(gameID);
 
 	}
@@ -914,7 +900,7 @@ public class Game
 	{
 		if (mode != GameMode.INGAME)
 		{
-			msgmgr.sendMessage(PrefixType.WARNING, "You can only spectate running games!", p);
+			plugin.getMessageHandler().sendMessage(Prefix.WARNING, "You can only spectate running games!", p);
 			return;
 		}
 
@@ -1044,9 +1030,9 @@ public class Game
 			{
 				for (Player pl : activePlayers)
 				{
-					msgmgr.sendMessage(PrefixType.INFO, "Chests restocked!", pl);
+					plugin.getMessageHandler().sendMessage(Prefix.INFO, "Chests restocked!", pl);
 				}
-				gm.openedChest.get(gameID).clear();
+				plugin.getGameManager().openedChest.get(gameID).clear();
 				reset = true;
 			}
 
@@ -1201,32 +1187,11 @@ public class Game
 		return "Arena " + gameID;
 	}
 
-	public void msgFall(PrefixType type, String msg, String... vars)
+	public void msgFall(Prefix type, String msg, String... vars)
 	{
 		for (Player p : getAllPlayers())
 		{
-			msgmgr.sendFMessage(type, msg, p, vars);
+			plugin.getMessageHandler().sendFMessage(type, msg, p, vars);
 		}
 	}
-
-	/*
-	 * public void randomTrap() {
-	 * 
-	 * World world = plugin.getSettingsManager().getGameWorld(gameID);
-	 * 
-	 * double xcord; double zcord; double ycord = 80; Random rand = new
-	 * Random(); xcord = rand.nextInt(1000); zcord = rand.nextInt(1000);
-	 * Location trap = new Location(world, xcord, ycord, zcord); boolean isAir =
-	 * true;
-	 * 
-	 * while(isAir == true) { ycord--; Byte blockData =
-	 * trap.getBlock().getData(); if(blockData != 0) {
-	 * trap.getBlock().setType(Material.AIR); ycord--;
-	 * trap.getBlock().setType(Material.AIR); ycord--;
-	 * trap.getBlock().setType(Material.AIR); ycord--;
-	 * trap.getBlock().setType(Material.LAVA); isAir = false; } else { isAir =
-	 * true; } }
-	 * 
-	 * }
-	 */
 }

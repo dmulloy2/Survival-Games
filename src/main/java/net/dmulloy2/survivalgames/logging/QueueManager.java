@@ -52,17 +52,17 @@ public class QueueManager
 		new DataDumper().runTaskTimer(plugin, 100, 100);
 	}
 
-	public void rollback(final int id, final boolean shutdown)
+	public void rollback(final int id)
 	{
 		loadSave(id);
 
-		if (! shutdown)
+		if (plugin.isDisabling())
 		{
-			new Rollback(id, shutdown, 0, 1, 0).runTaskLater(plugin, 2L);
+			rollback(id, true, 0, 1, 0);
 		}
 		else
 		{
-			rollback(id, shutdown, 0, 1, 0);
+			new Rollback(id, false, 0, 1, 0).runTaskLater(plugin, 2L);
 		}
 
 		List<Entity> removelist = new ArrayList<Entity>();
@@ -78,13 +78,13 @@ public class QueueManager
 			}
 		}
 
-		if (! shutdown)
+		if (plugin.isDisabling())
 		{
-			new EntityRemoveTask(removelist).runTaskLater(plugin, 2L);
+			removeEntites(removelist);
 		}
 		else
 		{
-			removeEntites(removelist);
+			new EntityRemoveTask(removelist).runTaskLater(plugin, 2L);
 		}
 	}
 
@@ -229,10 +229,8 @@ public class QueueManager
 
 			if (a != -1)
 			{
-				plugin.getServer()
-						.getScheduler()
-						.scheduleSyncDelayedTask(plugin.getGameManager().getPlugin(),
-								new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time), 1);
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(
+						plugin, new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time), 1);
 			}
 			else
 			{

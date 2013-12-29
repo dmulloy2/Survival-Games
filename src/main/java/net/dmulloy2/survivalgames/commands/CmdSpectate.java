@@ -1,8 +1,8 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 /**
  * @author dmulloy2
@@ -31,19 +31,19 @@ public class CmdSpectate extends SurvivalGamesCommand
 				return;
 			}
 
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.notspecified", player, "input-Game ID");
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notspecified", player, "input-Game ID");
 			return;
 		}
 		
 		if (plugin.getSettingsManager().getSpawnCount(Integer.parseInt(args[0])) == 0)
 		{
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.nospawns", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.nospawns", player);
 			return;
 		}
 		
 		if (gameManager.isPlayerActive(player))
 		{
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.specingame", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.specingame", player);
 			return;
 		}
 		

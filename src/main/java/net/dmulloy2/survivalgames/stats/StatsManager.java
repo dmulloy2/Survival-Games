@@ -10,10 +10,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.DatabaseManager;
-import net.dmulloy2.survivalgames.managers.MessageManager;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.Game;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 import org.bukkit.entity.Player;
 
@@ -26,17 +24,10 @@ public class StatsManager
 
 	private boolean enabled = true;
 
-	private DatabaseManager dbman;
-	private MessageManager msgmgr;
-
 	private final SurvivalGames plugin;
-
 	public StatsManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
-
-		this.msgmgr = plugin.getMessageManager();
-		this.dbman = plugin.getDatabaseManager();
 	}
 
 	public void setup(boolean b)
@@ -46,16 +37,16 @@ public class StatsManager
 		{
 			try
 			{
-				PreparedStatement s = dbman
+				PreparedStatement s = plugin.getDatabaseManager()
 						.createStatement(" CREATE TABLE "
 								+ plugin.getSettingsManager().getSqlPrefix()
 								+ "playerstats(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, gameno int,arenaid int, player text, points int,position int,"
 								+ " kills int, death int, killed text,time int, ks1 int, ks2 int,ks3 int, ks4 int, ks5 int)");
 
-				PreparedStatement s1 = dbman.createStatement(" CREATE TABLE " + plugin.getSettingsManager().getSqlPrefix()
+				PreparedStatement s1 = plugin.getDatabaseManager().createStatement(" CREATE TABLE " + plugin.getSettingsManager().getSqlPrefix()
 						+ "gamestats(gameno int NOT NULL AUTO_INCREMENT PRIMARY KEY, arenaid int, players int, winner text, time int )");
 
-				DatabaseMetaData dbm = dbman.getMysqlConnection().getMetaData();
+				DatabaseMetaData dbm = plugin.getDatabaseManager().getMysqlConnection().getMetaData();
 				ResultSet tables = dbm.getTables(null, null, plugin.getSettingsManager().getSqlPrefix() + "playerstats", null);
 				ResultSet tables1 = dbm.getTables(null, null, plugin.getSettingsManager().getSqlPrefix() + "gamestats", null);
 
@@ -116,13 +107,15 @@ public class StatsManager
 		int kslevel = s.addKill(killed);
 		if (kslevel > 3)
 		{
-			msgmgr.broadcastFMessage(PrefixType.INFO, "killstreak.level" + ((kslevel > 5) ? 5 : kslevel), "player-" + p.getName());
+			plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "killstreak.level" + ((kslevel > 5) ? 5 : kslevel),
+					"player-" + p.getName());
 		}
 		else if (kslevel > 0)
 		{
 			for (Player pl : plugin.getGameManager().getGame(arenaid).getAllPlayers())
 			{
-				msgmgr.sendFMessage(PrefixType.INFO, "killstreak.level" + ((kslevel > 5) ? 5 : kslevel), pl, "player-" + p.getName());
+				plugin.getMessageHandler().sendFMessage(Prefix.INFO, "killstreak.level" + ((kslevel > 5) ? 5 : kslevel), pl,
+						"player-" + p.getName());
 			}
 		}
 	}
@@ -138,7 +131,7 @@ public class StatsManager
 		try
 		{
 			long time1 = new Date().getTime();
-			PreparedStatement s2 = dbman.createStatement("SELECT * FROM " + plugin.getSettingsManager().getSqlPrefix()
+			PreparedStatement s2 = plugin.getDatabaseManager().createStatement("SELECT * FROM " + plugin.getSettingsManager().getSqlPrefix()
 					+ "gamestats ORDER BY gameno DESC LIMIT 1");
 			ResultSet rs = s2.executeQuery();
 			rs.next();
@@ -168,7 +161,7 @@ public class StatsManager
 
 	private void addSQL(String query)
 	{
-		addSQL(dbman.createStatement(query));
+		addSQL(plugin.getDatabaseManager().createStatement(query));
 	}
 
 	private void addSQL(PreparedStatement s)
@@ -195,7 +188,7 @@ public class StatsManager
 				}
 				catch (Exception e)
 				{
-					dbman.connect();
+					plugin.getDatabaseManager().connect();
 				}
 			}
 		}

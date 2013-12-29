@@ -1,9 +1,9 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -32,7 +32,7 @@ public class CmdDelArena extends SurvivalGamesCommand
 
 		if (g == null)
 		{
-			messageManager.sendFMessage(PrefixType.ERROR, "error.gamedoesntexist", player, "arena-" + arena);
+			sendFMessage(Prefix.ERROR, "error.gamedoesntexist", "arena-" + arena);
 			return;
 		}
 
@@ -40,7 +40,7 @@ public class CmdDelArena extends SurvivalGamesCommand
 		s.set("sg-system.arenas." + arena + ".enabled", false);
 		s.set("sg-system.arenano", s.getInt("sg-system.arenano") - 1);
 
-		messageManager.sendFMessage(PrefixType.INFO, "info.deleted", player, "input-Arena");
+		sendFMessage(Prefix.INFO, "info.deleted", "input-Arena");
 		plugin.getSettingsManager().saveSystemConfig();
 		gameManager.hotRemoveArena(arena);
 

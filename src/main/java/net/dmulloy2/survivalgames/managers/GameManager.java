@@ -9,9 +9,10 @@ import java.util.Set;
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.api.PlayerLeaveArenaEvent;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
+import net.dmulloy2.survivalgames.handlers.MessageHandler;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Game.GameMode;
+import net.dmulloy2.survivalgames.types.Prefix;
 import net.dmulloy2.survivalgames.util.Kit;
 
 import org.bukkit.ChatColor;
@@ -33,22 +34,19 @@ public class GameManager
 
 	public @Getter HashMap<Integer, HashSet<Block>> openedChest;
 
-	private MessageManager msgmgr;
+	private MessageHandler messageHandler;
 
 	private final SurvivalGames plugin;
 
 	public GameManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
+		this.messageHandler = plugin.getMessageHandler();
 
 		this.games = new ArrayList<Game>();
 		this.kits = new ArrayList<Kit>();
-
 		this.kitsel = new HashSet<String>();
-
 		this.openedChest = new HashMap<Integer, HashSet<Block>>();
-
-		this.msgmgr = plugin.getMessageManager();
 
 		loadGames();
 		loadKits();
@@ -57,11 +55,6 @@ public class GameManager
 		{
 			openedChest.put(g.getID(), new HashSet<Block>());
 		}
-	}
-
-	public SurvivalGames getPlugin()
-	{
-		return plugin;
 	}
 
 	public void reloadGames()
@@ -92,7 +85,7 @@ public class GameManager
 				if (c.getBoolean("sg-system.arenas." + a + ".enabled"))
 				{
 					loaded++;
-					games.add(new Game(this, a));
+					games.add(new Game(plugin, a));
 					plugin.getStatsManager().addArena(a);
 				}
 			}
@@ -190,7 +183,7 @@ public class GameManager
 			if (g.isInQueue(p) && g.getID() != id)
 			{
 				g.removeFromQueue(p);
-				msgmgr.sendMessage(PrefixType.INFO, "Removed from the queue in arena " + g.getID(), p);
+				messageHandler.sendMessage(Prefix.INFO, "Removed from the queue in arena " + g.getID(), p);
 			}
 		}
 	}
@@ -312,7 +305,7 @@ public class GameManager
 		Game game = getGame(g);
 		if (game == null)
 		{
-			plugin.getMessageManager().sendFMessage(PrefixType.ERROR, "error.input", p, "message-No game by this ID exist!");
+			messageHandler.sendFMessage(Prefix.ERROR, "error.input", p, "message-No game by this ID exist!");
 			return;
 		}
 
@@ -330,8 +323,7 @@ public class GameManager
 
 		if (qg.isEmpty())
 		{
-//			pl.sendMessage(ChatColor.RED + "No games to join");
-			msgmgr.sendMessage(PrefixType.WARNING, "No games to join!", pl);
+			messageHandler.sendMessage(Prefix.WARNING, "No games to join!", pl);
 			return;
 		}
 
@@ -343,14 +335,14 @@ public class GameManager
 		WorldEditPlugin we = plugin.getWorldEdit();
 		if (we == null)
 		{
-			msgmgr.sendMessage(PrefixType.WARNING, "WorldEdit is not installed! Please install it!", pl);
+			messageHandler.sendMessage(Prefix.WARNING, "WorldEdit is not installed! Please install it!", pl);
 			return;
 		}
 
 		Selection sel = we.getSelection(pl);
 		if (sel == null)
 		{
-			msgmgr.sendMessage(PrefixType.WARNING, "You must make a WorldEdit Selection first!", pl);
+			messageHandler.sendMessage(Prefix.WARNING, "You must make a WorldEdit Selection first!", pl);
 			return;
 		}
 
@@ -387,7 +379,7 @@ public class GameManager
 
 	private void hotAddArena(int no)
 	{
-		Game game = new Game(this, no);
+		Game game = new Game(plugin, no);
 		games.add(game);
 		plugin.getStatsManager().addArena(no);
 	}

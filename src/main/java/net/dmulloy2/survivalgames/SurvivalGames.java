@@ -39,6 +39,7 @@ import net.dmulloy2.survivalgames.events.SpectatorEvents;
 import net.dmulloy2.survivalgames.events.TeleportEvent;
 import net.dmulloy2.survivalgames.handlers.CommandHandler;
 import net.dmulloy2.survivalgames.handlers.LogHandler;
+import net.dmulloy2.survivalgames.handlers.MessageHandler;
 import net.dmulloy2.survivalgames.handlers.PermissionHandler;
 import net.dmulloy2.survivalgames.hooks.HookManager;
 import net.dmulloy2.survivalgames.logging.LoggingManager;
@@ -47,14 +48,12 @@ import net.dmulloy2.survivalgames.managers.DatabaseManager;
 import net.dmulloy2.survivalgames.managers.EconomyManager;
 import net.dmulloy2.survivalgames.managers.GameManager;
 import net.dmulloy2.survivalgames.managers.LobbyManager;
-import net.dmulloy2.survivalgames.managers.MessageManager;
 import net.dmulloy2.survivalgames.managers.SettingsManager;
 import net.dmulloy2.survivalgames.stats.StatsManager;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Reloadable;
 import net.dmulloy2.survivalgames.util.ChestRatioStorage;
 import net.dmulloy2.survivalgames.util.FormatUtil;
-import net.dmulloy2.survivalgames.util.MessageUtil;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -93,13 +92,13 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 	private @Getter	QueueManager queueManager;
 	private @Getter EconomyManager economyManager;
 	private @Getter	LoggingManager loggingManager;
-	private @Getter	MessageManager messageManager;
 	private @Getter DatabaseManager databaseManager;
 	private @Getter	SettingsManager settingsManager;
 	private @Getter	ChestRatioStorage chestRatioStorage;
 
 	private @Getter	PermissionHandler permissionHandler;
 	private @Getter	CommandHandler commandHandler;
+	private @Getter	MessageHandler messageHandler;
 	private @Getter	LogHandler logHandler;
 
 	private @Getter WorldEditPlugin worldEdit;
@@ -111,25 +110,27 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 	{
 		long start = System.currentTimeMillis();
 
-		permissionHandler = new PermissionHandler(this);
-		commandHandler = new CommandHandler(this);
+		// Register log handler first
 		logHandler = new LogHandler(this);
 
+		// Register some managers
 		settingsManager = new SettingsManager(this);
-		messageManager = new MessageManager(this);
 		statsManager = new StatsManager(this);
 		lobbyManager = new LobbyManager(this);
 		gameManager = new GameManager(this);
 
-		new MessageUtil(this); // Initialize message util
+		permissionHandler = new PermissionHandler(this);
+		commandHandler = new CommandHandler(this);
+		messageHandler = new MessageHandler(this);
 
+		// Register commands
 		commandHandler.setCommandPrefix("survivalgames");
 		commandHandler.registerCommand(new CmdAddWall(this));
 		commandHandler.registerCommand(new CmdCreateArena(this));
 		commandHandler.registerCommand(new CmdDelArena(this));
 		commandHandler.registerCommand(new CmdDisable(this));
 		commandHandler.registerCommand(new CmdEnable(this));
-//		commandHandler.registerCommand(new CmdFlag(this));
+		// commandHandler.registerCommand(new CmdFlag(this));
 		commandHandler.registerCommand(new CmdForceStart(this));
 		commandHandler.registerCommand(new CmdHelp(this));
 		commandHandler.registerCommand(new CmdJoin(this));
@@ -146,6 +147,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 		commandHandler.registerCommand(new CmdVersion(this));
 		commandHandler.registerCommand(new CmdVote(this));
 
+		// Hook into WorldEdit
 		worldEdit = hookIntoWorldEdit();
 		if (worldEdit == null)
 		{
@@ -176,6 +178,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 		economyManager = new EconomyManager(this);
 		hookManager = new HookManager(this);
 
+		// Register events
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new PlaceEvent(this), this);
 		pm.registerEvents(new BreakEvent(this), this);
@@ -222,8 +225,6 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 		for (Game g : gameManager.getGames())
 		{
 			g.disable();
-
-//			queueManager.rollback(g.getID(), true);
 		}
 
 		$("{0} has been disabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);

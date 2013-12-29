@@ -3,7 +3,6 @@ package net.dmulloy2.survivalgames.hooks;
 import java.util.HashMap;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.util.MessageUtil;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -26,8 +25,8 @@ public class HookManager
 		for (String str : c.getStringList("hooks." + hook))
 		{
 			String[] split = str.split("!");
-			String p = MessageUtil.replaceVars(split[0], args);
-			String[] commands = MessageUtil.replaceVars(split[1], args).split(";");
+			String p = plugin.getMessageHandler().replaceVars(split[0], args);
+			String[] commands = plugin.getMessageHandler().replaceVars(split[1], args).split(";");
 			if (checkConditions(split[2], args))
 			{
 				if (p.equalsIgnoreCase("console") || (split.length == 4 && plugin.getServer().getPlayer(p).hasPermission(split[3]))
@@ -52,7 +51,7 @@ public class HookManager
 			return true;
 		}
 
-		for (String split : MessageUtil.replaceVars(str, args).split(";"))
+		for (String split : plugin.getMessageHandler().replaceVars(str, args).split(";"))
 		{
 			boolean flag = false;
 			for (String c : C)

@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.handlers.MessageHandler;
 import net.dmulloy2.survivalgames.managers.GameManager;
 import net.dmulloy2.survivalgames.managers.LobbyManager;
-import net.dmulloy2.survivalgames.managers.MessageManager;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 import net.dmulloy2.survivalgames.util.FormatUtil;
 import net.dmulloy2.survivalgames.util.Util;
 
@@ -41,8 +41,8 @@ public abstract class SurvivalGamesCommand implements CommandExecutor
 	protected List<String> requiredArgs;
 	protected List<String> optionalArgs;
 	protected List<String> aliases;
-	
-	protected MessageManager messageManager;
+
+	protected MessageHandler messageHandler;
 	protected LobbyManager lobbyManager;
 	protected GameManager gameManager;
 
@@ -50,7 +50,7 @@ public abstract class SurvivalGamesCommand implements CommandExecutor
 	{
 		this.plugin = plugin;
 		
-		this.messageManager = plugin.getMessageManager();
+		this.messageHandler = plugin.getMessageHandler();
 		this.lobbyManager = plugin.getLobbyManager();
 		this.gameManager = plugin.getGameManager();
 
@@ -151,19 +151,29 @@ public abstract class SurvivalGamesCommand implements CommandExecutor
 		return FormatUtil.format(ret.toString());
 	}
 
-	protected final void sendMessage(PrefixType prefix, String message)
+	protected final void sendMessage(Prefix prefix, String message)
 	{
-		messageManager.sendMessage(prefix, message, player);
+		messageHandler.sendMessage(prefix, message, player);
 	}
 
 	protected final void sendMessage(String message)
 	{
-		sendMessage(PrefixType.INFO, message);
+		sendMessage(Prefix.INFO, message);
+	}
+
+	protected final void sendFMessage(Prefix prefix, String message, String... args)
+	{
+		messageHandler.sendFMessage(prefix, message, player, args);
+	}
+
+	protected final void sendFMessage(String message, String... args)
+	{
+		sendFMessage(Prefix.INFO, message, args);
 	}
 
 	protected final void err(String message)
 	{
-		sendMessage(PrefixType.ERROR, message);
+		sendMessage(Prefix.ERROR, message);
 	}
 
 	protected final void invalidArgs()

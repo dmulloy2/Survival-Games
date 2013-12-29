@@ -1,7 +1,7 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 /**
  * @author dmulloy2
@@ -21,7 +21,7 @@ public class CmdLeave extends SurvivalGamesCommand
 	{
 		if (gameManager.getPlayerGameId(player) == -1)
 		{
-			messageManager.sendFMessage(MessageManager.PrefixType.ERROR, "error.notingame", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notingame", player);
 			return;
 		}
 

@@ -1,9 +1,9 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.managers.MessageManager.PrefixType;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
+import net.dmulloy2.survivalgames.types.Prefix;
 
 /**
  * @author dmulloy2
@@ -42,25 +42,25 @@ public class CmdForceStart extends SurvivalGamesCommand
 
 		if (game == -1)
 		{
-			messageManager.sendFMessage(PrefixType.ERROR, "error.notingame", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notingame", player);
 			return;
 		}
 
 		if (gameManager.getGame(game).getActivePlayers() < 2)
 		{
-			messageManager.sendFMessage(PrefixType.ERROR, "error.notenoughtplayers", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notenoughtplayers", player);
 			return;
 		}
 
 		Game g = gameManager.getGame(game);
 		if (g.getMode() != Game.GameMode.WAITING && !player.hasPermission("sg.admin.restart"))
 		{
-			messageManager.sendFMessage(PrefixType.ERROR, "error.alreadyingame", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.alreadyingame", player);
 			return;
 		}
 		
 		g.countdown(seconds);
 
-		messageManager.sendFMessage(PrefixType.INFO, "game.started", player, "arena-" + game);
+		plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.started", player, "arena-" + game);
 	}
 }
