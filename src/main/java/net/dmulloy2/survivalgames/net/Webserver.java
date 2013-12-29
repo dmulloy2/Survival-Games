@@ -4,6 +4,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.util.Util;
 
 public class Webserver extends Thread
 {
@@ -12,7 +13,7 @@ public class Webserver extends Thread
 	{
 		this.plugin = plugin;
 	}
-	
+
 	@Override
 	public void run()
 	{
@@ -27,13 +28,13 @@ public class Webserver extends Thread
 				// Spin off request to a new thread to be handled
 				Connection c = new Connection(plugin, skt);
 				c.start();
-				// st.close();
 			}
+
 			st.close();
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			plugin.getLogHandler().debug(Util.getUsefulStack(e, "running webserver"));
 		}
 	}
 }

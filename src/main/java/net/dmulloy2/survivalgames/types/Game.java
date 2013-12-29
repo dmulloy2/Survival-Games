@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.api.PlayerGameDeathEvent;
@@ -190,7 +191,6 @@ public class Game
 		plugin.getLobbyManager().updateWall(gameID);
 
 		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamewaiting", "arena-" + gameID);
-
 	}
 
 	// -------------------------//
@@ -275,7 +275,7 @@ public class Game
 					}
 				}
 
-				if (!placed)
+				if (! placed)
 				{
 					plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gamefull", p, "arena-" + gameID);
 					return false;
@@ -345,7 +345,7 @@ public class Game
 
 	public boolean canJoinArena(Player p, int gameId)
 	{
-		return (p.hasPermission("sg.arenas.join." + gameId) || p.hasPermission("sg.arenas.join.*"));
+		return p.hasPermission("sg.arenas.join." + gameId) || p.hasPermission("sg.arenas.join.*") || p.isOp();
 	}
 
 	// -------------------------//
@@ -461,25 +461,31 @@ public class Game
 				plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Not enough players!", pl);
 				mode = GameMode.WAITING;
 				plugin.getLobbyManager().updateWall(gameID);
-
 			}
+
 			return;
 		}
 		else
 		{
 			startTime = new Date().getTime();
+
 			for (Player pl : activePlayers)
 			{
-				pl.setHealth(pl.getMaxHealth());
-				// clearInv(pl);
+				pl.setHealth(20.0D);
+				pl.setFoodLevel(20);
+				pl.setFireTicks(0);
+
 				plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.goodluck", pl);
 			}
+
 			if (config.getBoolean("restock-chest"))
 			{
 				plugin.getSettingsManager().getGameWorld(gameID).setTime(0);
+				tasks.add(new NightChecker().runTaskLater(plugin, 14400).getTaskId());
+
 				gcount++;
-				tasks.add(plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new NightChecker(), 14400));
 			}
+
 			if (config.getInt("grace-period") != 0)
 			{
 				for (Player play : activePlayers)
@@ -500,17 +506,16 @@ public class Game
 					}
 				}.runTaskLater(plugin, config.getInt("grace-period") * 20);
 			}
+
 			if (config.getBoolean("deathmatch.enabled"))
 			{
-				tasks.add(plugin.getServer().getScheduler()
-						.scheduleSyncDelayedTask(plugin, new DeathMatch(), config.getInt("deathmatch.time") * 20 * 60));
+				tasks.add(new DeathMatch().runTaskLater(plugin, config.getInt("deathmatch.time") * 20 * 60).getTaskId());
 			}
 		}
 
 		mode = GameMode.INGAME;
 		plugin.getLobbyManager().updateWall(gameID);
 		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamestarted", "arena-" + gameID);
-
 	}
 
 	// -------------------------//
@@ -526,7 +531,6 @@ public class Game
 
 	public void countdown(int time)
 	{
-		// plugin.getServer().broadcastMessage(""+time);
 		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamestarting", "arena-" + gameID, "t-" + time);
 		countdownRunning = true;
 		count = time;
@@ -582,24 +586,21 @@ public class Game
 			activePlayers.remove(p);
 			inactivePlayers.remove(p);
 
-			for (Object in : spawns.keySet().toArray())
+			for (Entry<Integer, Player> entry : spawns.entrySet())
 			{
-				if (spawns.get(in) == p)
-					spawns.remove(in);
+				if (entry.getValue().equals(p))
+				{
+					spawns.remove(entry.getKey());
+				}
 			}
+
 			plugin.getLobbyManager().clearSigns(gameID);
 
 			msgFall(Prefix.INFO, "game.playerleavegame", "player-" + p.getName());
 		}
 
 		plugin.getHookManager().runHook("PLAYER_REMOVED", "player-" + p.getName());
-
 		plugin.getLobbyManager().updateWall(gameID);
-	}
-
-	public void playerLeave(Player p)
-	{
-
 	}
 
 	// -------------------------//
@@ -608,23 +609,21 @@ public class Game
 	public void killPlayer(Player p, boolean left)
 	{
 		clearInv(p);
-		if (!left)
+
+		if (! left)
 		{
 			p.teleport(plugin.getSettingsManager().getLobbySpawn());
 		}
+
 		plugin.getStatsManager().playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
 
-		if (!activePlayers.contains(p))
-		{
+		if (! activePlayers.contains(p))
 			return;
-		}
-		else
-		{
-			restoreInv(p);
-		}
 
+		restoreInv(p);
 		activePlayers.remove(p);
 		inactivePlayers.add(p);
+
 		if (left)
 		{
 			PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, p, this);
@@ -695,6 +694,7 @@ public class Game
 								"killer-" + p.getLastDamageCause().getCause());
 						break;
 				}
+
 				if (getActivePlayers() > 1)
 				{
 					for (Player pl : getAllPlayers())
@@ -710,7 +710,7 @@ public class Game
 
 		for (Player pe : activePlayers)
 		{
-			Location l = pe.getLocation();
+			Location l = pe.getLocation().clone();
 			l.setY(l.getWorld().getMaxHeight());
 			l.getWorld().strikeLightningEffect(l);
 		}
@@ -732,15 +732,15 @@ public class Game
 	// -------------------------//
 	// Player win
 	// -------------------------//
-	public void playerWin(Player p)
+	public void playerWin(Player victim)
 	{
 		if (GameMode.DISABLED == mode)
 			return;
+
 		Player win = activePlayers.get(0);
-		// clearInv(p);
 		win.teleport(plugin.getSettingsManager().getLobbySpawn());
 		restoreInv(win);
-		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "game.playerwin", "arena-" + gameID, "victim-" + p.getName(),
+		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "game.playerwin", "arena-" + gameID, "victim-" + victim.getName(),
 				"player-" + win.getName());
 		plugin.getLobbyManager().display(new String[] { win.getName(), "", "Won the ", "Survival Games!" }, gameID);
 
@@ -748,20 +748,20 @@ public class Game
 		if (config.getBoolean("reward.enabled", false))
 		{
 			List<String> items = config.getStringList("reward.contents");
-			for (int i = 0; i <= (items.size() - 1); i++)
+			for (String s : items)
 			{
-				ItemStack item = ItemReader.read(items.get(i));
+				ItemStack item = ItemReader.read(s);
 				win.getInventory().addItem(item);
 			}
 		}
 
 		clearSpecs();
-		win.setHealth(p.getMaxHealth());
+		win.setHealth(win.getMaxHealth());
 		win.setFoodLevel(20);
 		win.setFireTicks(0);
 		win.setFallDistance(0);
 
-		PlayerWinEvent winEvent = new PlayerWinEvent(win, p, this);
+		PlayerWinEvent winEvent = new PlayerWinEvent(win, victim, this);
 		plugin.getServer().getPluginManager().callEvent(winEvent);
 
 		plugin.getStatsManager().playerWin(win, gameID, new Date().getTime() - startTime);
@@ -774,7 +774,6 @@ public class Game
 		loadspawns();
 		plugin.getLobbyManager().updateWall(gameID);
 		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gameend", "arena-" + gameID);
-
 	}
 
 	// -------------------------//
@@ -788,7 +787,6 @@ public class Game
 
 		plugin.getLobbyManager().clearSigns(gameID);
 		plugin.getLobbyManager().updateWall(gameID);
-
 	}
 
 	// -------------------------//
@@ -857,12 +855,11 @@ public class Game
 		plugin.getGameManager().gameEndCallBack(gameID);
 		plugin.getQueueManager().rollback(gameID);
 		plugin.getLobbyManager().updateWall(gameID);
-
 	}
 
 	public void resetCallback()
 	{
-		if (!disabled)
+		if (! disabled)
 		{
 			enable();
 		}
@@ -885,7 +882,6 @@ public class Game
 		store[1] = p.getInventory().getArmorContents();
 
 		inv_store.put(p, store);
-
 	}
 
 	public void restoreInvOffline(String p)
@@ -1032,10 +1028,10 @@ public class Game
 				{
 					plugin.getMessageHandler().sendMessage(Prefix.INFO, "Chests restocked!", pl);
 				}
+
 				plugin.getGameManager().openedChest.get(gameID).clear();
 				reset = true;
 			}
-
 		}
 	}
 

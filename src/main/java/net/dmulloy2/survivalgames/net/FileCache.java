@@ -9,17 +9,9 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 
 public class FileCache
 {
-	private static FileCache instance = new FileCache();
 	private static HashMap<String, String> html = new HashMap<String, String>();
 
-	private FileCache()
-	{
-	}
-
-	public static FileCache getInstance()
-	{
-		return instance;
-	}
+	private FileCache() { }
 
 	public static String getHTML(SurvivalGames plugin, String pagename, boolean template)
 	{
@@ -44,6 +36,7 @@ public class FileCache
 		{
 			plugin.$(Level.WARNING, "Webstats - Could not load page: " + pagename + "    " + f.getAbsolutePath());
 		}
+
 		String data = "";
 
 		if (scan == null)
@@ -51,10 +44,12 @@ public class FileCache
 			html.put(pagename, "404 - Not found");
 			return;
 		}
+
 		while (scan.hasNext())
 		{
 			data = data + scan.nextLine();
 		}
+
 		html.put(pagename, data);
 	}
 }

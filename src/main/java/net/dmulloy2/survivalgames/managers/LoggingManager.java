@@ -1,9 +1,10 @@
-package net.dmulloy2.survivalgames.logging;
+package net.dmulloy2.survivalgames.managers;
 
 import java.util.HashMap;
 
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.types.BlockData;
 import net.dmulloy2.survivalgames.types.Game;
 
 import org.bukkit.Material;

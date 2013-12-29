@@ -1,4 +1,4 @@
-package net.dmulloy2.survivalgames.logging;
+package net.dmulloy2.survivalgames.types;
 
 import java.io.Serializable;
 

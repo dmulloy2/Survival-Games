@@ -1,31 +1,23 @@
 package net.dmulloy2.survivalgames.api;
 
+import lombok.Getter;
 import net.dmulloy2.survivalgames.types.Game;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@Getter
 public class PlayerJoinArenaEvent extends Event
 {
 	private static final HandlerList handlers = new HandlerList();
 	private Player player;
 	private Game game;
 
-	public PlayerJoinArenaEvent(Player p, Game g)
+	public PlayerJoinArenaEvent(Player player, Game game)
 	{
-		player = p;
-		game = g;
-	}
-
-	public Player getPlayer()
-	{
-		return player;
-	}
-
-	public Game getGame()
-	{
-		return game;
+		this.player = player;
+		this.game = game;
 	}
 
 	@Override

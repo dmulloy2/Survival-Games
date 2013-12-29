@@ -1,4 +1,4 @@
-package net.dmulloy2.survivalgames.logging;
+package net.dmulloy2.survivalgames.managers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.types.BlockData;
 import net.dmulloy2.survivalgames.types.Game;
 
 import org.bukkit.Location;

@@ -18,11 +18,9 @@ import org.bukkit.entity.Player;
 
 public class MessageHandler
 {
-	private @Getter
-	HashMap<Prefix, String> prefixes;
+	private @Getter HashMap<Prefix, String> prefixes;
 
 	private final SurvivalGames plugin;
-
 	public MessageHandler(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
@@ -50,7 +48,7 @@ public class MessageHandler
 			return;
 		}
 
-		if (!plugin.getSettingsManager().getMessageConfig().getBoolean("messages." + input + "_enabled", true))
+		if (! plugin.getSettingsManager().getMessageConfig().getBoolean("messages." + input + "_enabled", true))
 		{
 			return;
 		}
@@ -114,7 +112,7 @@ public class MessageHandler
 			return;
 		}
 
-		if (!plugin.getSettingsManager().getMessageConfig().getBoolean("messages." + input + "_enabled", true))
+		if (! plugin.getSettingsManager().getMessageConfig().getBoolean("messages." + input + "_enabled", true))
 		{
 			return;
 		}
