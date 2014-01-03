@@ -6,10 +6,11 @@
   <version>1.0</version>
   <name>SurvivalGames</name>
   
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-    
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.number>LOCAL</project.build.number>
+  </properties>
+
   <repositories>
     <repository>
       <id>vault-repo</id>
@@ -24,6 +25,21 @@
       <url>http://maven.sk89q.com/repo</url>
     </repository>
   </repositories>
+
+  <profiles>
+    <profile>
+      <id>jenkins</id>
+      <activation>
+        <property>
+          <name>env.BUILD_NUMBER</name>
+        </property>
+      </activation>
+      <properties>
+        <project.build.number>${env.BUILD_NUMBER}</project.build.number>
+      </properties>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
@@ -58,6 +74,7 @@
       </resource>
     </resources>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>org.bukkit</groupId>

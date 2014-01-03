@@ -1,6 +1,6 @@
 name: SurvivalGames
 main: net.dmulloy2.survivalgames.SurvivalGames
-version: "${project.version}"
+version: ${project.version} (Build ${project.build.number})
 author: dmulloy2
 description: Fully Automated Hunger Games Plugin!
 softdepend: [Multiverse-Core, WorldEdit]
