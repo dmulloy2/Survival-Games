@@ -586,7 +586,7 @@ public class Game
 			activePlayers.remove(p);
 			inactivePlayers.remove(p);
 
-			for (Entry<Integer, Player> entry : spawns.entrySet())
+			for (Entry<Integer, Player> entry : new HashMap<Integer, Player>(spawns).entrySet())
 			{
 				if (entry.getValue().equals(p))
 				{
