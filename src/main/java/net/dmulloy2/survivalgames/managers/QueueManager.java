@@ -233,8 +233,15 @@ public class QueueManager
 
 			if (a != -1)
 			{
-				plugin.getServer().getScheduler().scheduleSyncDelayedTask(
-						plugin, new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time), 1);
+				if (! plugin.isDisabling())
+				{
+					plugin.getServer().getScheduler().scheduleSyncDelayedTask(
+							plugin, new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time), 1);
+				}
+				else
+				{
+					rollback(id, shutdown, totalRollback + rb, iteration + 1, time);
+				}
 			}
 			else
 			{
