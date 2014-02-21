@@ -218,10 +218,13 @@ public class QueueManager
 					data.remove(a);
 					Location l = new Location(plugin.getServer().getWorld(result.getWorld()), result.getX(), result.getY(), result.getZ());
 					Block b = l.getBlock();
-					b.setType(result.getPrevmat());
-					b.getState().setData(result.getPrevdata());
-					b.getState().update();
-					rb++;
+					if (result.getPrevmat() != null)
+					{
+						b.setType(result.getPrevmat());
+						b.getState().setData(result.getPrevdata());
+						b.getState().update();
+						rb++;
+					}
 				}
 				a--;
 			}
