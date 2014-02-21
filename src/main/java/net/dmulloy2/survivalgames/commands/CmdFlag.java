@@ -31,7 +31,7 @@ public class CmdFlag extends SurvivalGamesCommand
 		Game g = gameManager.getGame(Integer.parseInt(args[0]));
 		if (g == null)
 		{
-			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gamedoesntexist", player, "arena-" + args[0]);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", player, "arena-" + args[0]);
 			return;
 		}
 

@@ -32,7 +32,7 @@ public class CmdDelArena extends SurvivalGamesCommand
 
 		if (g == null)
 		{
-			sendFMessage(Prefix.ERROR, "error.gamedoesntexist", "arena-" + arena);
+			sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", "arena-" + args[0]);
 			return;
 		}
 

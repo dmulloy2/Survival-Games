@@ -49,7 +49,7 @@ public class CmdEnable extends SurvivalGamesCommand
 		}
 		catch (NullPointerException e)
 		{
-			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gamedoesntexist", player, "arena-" + args[0]);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", player, "arena-" + args[0]);
 		}
 	}
 }

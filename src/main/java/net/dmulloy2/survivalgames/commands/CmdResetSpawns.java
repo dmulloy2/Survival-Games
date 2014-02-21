@@ -34,7 +34,7 @@ public class CmdResetSpawns extends SurvivalGamesCommand
 		}
 		catch (NullPointerException e)
 		{
-			plugin.getMessageHandler().sendMessage(Prefix.ERROR, "error.gamenotexist", player);
+			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", player, "arena-" + args[0]);
 		}
 	}
 }

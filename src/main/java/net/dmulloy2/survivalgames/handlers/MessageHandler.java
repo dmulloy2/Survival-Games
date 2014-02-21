@@ -151,7 +151,7 @@ public class MessageHandler
 		{
 			try
 			{
-				msg.replace("{$" + s + "}", vars.get(s));
+				msg = msg.replace("{$" + s + "}", vars.get(s));
 			}
 			catch (Exception e)
 			{
