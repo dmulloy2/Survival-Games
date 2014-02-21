@@ -588,7 +588,7 @@ public class Game
 
 			for (Entry<Integer, Player> entry : new HashMap<Integer, Player>(spawns).entrySet())
 			{
-				if (entry.getValue().equals(p))
+				if (p.equals(entry.getValue()))
 				{
 					spawns.remove(entry.getKey());
 				}
