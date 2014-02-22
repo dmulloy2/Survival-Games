@@ -119,7 +119,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable
 		lobbyManager = new LobbyManager(this);
 		gameManager = new GameManager(this);
 
-		permissionHandler = new PermissionHandler(this);
+		permissionHandler = new PermissionHandler();
 		commandHandler = new CommandHandler(this);
 		messageHandler = new MessageHandler(this);
 
