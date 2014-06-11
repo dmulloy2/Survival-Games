@@ -15,6 +15,7 @@ import net.dmulloy2.survivalgames.util.Kit;
 import net.dmulloy2.survivalgames.util.LocationUtil;
 import net.dmulloy2.survivalgames.util.NameUtil;
 import net.dmulloy2.survivalgames.util.SpectatorUtil;
+import net.dmulloy2.survivalgames.util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -932,36 +933,36 @@ public class Game
 		p.updateInventory();
 	}
 
-	public void removeSpectator(Player p)
+	public void removeSpectator(Player player)
 	{
-		if (p.isOnline())
+		if (player.isOnline())
 		{
 			for (Player pl : plugin.getServer().getOnlinePlayers())
 			{
-				pl.showPlayer(p);
+				pl.showPlayer(player);
 			}
 		}
 
-		clearInv(p);
-		restoreInv(p);
-		p.setAllowFlight(false);
-		p.setFlying(false);
-		p.setFallDistance(0);
-		p.setHealth(p.getMaxHealth());
-		p.setFoodLevel(20);
-		p.setSaturation(20);
-		p.teleport(plugin.getSettingsManager().getLobbySpawn());
+		clearInv(player);
+		restoreInv(player);
+		player.setAllowFlight(false);
+		player.setFlying(false);
+		player.setFallDistance(0);
+		player.setHealth(player.getMaxHealth());
+		player.setFoodLevel(20);
+		player.setSaturation(20);
+		player.teleport(plugin.getSettingsManager().getLobbySpawn());
 
-		SpectatorUtil.removeSpectator(p);
-
-		spectators.remove(p.getName());
+		SpectatorUtil.removeSpectator(player);
 	}
 
 	public void clearSpecs()
 	{
-		for (int a = 0; a < spectators.size(); a = 0)
+		for (String spectator : new ArrayList<>(spectators))
 		{
-			removeSpectator(plugin.getServer().getPlayerExact(spectators.get(0)));
+			Player player = Util.matchPlayer(spectator);
+			if (player != null)
+				removeSpectator(player);
 		}
 
 		spectators.clear();

@@ -168,22 +168,23 @@ public class GameManager
 		for (Game g : games)
 		{
 			if (g.isSpectator(player))
-			{
 				return true;
-			}
 		}
 
 		return false;
 	}
 
-	public void removeFromOtherQueues(Player p, int id)
+	public void removeFromOtherQueues(Player player, int id)
 	{
-		for (Game g : getGames())
+		for (Game game : games)
 		{
-			if (g.isInQueue(p) && g.getID() != id)
+			if (game != null)
 			{
-				g.removeFromQueue(p);
-				messageHandler.sendMessage(Prefix.INFO, "Removed from the queue in arena " + g.getID(), p);
+				if (game.isInQueue(player) && game.getID() != id)
+				{
+					game.removeFromQueue(player);
+					messageHandler.sendMessage(Prefix.INFO, "Removed from the queue in arena " + game.getID(), player);
+				}
 			}
 		}
 	}
