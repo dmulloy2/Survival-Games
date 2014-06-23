@@ -26,11 +26,11 @@ public class EconHook implements HookBase
 				int funds = Integer.parseInt(split[2]);
 				if (split[0].equals("remove"))
 				{
-					econ.withdrawPlayer(p.getName(), funds);
+					econ.withdrawPlayer(p, funds);
 				}
 				else if (split[1].equals("deposit"))
 				{
-					econ.depositPlayer(p.getName(), funds);
+					econ.depositPlayer(p, funds);
 				}
 			}
 		}

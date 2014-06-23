@@ -1,11 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.dmulloy2</groupId>
   <artifactId>survivalgames</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>SurvivalGames</name>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.number>LOCAL</project.build.number>
@@ -79,10 +79,10 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.7.9-R0.1-SNAPSHOT</version>
+      <version>1.7.9-R0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
- 	  <groupId>org.projectlombok</groupId>
+      <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>0.12.0</version>
       <scope>provided</scope>
@@ -95,7 +95,7 @@
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>Vault</artifactId>
-      <version>1.2.32</version>
+      <version>1.4.1</version>
     </dependency>
   </dependencies>
 </project>
