@@ -419,7 +419,7 @@ public class Metrics
 		data.append(encode("guid")).append('=').append(encode(guid));
 		encodeDataPair(data, "version", description.getVersion());
 		encodeDataPair(data, "server", plugin.getServer().getVersion());
-		encodeDataPair(data, "players", Integer.toString(plugin.getServer().getOnlinePlayers().length));
+		encodeDataPair(data, "players", Integer.toString(plugin.getServer().getOnlinePlayers().size()));
 		encodeDataPair(data, "revision", String.valueOf(REVISION));
 
 		// If we're pinging, append it
