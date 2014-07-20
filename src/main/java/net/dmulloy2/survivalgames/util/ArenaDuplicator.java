@@ -19,7 +19,7 @@ public class ArenaDuplicator
 	{
 		this.plugin = plugin;
 	}
-	
+
 	private background background;
 
 	public void startDupe(Vector v1, Vector v2)
@@ -60,8 +60,8 @@ public class ArenaDuplicator
 
 			Vector s1 = new Vector((sp1 < sp2) ? sp1 : sp2, (y1 < y2) ? y1 : y2, (z1 < z2) ? z1 : z2);
 			Vector s2 = new Vector((sp1 > sp2) ? sp1 : sp2, (y1 > y2) ? y1 : y2, (z1 > z2) ? z1 : z2);
-			System.out.println(s1);
-			System.out.println(s2);
+			// System.out.println(s1);
+			// System.out.println(s2);
 			new DupeThread(s1, s2, maxx - v1.getBlockX(), 0, a).start();
 		}
 
@@ -160,7 +160,7 @@ public class ArenaDuplicator
 		{
 			while (true)
 			{
-				System.out.println(fin + "/" + x + " " + ((fin - prev) / 2) + " " + ((fin + 0.0) / (x + 0.0)) * 100);
+				// System.out.println(fin + "/" + x + " " + ((fin - prev) / 2) + " " + ((fin + 0.0) / (x + 0.0)) * 100);
 				prev = fin;
 				try
 				{
