@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.api.PlayerGameDeathEvent;
@@ -15,7 +17,6 @@ import net.dmulloy2.survivalgames.util.Kit;
 import net.dmulloy2.survivalgames.util.LocationUtil;
 import net.dmulloy2.survivalgames.util.NameUtil;
 import net.dmulloy2.survivalgames.util.SpectatorUtil;
-import net.dmulloy2.survivalgames.util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -38,23 +39,22 @@ public class Game
 		DISABLED, LOADING, INACTIVE, WAITING, STARTING, INGAME, FINISHING, RESETTING, ERROR
 	}
 
-	// TODO: Don't store references to players in lists, instead use their names
 	private GameMode mode = GameMode.DISABLED;
-	private List<Player> activePlayers = new ArrayList<Player>();
-	private List<Player> inactivePlayers = new ArrayList<Player>();
-	private List<String> spectators = new ArrayList<String>();
-	private List<Player> queue = new ArrayList<Player>();
-	private HashMap<String, Object> flags = new HashMap<String, Object>();
-	private HashMap<Player, Integer> nextspec = new HashMap<Player, Integer>();
-	private List<Integer> tasks = new ArrayList<Integer>();
+	private List<UUID> activePlayers = new ArrayList<>();
+	private List<UUID> inactivePlayers = new ArrayList<>();
+	private List<UUID> spectators = new ArrayList<>();
+	private List<UUID> queue = new ArrayList<>();
+	private Map<String, Object> flags = new HashMap<>();
+	private Map<UUID, Integer> nextspec = new HashMap<>();
+	private List<Integer> tasks = new ArrayList<>();
 
 	private Arena arena;
 	private int gameID;
 	private int gcount = 0;
 	private FileConfiguration config;
 	private FileConfiguration system;
-	private HashMap<Integer, Player> spawns = new HashMap<Integer, Player>();
-	private HashMap<Player, ItemStack[][]> inv_store = new HashMap<Player, ItemStack[][]>();
+	private HashMap<Integer, UUID> spawns = new HashMap<>();
+	private HashMap<UUID, ItemStack[][]> inv_store = new HashMap<>();
 	private int spawnCount = 0;
 	private int vote = 0;
 	private boolean disabled = false;
@@ -65,10 +65,9 @@ public class Game
 	private long startTime = 0;
 	private boolean countdownRunning;
 
-	private HashMap<String, String> hookvars = new HashMap<String, String>();
+	private Map<String, String> hookvars = new HashMap<>();
 
 	private final SurvivalGames plugin;
-
 	public Game(SurvivalGames plugin, int gameID)
 	{
 		this.plugin = plugin;
@@ -180,12 +179,13 @@ public class Game
 				.getSpawnCount(gameID);
 		for (int a = 0; a < b; a++)
 		{
-			addPlayer(queue.remove(0));
+			addPlayer(plugin.getServer().getPlayer(queue.remove(0)));
 		}
 		int c = 1;
-		for (Player p : queue)
+		for (UUID id : queue)
 		{
-			plugin.getMessageHandler().sendMessage(Prefix.INFO, "You are now #" + c + " in line for arena " + gameID, p);
+			Player player = plugin.getServer().getPlayer(id);
+			plugin.getMessageHandler().sendMessage(Prefix.INFO, "You are now #" + c + " in line for arena " + gameID, player);
 			c++;
 		}
 
@@ -199,13 +199,14 @@ public class Game
 	// -------------------------//
 	public boolean addPlayer(Player p)
 	{
+		UUID id = p.getUniqueId();
 		if (plugin.getSettingsManager().getLobbySpawn() == null)
 		{
 			plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.nolobbyspawn", p);
 			return false;
 		}
 
-		if (!canJoinArena(p, gameID))
+		if (! canJoinArena(p, gameID))
 		{
 			debug("permission needed to join arena: " + "sg.arena.join." + gameID);
 			plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "game.nopermission", p, "arena-" + gameID);
@@ -229,7 +230,7 @@ public class Game
 		if (p.isInsideVehicle())
 			p.leaveVehicle();
 
-		if (spectators.contains(p))
+		if (spectators.contains(id))
 			removeSpectator(p);
 
 		if (mode == GameMode.WAITING || mode == GameMode.STARTING)
@@ -247,7 +248,7 @@ public class Game
 					if (spawns.get(a) == null)
 					{
 						placed = true;
-						spawns.put(a, p);
+						spawns.put(a, id);
 						p.setGameMode(org.bukkit.GameMode.SURVIVAL);
 
 						p.teleport(plugin.getSettingsManager().getLobbySpawn());
@@ -259,7 +260,7 @@ public class Game
 						p.setFoodLevel(20);
 						clearInv(p);
 
-						activePlayers.add(p);
+						activePlayers.add(id);
 						plugin.getStatsManager().addPlayer(p, gameID);
 
 						hookvars.put("activeplayers", activePlayers.size() + "");
@@ -296,7 +297,7 @@ public class Game
 
 			msgFall(Prefix.INFO, "game.playerjoingame", "player-" + p.getName(), "activeplayers-" + getActivePlayers(), "maxplayers-"
 					+ plugin.getSettingsManager().getSpawnCount(gameID));
-			if (activePlayers.size() >= config.getInt("auto-start-players") && !countdownRunning)
+			if (activePlayers.size() >= config.getInt("auto-start-players") && ! countdownRunning)
 				countdown(config.getInt("auto-start-time"));
 
 			return true;
@@ -305,14 +306,15 @@ public class Game
 		{
 			if (config.getBoolean("enable-player-queue"))
 			{
-				if (!queue.contains(p))
+				if (! queue.contains(id))
 				{
-					queue.add(p);
+					queue.add(id);
 					plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playerjoinqueue", p, "queuesize-" + queue.size());
 				}
 				int a = 1;
-				for (Player qp : queue)
+				for (UUID qId : queue)
 				{
+					Player qp = plugin.getServer().getPlayer(qId);
 					if (qp == p)
 					{
 						plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playercheckqueue", p, "queuepos-" + a);
@@ -362,7 +364,7 @@ public class Game
 
 		List<Kit> kits = plugin.getGameManager().getKits(p);
 		plugin.debug(kits + "");
-		if (kits == null || kits.size() == 0 || !plugin.getSettingsManager().getKits().getBoolean("enabled"))
+		if (kits == null || kits.size() == 0 || ! plugin.getSettingsManager().getKits().getBoolean("enabled"))
 		{
 			plugin.getGameManager().leaveKitMenu(p);
 			return;
@@ -408,7 +410,7 @@ public class Game
 	// --------------------------//
 	// Vote
 	// -------------------------//
-	ArrayList<Player> voted = new ArrayList<Player>();
+	private final List<UUID> voted = new ArrayList<>();
 
 	public void vote(Player pl)
 	{
@@ -422,17 +424,18 @@ public class Game
 			plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Game already started!", pl);
 			return;
 		}
-		if (voted.contains(pl))
+		if (voted.contains(pl.getUniqueId()))
 		{
 			plugin.getMessageHandler().sendMessage(Prefix.WARNING, "You already voted!", pl);
 			return;
 		}
 
 		vote++;
-		voted.add(pl);
+		voted.add(pl.getUniqueId());
 
-		for (Player player : activePlayers)
+		for (UUID uuid : activePlayers)
 		{
+			Player player = plugin.getServer().getPlayer(uuid);
 			plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playervote", player, "player-" + pl.getName(), "voted-" + vote,
 					"players-" + getActivePlayers());
 		}
@@ -457,8 +460,9 @@ public class Game
 
 		if (activePlayers.size() <= 1)
 		{
-			for (Player pl : activePlayers)
+			for (UUID id : activePlayers)
 			{
+				Player pl = plugin.getServer().getPlayer(id);
 				plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Not enough players!", pl);
 				mode = GameMode.WAITING;
 				plugin.getLobbyManager().updateWall(gameID);
@@ -470,8 +474,9 @@ public class Game
 		{
 			startTime = new Date().getTime();
 
-			for (Player pl : activePlayers)
+			for (UUID id : activePlayers)
 			{
+				Player pl = plugin.getServer().getPlayer(id);
 				pl.setHealth(20.0D);
 				pl.setFoodLevel(20);
 				pl.setFireTicks(0);
@@ -489,8 +494,9 @@ public class Game
 
 			if (config.getInt("grace-period") != 0)
 			{
-				for (Player play : activePlayers)
+				for (UUID id : activePlayers)
 				{
+					Player play = plugin.getServer().getPlayer(id);
 					plugin.getMessageHandler().sendMessage(Prefix.INFO,
 							"You have a " + config.getInt("grace-period") + " second grace period!", play);
 				}
@@ -500,8 +506,9 @@ public class Game
 					@Override
 					public void run()
 					{
-						for (Player play : activePlayers)
+						for (UUID id : activePlayers)
 						{
+							Player play = plugin.getServer().getPlayer(id);
 							plugin.getMessageHandler().sendMessage(Prefix.INFO, "Grace period has ended!", play);
 						}
 					}
@@ -587,7 +594,7 @@ public class Game
 			activePlayers.remove(p);
 			inactivePlayers.remove(p);
 
-			for (Entry<Integer, Player> entry : new HashMap<Integer, Player>(spawns).entrySet())
+			for (Entry<Integer, UUID> entry : new HashMap<>(spawns).entrySet())
 			{
 				if (p.equals(entry.getValue()))
 				{
@@ -622,8 +629,8 @@ public class Game
 			return;
 
 		restoreInv(p);
-		activePlayers.remove(p);
-		inactivePlayers.add(p);
+		activePlayers.remove(p.getUniqueId());
+		inactivePlayers.add(p.getUniqueId());
 
 		if (left)
 		{
@@ -709,14 +716,16 @@ public class Game
 			}
 		}
 
-		for (Player pe : activePlayers)
+		for (UUID id : activePlayers)
 		{
+			Player pe = plugin.getServer().getPlayer(id);
 			Location l = pe.getLocation().clone();
 			l.setY(l.getWorld().getMaxHeight());
 			l.getWorld().strikeLightningEffect(l);
 		}
 
-		if (getActivePlayers() <= config.getInt("endgame.players") && config.getBoolean("endgame.fire-lighting.enabled") && !endgameRunning)
+		if (getActivePlayers() <= config.getInt("endgame.players") && config.getBoolean("endgame.fire-lighting.enabled")
+				&& ! endgameRunning)
 		{
 			tasks.add(new EndgameManager().runTaskTimer(plugin, 0, config.getInt("endgame.fire-lighting.interval") * 20).getTaskId());
 		}
@@ -738,12 +747,16 @@ public class Game
 		if (GameMode.DISABLED == mode)
 			return;
 
-		Player win = activePlayers.get(0);
+		UUID uuid = activePlayers.get(0);
+		Player win = plugin.getServer().getPlayer(uuid);
 		win.teleport(plugin.getSettingsManager().getLobbySpawn());
 		restoreInv(win);
 		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "game.playerwin", "arena-" + gameID, "victim-" + victim.getName(),
 				"player-" + win.getName());
-		plugin.getLobbyManager().display(new String[] { win.getName(), "", "Won the ", "Survival Games!" }, gameID);
+		plugin.getLobbyManager().display(new String[]
+		{
+				win.getName(), "", "Won the ", "Survival Games!"
+		}, gameID);
 
 		mode = GameMode.FINISHING;
 		if (config.getBoolean("reward.enabled", false))
@@ -798,33 +811,37 @@ public class Game
 		disabled = true;
 		spawns.clear();
 
-		for (int a = 0; a < activePlayers.size(); a = 0)
+		// Alert the players
+		for (UUID id : new ArrayList<>(activePlayers))
 		{
 			try
 			{
-				Player p = activePlayers.get(a);
+				Player p = plugin.getServer().getPlayer(id);
 				plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Game disabled!", p);
 				removePlayer(p, false);
 			}
-			catch (Exception e)
+			catch (Throwable ex)
 			{
 				//
 			}
 		}
 
-		for (int a = 0; a < inactivePlayers.size(); a = 0)
+		for (UUID id : new ArrayList<>(inactivePlayers))
 		{
 			try
 			{
-				Player p = inactivePlayers.remove(a);
+				Player p = plugin.getServer().getPlayer(id);
 				plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Game disabled!", p);
 			}
-			catch (Exception e)
+			catch (Throwable ex)
 			{
 				//
 			}
-
 		}
+
+		// Clear lists
+		activePlayers.clear();
+		inactivePlayers.clear();
 
 		clearSpecs();
 		queue.clear();
@@ -832,7 +849,6 @@ public class Game
 		endGame();
 		plugin.getLobbyManager().updateWall(gameID);
 		plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamedisabled", "arena-" + gameID);
-
 	}
 
 	// -------------------------//
@@ -882,7 +898,7 @@ public class Game
 		store[0] = p.getInventory().getContents();
 		store[1] = p.getInventory().getArmorContents();
 
-		inv_store.put(p, store);
+		inv_store.put(p.getUniqueId(), store);
 	}
 
 	public void restoreInvOffline(String p)
@@ -914,7 +930,7 @@ public class Game
 
 		p.setAllowFlight(true);
 		p.setFlying(true);
-		spectators.add(p.getName());
+		spectators.add(p.getUniqueId());
 
 		addItem(p, new ItemStack(Material.COMPASS));
 
@@ -923,7 +939,30 @@ public class Game
 
 	public List<Player> getActivePlayerList()
 	{
-		return activePlayers;
+		List<Player> ret = new ArrayList<>();
+
+		for (UUID id : activePlayers)
+		{
+			Player player = plugin.getServer().getPlayer(id);
+			if (player != null)
+				ret.add(player);
+		}
+
+		return ret;
+	}
+
+	public List<Player> getInactivePlayerList()
+	{
+		List<Player> ret = new ArrayList<>();
+
+		for (UUID id : inactivePlayers)
+		{
+			Player player = plugin.getServer().getPlayer(id);
+			if (player != null)
+				ret.add(player);
+		}
+
+		return ret;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -958,9 +997,9 @@ public class Game
 
 	public void clearSpecs()
 	{
-		for (String spectator : new ArrayList<>(spectators))
+		for (UUID spectator : new ArrayList<>(spectators))
 		{
-			Player player = Util.matchPlayer(spectator);
+			Player player = plugin.getServer().getPlayer(spectator);
 			if (player != null)
 				removeSpectator(player);
 		}
@@ -969,7 +1008,7 @@ public class Game
 		nextspec.clear();
 	}
 
-	public HashMap<Player, Integer> getNextSpec()
+	public Map<UUID, Integer> getNextSpec()
 	{
 		return nextspec;
 	}
@@ -988,7 +1027,7 @@ public class Game
 			inv_store.remove(p);
 			p.updateInventory();
 		}
-		catch (Exception e)
+		catch (Throwable ex)
 		{
 			//
 		}
@@ -1025,12 +1064,13 @@ public class Game
 		{
 			if (plugin.getSettingsManager().getGameWorld(gameID).getTime() > 14000)
 			{
-				for (Player pl : activePlayers)
+				for (UUID id : new ArrayList<>(activePlayers))
 				{
+					Player pl = plugin.getServer().getPlayer(id);
 					plugin.getMessageHandler().sendMessage(Prefix.INFO, "Chests restocked!", pl);
 				}
 
-				plugin.getGameManager().openedChest.get(gameID).clear();
+				plugin.getGameManager().getOpenedChest().get(gameID).clear();
 				reset = true;
 			}
 		}
@@ -1044,8 +1084,9 @@ public class Game
 		@Override
 		public void run()
 		{
-			for (Player player : activePlayers.toArray(new Player[0]))
+			for (UUID uuid : new ArrayList<>(activePlayers))
 			{
+				Player player = plugin.getServer().getPlayer(uuid);
 				Location l = player.getLocation();
 				l.add(0, 5, 0);
 				player.getWorld().strikeLightningEffect(l);
@@ -1062,13 +1103,14 @@ public class Game
 		@Override
 		public void run()
 		{
-			for (Player p : activePlayers)
+			for (UUID id : new ArrayList<>(activePlayers))
 			{
-				for (int a = 0; a < spawns.size(); a++)
+				for (Entry<Integer, UUID> entry : new HashMap<>(spawns).entrySet())
 				{
-					if (spawns.get(a) == p)
+					if (entry.getValue() == id)
 					{
-						p.teleport(plugin.getSettingsManager().getSpawnPoint(gameID, a));
+						Player player = plugin.getServer().getPlayer(id);
+						player.teleport(plugin.getSettingsManager().getSpawnPoint(gameID, entry.getKey()));
 						break;
 					}
 				}
@@ -1079,8 +1121,9 @@ public class Game
 				@Override
 				public void run()
 				{
-					for (Player p : activePlayers)
+					for (UUID id : new ArrayList<>(activePlayers))
 					{
+						Player p = plugin.getServer().getPlayer(id);
 						p.getLocation().getWorld().strikeLightning(p.getLocation());
 					}
 				}
@@ -1118,40 +1161,43 @@ public class Game
 
 	public Player[][] getPlayers()
 	{
-		return new Player[][] { activePlayers.toArray(new Player[0]), inactivePlayers.toArray(new Player[0]) };
+		return new Player[][]
+		{
+				getActivePlayerList().toArray(new Player[0]), getInactivePlayerList().toArray(new Player[0])
+		};
 	}
 
-	public ArrayList<Player> getAllPlayers()
+	public List<Player> getAllPlayers()
 	{
-		ArrayList<Player> all = new ArrayList<Player>();
-		all.addAll(activePlayers);
-		all.addAll(inactivePlayers);
+		List<Player> all = new ArrayList<Player>();
+		all.addAll(getActivePlayerList());
+		all.addAll(getInactivePlayerList());
 		return all;
 	}
 
 	public boolean isSpectator(Player p)
 	{
-		return spectators.contains(p.getName());
+		return spectators.contains(p.getUniqueId());
 	}
 
 	public boolean isInQueue(Player p)
 	{
-		return queue.contains(p);
+		return queue.contains(p.getUniqueId());
 	}
 
 	public boolean isPlayerActive(Player player)
 	{
-		return activePlayers.contains(player);
+		return activePlayers.contains(player.getUniqueId());
 	}
 
-	public boolean isPlayerinactive(Player player)
+	public boolean isPlayerInactive(Player player)
 	{
-		return inactivePlayers.contains(player);
+		return inactivePlayers.contains(player.getUniqueId());
 	}
 
 	public boolean hasPlayer(Player p)
 	{
-		return activePlayers.contains(p) || inactivePlayers.contains(p);
+		return activePlayers.contains(p.getUniqueId()) || inactivePlayers.contains(p.getUniqueId());
 	}
 
 	public GameMode getMode()

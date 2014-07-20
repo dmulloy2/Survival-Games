@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import lombok.Getter;
@@ -29,15 +30,12 @@ public class GameManager
 {
 	private @Getter List<Kit> kits;
 	private @Getter List<Game> games;
-
-	private @Getter HashSet<String> kitsel;
-
-	public @Getter HashMap<Integer, HashSet<Block>> openedChest;
+	private @Getter Set<String> kitsel;
+	private @Getter Map<Integer, HashSet<Block>> openedChest;
 
 	private MessageHandler messageHandler;
 
 	private final SurvivalGames plugin;
-
 	public GameManager(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
@@ -50,7 +48,7 @@ public class GameManager
 
 		loadGames();
 		loadKits();
-		
+
 		for (Game g : getGames())
 		{
 			openedChest.put(g.getID(), new HashSet<Block>());
@@ -89,7 +87,7 @@ public class GameManager
 					plugin.getStatsManager().addArena(a);
 				}
 			}
-			
+
 			a++;
 		}
 
@@ -103,9 +101,7 @@ public class GameManager
 		for (Game g : games)
 		{
 			if (g.isBlockInArena(v))
-			{
 				return g.getID();
-			}
 		}
 
 		return -1;
@@ -116,9 +112,7 @@ public class GameManager
 		for (Game g : games)
 		{
 			if (g.isPlayerActive(p))
-			{
 				return g.getID();
-			}
 		}
 
 		return -1;
@@ -129,9 +123,7 @@ public class GameManager
 		for (Game g : games)
 		{
 			if (g.isSpectator(p))
-			{
 				return g.getID();
-			}
 		}
 
 		return -1;
@@ -142,9 +134,7 @@ public class GameManager
 		for (Game g : games)
 		{
 			if (g.isPlayerActive(player))
-			{
 				return true;
-			}
 		}
 
 		return false;
@@ -154,10 +144,8 @@ public class GameManager
 	{
 		for (Game g : games)
 		{
-			if (g.isPlayerActive(player))
-			{
+			if (g.isPlayerInactive(player))
 				return true;
-			}
 		}
 
 		return false;
@@ -349,7 +337,7 @@ public class GameManager
 
 		Location max = sel.getMaximumPoint();
 		Location min = sel.getMinimumPoint();
-		
+
 		FileConfiguration c = plugin.getSettingsManager().getSystemConfig();
 
 		int no = c.getInt("sg-system.arenano") + 1;

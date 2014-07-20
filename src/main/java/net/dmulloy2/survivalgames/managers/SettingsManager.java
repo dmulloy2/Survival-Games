@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
@@ -317,7 +318,7 @@ public class SettingsManager
 
 	}
 
-	public void saveGameFlags(HashMap<String, Object> flags, int a)
+	public void saveGameFlags(Map<String, Object> flags, int a)
 	{
 		system.set("sg-system.arenas." + a + ".flags.autostart", flags.get("AUTOSTART_PLAYERS"));
 		system.set("sg-system.arenas." + a + ".flags.vote", flags.get("AUTOSTART_VOTE"));

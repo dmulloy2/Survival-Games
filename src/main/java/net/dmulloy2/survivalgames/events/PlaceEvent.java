@@ -22,7 +22,7 @@ public class PlaceEvent implements Listener
 	public PlaceEvent(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
-		
+
 		for (String s : plugin.getSettingsManager().getConfig().getStringList("block.place.whitelist"))
 		{
 			allowedPlace.add(MaterialUtil.getMaterial(s));
@@ -45,26 +45,24 @@ public class PlaceEvent implements Listener
 					event.setCancelled(true);
 				}
 			}
+
 			return;
 		}
 
 		Game g = plugin.getGameManager().getGame(id);
-		if (g.isPlayerinactive(p))
-		{
+		if (g.isPlayerInactive(p))
 			return;
-		}
+
 		if (g.getMode() == Game.GameMode.DISABLED)
-		{
 			return;
-		}
+
 		if (g.getMode() != Game.GameMode.INGAME)
 		{
 			event.setCancelled(true);
 			return;
-
 		}
 
-		if (!allowedPlace.contains(event.getBlock().getType()))
+		if (! allowedPlace.contains(event.getBlock().getType()))
 		{
 			event.setCancelled(true);
 		}

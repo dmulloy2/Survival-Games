@@ -18,18 +18,17 @@ public class SignClickEvent implements Listener
 	{
 		this.plugin = plugin;
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void clickHandler(PlayerInteractEvent e)
 	{
-
-		if (!(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK))
+		if (! (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK))
 		{
 			return;
 		}
 
 		Block clickedBlock = e.getClickedBlock();
-		if (!(clickedBlock.getType() == Material.SIGN || clickedBlock.getType() == Material.SIGN_POST || clickedBlock.getType() == Material.WALL_SIGN))
+		if (! (clickedBlock.getType() == Material.SIGN || clickedBlock.getType() == Material.SIGN_POST || clickedBlock.getType() == Material.WALL_SIGN))
 		{
 			return;
 		}
@@ -40,9 +39,11 @@ public class SignClickEvent implements Listener
 		{
 			return;
 		}
+
 		if (lines[0].equalsIgnoreCase("[SurvivalGames]"))
 		{
 			e.setCancelled(true);
+
 			try
 			{
 				if (lines[2].equalsIgnoreCase("Auto Assign"))
@@ -56,9 +57,9 @@ public class SignClickEvent implements Listener
 					plugin.getGameManager().addPlayer(e.getPlayer(), gameno);
 				}
 			}
-			catch (Exception ek)
+			catch (Throwable ex)
 			{
-				//
+				// Do nothing...
 			}
 		}
 	}
