@@ -18,55 +18,41 @@ public class BandageUse implements Listener
 	{
 		this.plugin = plugin;
 	}
-	
+
 	@EventHandler
 	public void onBandageUse(PlayerInteractEvent e)
 	{
 		Player player = e.getPlayer();
-		if (!plugin.getGameManager().isPlayerActive(player))
-		{
+		if (! plugin.getGameManager().isPlayerActive(player))
 			return;
-		}
 
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
 		{
 			ItemStack stack = player.getItemInHand();
 			if (stack == null || stack.getType() == Material.AIR)
-			{
 				return;
-			}
 
 			if (stack.getType() == Material.PAPER)
 			{
 				player.getItemInHand().setAmount(stack.getAmount() - 1);
 				if (player.getItemInHand().getAmount() == 0)
-				{
 					player.getInventory().removeItem(player.getItemInHand());
-				}
-				updateInventory(player);
+				player.updateInventory();
 
 				double amountToGive = amountToGive(player);
 				player.setHealth(player.getHealth() + amountToGive);
-				player.sendMessage(ChatColor.GREEN + "You used a bandage and got " + amountToGive + " hearts!");
+				player.sendMessage(ChatColor.GREEN + "You used a bandage and got " + (amountToGive / 2) + " hearts!");
 			}
 		}
 	}
 
+	private static final double HEALTH = 5.0D;
+
 	private double amountToGive(Player player)
 	{
-		if ((player.getHealth() + 5.0D) > 20.0D)
-		{
-			return (20.0D - player.getHealth());
-		}
-		else
-		{
-			return 5.0D;
-		}
-	}
+		if (player.getHealth() + HEALTH > 20.0D)
+			return 20.0D - HEALTH;
 
-	@SuppressWarnings("deprecation")
-	private void updateInventory(Player p)
-	{
-		p.updateInventory();
+		return HEALTH;
 	}
 }

@@ -192,7 +192,6 @@ public class GameManager
 		kitsel.add(p.getName());
 	}
 
-	@SuppressWarnings("deprecation")
 	public void selectKit(Player p, int i)
 	{
 		p.getInventory().clear();

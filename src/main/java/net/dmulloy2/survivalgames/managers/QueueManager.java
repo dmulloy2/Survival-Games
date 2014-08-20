@@ -36,19 +36,13 @@ public class QueueManager
 		try
 		{
 			if (! baseDir.exists())
-			{
 				baseDir.mkdirs();
-			}
 
 			for (Game g : plugin.getGameManager().getGames())
 			{
 				ensureFile(g.getID());
 			}
-		}
-		catch (Exception e)
-		{
-			//
-		}
+		} catch (Throwable ex) { }
 
 		new DataDumper().runTaskTimer(plugin, 100, 100);
 	}
@@ -97,9 +91,9 @@ public class QueueManager
 			dat = new ArrayList<BlockData>();
 			ensureFile(data.getGameId());
 		}
+
 		dat.add(data);
 		queue.put(data.getGameId(), dat);
-
 	}
 
 	public void ensureFile(int id)
@@ -108,14 +102,8 @@ public class QueueManager
 		{
 			File f2 = new File(baseDir, "Arena" + id + ".dat");
 			if (! f2.exists())
-			{
 				f2.createNewFile();
-			}
-		}
-		catch (Exception e)
-		{
-			//
-		}
+		} catch (Throwable ex) { }
 	}
 
 	public class DataDumper extends BukkitRunnable
@@ -133,12 +121,7 @@ public class QueueManager
 					out.writeObject(data);
 					out.flush();
 					out.close();
-
-				}
-				catch (Exception e)
-				{
-					//
-				}
+				} catch (Throwable ex) { }
 			}
 		}
 	}
@@ -170,11 +153,7 @@ public class QueueManager
 
 			queue.put(id, data);
 			in.close();
-		}
-		catch (Exception e)
-		{
-			//
-		}
+		} catch (Throwable ex) { }
 	}
 
 	public class Rollback extends BukkitRunnable
@@ -235,8 +214,7 @@ public class QueueManager
 			{
 				if (! plugin.isDisabling())
 				{
-					plugin.getServer().getScheduler().scheduleSyncDelayedTask(
-							plugin, new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time), 1);
+					new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time).runTaskLater(plugin, 1);
 				}
 				else
 				{

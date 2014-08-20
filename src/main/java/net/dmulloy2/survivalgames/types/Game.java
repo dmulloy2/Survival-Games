@@ -965,7 +965,6 @@ public class Game
 		return ret;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void addItem(Player p, ItemStack stack)
 	{
 		p.getInventory().addItem(stack);
@@ -1016,7 +1015,6 @@ public class Game
 	// -------------------------//
 	// Inventory Work
 	// -------------------------//
-	@SuppressWarnings("deprecation")
 	public void restoreInv(Player p)
 	{
 		try
@@ -1026,14 +1024,9 @@ public class Game
 			p.getInventory().setArmorContents(inv_store.get(p)[1]);
 			inv_store.remove(p);
 			p.updateInventory();
-		}
-		catch (Throwable ex)
-		{
-			//
-		}
+		} catch (Throwable ex) { }
 	}
 
-	@SuppressWarnings("deprecation")
 	public void clearInv(Player p)
 	{
 		ItemStack[] inv = p.getInventory().getContents();
@@ -1054,7 +1047,7 @@ public class Game
 	// -------------------------//
 	// Check for night
 	// -------------------------//
-	class NightChecker extends BukkitRunnable
+	public class NightChecker extends BukkitRunnable
 	{
 		boolean reset = false;
 		int tgc = gcount;
@@ -1079,7 +1072,7 @@ public class Game
 	// -------------------------//
 	// Ending Games
 	// -------------------------//
-	class EndgameManager extends BukkitRunnable
+	public class EndgameManager extends BukkitRunnable
 	{
 		@Override
 		public void run()
@@ -1098,7 +1091,7 @@ public class Game
 	// -------------------------//
 	// Death Match
 	// -------------------------//
-	class DeathMatch extends BukkitRunnable
+	public class DeathMatch extends BukkitRunnable
 	{
 		@Override
 		public void run()
@@ -1116,7 +1109,7 @@ public class Game
 				}
 			}
 
-			tasks.add(plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new BukkitRunnable()
+			tasks.add(new BukkitRunnable()
 			{
 				@Override
 				public void run()
@@ -1127,7 +1120,7 @@ public class Game
 						p.getLocation().getWorld().strikeLightning(p.getLocation());
 					}
 				}
-			}, config.getInt("deathmatch.killtime") * 20 * 60));
+			}.runTaskLater(plugin, config.getInt("deathmatch.killtime") * 20 * 60).getTaskId());
 		}
 	}
 
