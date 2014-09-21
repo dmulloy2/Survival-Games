@@ -23,7 +23,7 @@ public class PlayerStatsSession
 	int position = 0;
 	int pppoints = 0;
 
-	private List<Player> killed = new ArrayList<Player>();
+	private List<String> killed = new ArrayList<>();
 
 	private HashMap<Integer, Integer> kslist = new HashMap<Integer, Integer>();
 
@@ -31,7 +31,7 @@ public class PlayerStatsSession
 	public PlayerStatsSession(SurvivalGames plugin, Player p, int arenaid)
 	{
 		this.plugin = plugin;
-		
+
 		this.player = p;
 		this.arenaid = arenaid;
 
@@ -49,7 +49,7 @@ public class PlayerStatsSession
 
 	public int addKill(Player p)
 	{
-		killed.add(p);
+		killed.add(p.getName());
 		kills++;
 		checkKS();
 		lastkill = new Date().getTime();
@@ -122,16 +122,13 @@ public class PlayerStatsSession
 	{
 		calcPoints();
 		String query = "INSERT INTO " + plugin.getSettingsManager().getSqlPrefix() + "playerstats VALUES(NULL,";
-		query = query + gameno + "," + /*
-										 * plugin.getSettingsManager().getConfig
-										 * ().getString("sql.server-prefix")+
-										 */arenaid + ",'" + player.getName() + "'," + points + "," + position + "," + kills + "," + death
+		query = query + gameno + "," + arenaid + ",'" + player.getName() + "'," + points + "," + position + "," + kills + "," + death
 				+ ",";
 		String killeds = "'";
 
-		for (Player p : killed)
+		for (String killedPlayer : killed)
 		{
-			killeds = killeds + ((killeds.length() > 2) ? ":" : "") + p.getName();
+			killeds = killeds + ((killeds.length() > 2) ? ":" : "") + killedPlayer;
 		}
 
 		query = query + killeds + "'," + time;

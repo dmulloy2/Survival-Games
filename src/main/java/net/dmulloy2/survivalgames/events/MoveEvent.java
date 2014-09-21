@@ -1,13 +1,13 @@
 package net.dmulloy2.survivalgames.events;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Game.GameMode;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,20 +16,21 @@ import org.bukkit.util.Vector;
 
 public class MoveEvent implements Listener
 {
-	private HashMap<Player, Vector> playerpos = new HashMap<Player, Vector>();
+	private final Map<String, Vector> positions;
 
 	private final SurvivalGames plugin;
 	public MoveEvent(SurvivalGames plugin)
 	{
 		this.plugin = plugin;
+		this.positions = new HashMap<>();
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void frozenSpawnHandler(PlayerMoveEvent e)
 	{
 		if (plugin.getGameManager().getPlayerGameId(e.getPlayer()) == -1)
 		{
-			playerpos.remove(e.getPlayer());
+			positions.remove(e.getPlayer());
 			return;
 		}
 		if (plugin.getGameManager().getGame(plugin.getGameManager().getPlayerGameId(e.getPlayer())).getMode() == Game.GameMode.INGAME)
@@ -40,13 +41,13 @@ public class MoveEvent implements Listener
 		GameMode mo3 = plugin.getGameManager().getGameMode(plugin.getGameManager().getPlayerGameId(e.getPlayer()));
 		if (plugin.getGameManager().isPlayerActive(e.getPlayer()) && mo3 != Game.GameMode.INGAME)
 		{
-			if (playerpos.get(e.getPlayer()) == null)
+			if (positions.get(e.getPlayer().getName()) == null)
 			{
-				playerpos.put(e.getPlayer(), e.getPlayer().getLocation().toVector());
+				positions.put(e.getPlayer().getName(), e.getPlayer().getLocation().toVector());
 				return;
 			}
 			Location l = e.getPlayer().getLocation();
-			Vector v = playerpos.get(e.getPlayer());
+			Vector v = positions.get(e.getPlayer().getName());
 			if (l.getBlockX() != v.getBlockX() || l.getBlockZ() != v.getBlockZ())
 			{
 				l.setX(v.getBlockX() + .5);

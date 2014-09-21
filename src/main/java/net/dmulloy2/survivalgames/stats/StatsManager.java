@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
@@ -17,10 +19,10 @@ import org.bukkit.entity.Player;
 
 public class StatsManager
 {
-	private ArrayList<PreparedStatement> queue = new ArrayList<PreparedStatement>();
+	private List<PreparedStatement> queue = new ArrayList<>();
 	private DatabaseDumper dumper = new DatabaseDumper();
 
-	private HashMap<Integer, HashMap<Player, PlayerStatsSession>> arenas = new HashMap<Integer, HashMap<Player, PlayerStatsSession>>();
+	private Map<Integer, HashMap<String, PlayerStatsSession>> arenas = new HashMap<>();
 
 	private boolean enabled = true;
 
@@ -69,37 +71,37 @@ public class StatsManager
 
 	public void addArena(int arenaid)
 	{
-		arenas.put(arenaid, new HashMap<Player, PlayerStatsSession>());
+		arenas.put(arenaid, new HashMap<String, PlayerStatsSession>());
 	}
 
 	public void addPlayer(Player p, int arenaid)
 	{
-		arenas.get(arenaid).put(p, new PlayerStatsSession(plugin, p, arenaid));
+		arenas.get(arenaid).put(p.getName(), new PlayerStatsSession(plugin, p, arenaid));
 	}
 
 	public void removePlayer(Player p, int id)
 	{
-		arenas.get(id).remove(p);
+		arenas.get(id).remove(p.getName());
 	}
 
 	public void playerDied(Player p, int pos, int arenaid, long time)
 	{
-		arenas.get(arenaid).get(p).died(pos, time);
+		arenas.get(arenaid).get(p.getName()).died(pos, time);
 	}
 
 	public void playerWin(Player p, int arenaid, long time)
 	{
-		arenas.get(arenaid).get(p).win(time);
+		arenas.get(arenaid).get(p.getName()).win(time);
 	}
 
 	public PlayerStatsSession getPlayerStatsSession(Player p, int arenaid)
 	{
-		return arenas.get(arenaid).get(p);
+		return arenas.get(arenaid).get(p.getName());
 	}
 
 	public void addKill(Player p, Player killed, int arenaid)
 	{
-		PlayerStatsSession s = arenas.get(arenaid).get(p);
+		PlayerStatsSession s = arenas.get(arenaid).get(p.getName());
 
 		if (s == null)
 			return;
