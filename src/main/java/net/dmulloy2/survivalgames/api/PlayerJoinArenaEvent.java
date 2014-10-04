@@ -8,26 +8,22 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 @Getter
-public class PlayerJoinArenaEvent extends Event
-{
-	private static final HandlerList handlers = new HandlerList();
-	private Player player;
-	private Game game;
+public class PlayerJoinArenaEvent extends Event {
+    private static final HandlerList handlers = new HandlerList();
+    private Player player;
+    private Game game;
 
-	public PlayerJoinArenaEvent(Player player, Game game)
-	{
-		this.player = player;
-		this.game = game;
-	}
+    public PlayerJoinArenaEvent(Player player, Game game) {
+        this.player = player;
+        this.game = game;
+    }
 
-	@Override
-	public HandlerList getHandlers()
-	{
-		return handlers;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	public static HandlerList getHandlerList()
-	{
-		return handlers;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }

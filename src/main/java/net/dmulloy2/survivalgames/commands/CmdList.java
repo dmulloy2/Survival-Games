@@ -8,44 +8,32 @@ import net.dmulloy2.survivalgames.types.Prefix;
  * @author dmulloy2
  */
 
-public class CmdList extends SurvivalGamesCommand
-{
-	public CmdList(SurvivalGames plugin)
-	{
-		super(plugin);
-		this.name = "list";
-		this.description = "List all players in the arena you are playing in";
-		
-		this.permission = Permission.PLAYER_LIST;
-	}
+public class CmdList extends SurvivalGamesCommand {
+    public CmdList(SurvivalGames plugin) {
+        super(plugin);
+        this.name = "list";
+        this.description = "List all players in the arena you are playing in";
 
-	@Override
-	public void perform()
-	{
-		int gid = 0;
-		try
-		{
-			if (args.length == 0)
-			{
-				gid = gameManager.getPlayerGameId(player);
-			}
-			else
-			{
-				gid = Integer.parseInt(args[0]);
-			}
+        this.permission = Permission.PLAYER_LIST;
+    }
 
-			for (String s : gameManager.getStringList(gid))
-			{
-				player.sendMessage(s);
-			}
-		}
-		catch (NumberFormatException ex)
-		{
-			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notanumber", player, "input-Arena");
-		}
-		catch (NullPointerException ex)
-		{
-			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", player);
-		}
-	}
+    @Override
+    public void perform() {
+        int gid = 0;
+        try {
+            if (args.length == 0) {
+                gid = gameManager.getPlayerGameId(player);
+            } else {
+                gid = Integer.parseInt(args[0]);
+            }
+
+            for (String s : gameManager.getStringList(gid)) {
+                player.sendMessage(s);
+            }
+        } catch (NumberFormatException ex) {
+            plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notanumber", player, "input-Arena");
+        } catch (NullPointerException ex) {
+            plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", player);
+        }
+    }
 }

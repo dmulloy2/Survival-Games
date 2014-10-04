@@ -7,49 +7,41 @@ import java.util.logging.Level;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 
-public class FileCache
-{
-	private static HashMap<String, String> html = new HashMap<String, String>();
+public class FileCache {
+    private static HashMap<String, String> html = new HashMap<String, String>();
 
-	private FileCache() { }
+    private FileCache() {
+    }
 
-	public static String getHTML(SurvivalGames plugin, String pagename, boolean template)
-	{
-		if (html.get(pagename) == null)
-		{
-			loadPage(plugin, pagename, template);
-		}
+    public static String getHTML(SurvivalGames plugin, String pagename, boolean template) {
+        if (html.get(pagename) == null) {
+            loadPage(plugin, pagename, template);
+        }
 
-		return html.get(pagename);
-	}
+        return html.get(pagename);
+    }
 
-	public static void loadPage(SurvivalGames plugin, String pagename, boolean template)
-	{
-		Scanner scan = null;
-		File f = new File(plugin.getDataFolder() + ((template) ? "/www/template.html" : "/www/pages/" + pagename + ".html"));
+    public static void loadPage(SurvivalGames plugin, String pagename, boolean template) {
+        Scanner scan = null;
+        File f = new File(plugin.getDataFolder() + ((template) ? "/www/template.html" : "/www/pages/" + pagename + ".html"));
 
-		try
-		{
-			scan = new Scanner(f);
-		}
-		catch (Exception e)
-		{
-			plugin.$(Level.WARNING, "Webstats - Could not load page: " + pagename + "    " + f.getAbsolutePath());
-		}
+        try {
+            scan = new Scanner(f);
+        } catch (Exception e) {
+            plugin.log(Level.WARNING, "Webstats - Could not load page: " + pagename + "    " + f.getAbsolutePath());
+        }
 
-		String data = "";
+        String data = "";
 
-		if (scan == null)
-		{
-			html.put(pagename, "404 - Not found");
-			return;
-		}
+        if (scan == null) {
+            html.put(pagename, "404 - Not found");
+            return;
+        }
 
-		while (scan.hasNext())
-		{
-			data = data + scan.nextLine();
-		}
+        while (scan.hasNext()) {
+            data = data + scan.nextLine();
+        }
 
-		html.put(pagename, data);
-	}
+        html.put(pagename, data);
+    }
 }

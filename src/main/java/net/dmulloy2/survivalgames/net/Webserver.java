@@ -6,35 +6,29 @@ import java.net.Socket;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.util.Util;
 
-public class Webserver extends Thread
-{
-	private final SurvivalGames plugin;
-	public Webserver(SurvivalGames plugin)
-	{
-		this.plugin = plugin;
-	}
+public class Webserver extends Thread {
+    private final SurvivalGames plugin;
 
-	@Override
-	public void run()
-	{
-		try
-		{
-			ServerSocket st = new ServerSocket(880);
+    public Webserver(SurvivalGames plugin) {
+        this.plugin = plugin;
+    }
 
-			while (! plugin.isDisabling())
-			{
-				Socket skt = st.accept();
+    @Override
+    public void run() {
+        try {
+            ServerSocket st = new ServerSocket(880);
 
-				// Spin off request to a new thread to be handled
-				Connection c = new Connection(plugin, skt);
-				c.start();
-			}
+            while (!plugin.isDisabling()) {
+                Socket skt = st.accept();
 
-			st.close();
-		}
-		catch (Exception e)
-		{
-			plugin.getLogHandler().debug(Util.getUsefulStack(e, "running webserver"));
-		}
-	}
+                // Spin off request to a new thread to be handled
+                Connection c = new Connection(plugin, skt);
+                c.start();
+            }
+
+            st.close();
+        } catch (Exception e) {
+            plugin.getLogHandler().debug(Util.getUsefulStack(e, "running webserver"));
+        }
+    }
 }

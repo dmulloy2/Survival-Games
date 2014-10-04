@@ -11,56 +11,44 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class SignClickEvent implements Listener
-{
-	private final SurvivalGames plugin;
-	public SignClickEvent(SurvivalGames plugin)
-	{
-		this.plugin = plugin;
-	}
+public class SignClickEvent implements Listener {
+    private final SurvivalGames plugin;
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void clickHandler(PlayerInteractEvent e)
-	{
-		if (! (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK))
-		{
-			return;
-		}
+    public SignClickEvent(SurvivalGames plugin) {
+        this.plugin = plugin;
+    }
 
-		Block clickedBlock = e.getClickedBlock();
-		if (! (clickedBlock.getType() == Material.SIGN || clickedBlock.getType() == Material.SIGN_POST || clickedBlock.getType() == Material.WALL_SIGN))
-		{
-			return;
-		}
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void clickHandler(PlayerInteractEvent e) {
+        if (!(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK)) {
+            return;
+        }
 
-		Sign thisSign = (Sign) clickedBlock.getState();
-		String[] lines = thisSign.getLines();
-		if (lines.length < 3)
-		{
-			return;
-		}
+        Block clickedBlock = e.getClickedBlock();
+        if (!(clickedBlock.getType() == Material.SIGN || clickedBlock.getType() == Material.SIGN_POST || clickedBlock.getType() == Material.WALL_SIGN)) {
+            return;
+        }
 
-		if (lines[0].equalsIgnoreCase("[SurvivalGames]"))
-		{
-			e.setCancelled(true);
+        Sign thisSign = (Sign) clickedBlock.getState();
+        String[] lines = thisSign.getLines();
+        if (lines.length < 3) {
+            return;
+        }
 
-			try
-			{
-				if (lines[2].equalsIgnoreCase("Auto Assign"))
-				{
-					plugin.getGameManager().autoAddPlayer(e.getPlayer());
-				}
-				else
-				{
-					String game = lines[2].replace("Arena ", "");
-					int gameno = Integer.parseInt(game);
-					plugin.getGameManager().addPlayer(e.getPlayer(), gameno);
-				}
-			}
-			catch (Throwable ex)
-			{
-				// Do nothing...
-			}
-		}
-	}
+        if (lines[0].equalsIgnoreCase("[SurvivalGames]")) {
+            e.setCancelled(true);
+
+            try {
+                if (lines[2].equalsIgnoreCase("Auto Assign")) {
+                    plugin.getGameManager().autoAddPlayer(e.getPlayer());
+                } else {
+                    String game = lines[2].replace("Arena ", "");
+                    int gameno = Integer.parseInt(game);
+                    plugin.getGameManager().addPlayer(e.getPlayer(), gameno);
+                }
+            } catch (Throwable ex) {
+                // Do nothing...
+            }
+        }
+    }
 }

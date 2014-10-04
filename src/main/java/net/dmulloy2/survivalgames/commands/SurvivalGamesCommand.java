@@ -23,181 +23,155 @@ import org.bukkit.entity.Player;
  * @author dmulloy2
  */
 
-public abstract class SurvivalGamesCommand implements CommandExecutor
-{
-	protected final SurvivalGames plugin;
+public abstract class SurvivalGamesCommand implements CommandExecutor {
+    protected final SurvivalGames plugin;
 
-	protected CommandSender sender;
-	protected Player player;
-	protected String args[];
+    protected CommandSender sender;
+    protected Player player;
+    protected String args[];
 
-	protected String name;
-	protected String description;
+    protected String name;
+    protected String description;
 
-	protected Permission permission;
+    protected Permission permission;
 
-	protected boolean mustBePlayer = true;
+    protected boolean mustBePlayer = true;
 
-	protected List<String> requiredArgs;
-	protected List<String> optionalArgs;
-	protected List<String> aliases;
+    protected List<String> requiredArgs;
+    protected List<String> optionalArgs;
+    protected List<String> aliases;
 
-	protected MessageHandler messageHandler;
-	protected LobbyManager lobbyManager;
-	protected GameManager gameManager;
+    protected MessageHandler messageHandler;
+    protected LobbyManager lobbyManager;
+    protected GameManager gameManager;
 
-	public SurvivalGamesCommand(SurvivalGames plugin)
-	{
-		this.plugin = plugin;
-		
-		this.messageHandler = plugin.getMessageHandler();
-		this.lobbyManager = plugin.getLobbyManager();
-		this.gameManager = plugin.getGameManager();
+    public SurvivalGamesCommand(SurvivalGames plugin) {
+        this.plugin = plugin;
 
-		this.requiredArgs = new ArrayList<String>(2);
-		this.optionalArgs = new ArrayList<String>(2);
-		this.aliases = new ArrayList<String>(2);
-	}
+        this.messageHandler = plugin.getMessageHandler();
+        this.lobbyManager = plugin.getLobbyManager();
+        this.gameManager = plugin.getGameManager();
 
-	@Override
-	public final boolean onCommand(CommandSender sender, Command command, String label, String[] args)
-	{
-		execute(sender, args);
-		return true;
-	}
+        this.requiredArgs = new ArrayList<String>(2);
+        this.optionalArgs = new ArrayList<String>(2);
+        this.aliases = new ArrayList<String>(2);
+    }
 
-	public final void execute(CommandSender sender, String[] args)
-	{
-		this.sender = sender;
-		this.args = args;
+    @Override
+    public final boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        execute(sender, args);
+        return true;
+    }
 
-		if (sender instanceof Player)
-			player = (Player) sender;
+    public final void execute(CommandSender sender, String[] args) {
+        this.sender = sender;
+        this.args = args;
 
-		if (mustBePlayer && ! isPlayer())
-		{
-			err("You must be a player to execute this command!");
-			return;
-		}
+        if (sender instanceof Player)
+            player = (Player) sender;
 
-		if (requiredArgs.size() > args.length)
-		{
-			invalidArgs();
-			return;
-		}
+        if (mustBePlayer && !isPlayer()) {
+            err("You must be a player to execute this command!");
+            return;
+        }
 
-		if (! hasPermission())
-		{
-			err("You do not have permission to perform this command!");
-			log(Level.WARNING, sender.getName() + " was denied access to a command!");
-			return;
-		}
+        if (requiredArgs.size() > args.length) {
+            invalidArgs();
+            return;
+        }
 
-		try
-		{
-			perform();
-		}
-		catch (Throwable e)
-		{
-			err("Encountered an exception executing this command: " + e.getMessage());
-			plugin.getLogHandler().debug(Util.getUsefulStack(e, "executing command " + name));
-		}
-	}
+        if (!hasPermission()) {
+            err("You do not have permission to perform this command!");
+            log(Level.WARNING, sender.getName() + " was denied access to a command!");
+            return;
+        }
 
-	public abstract void perform();
+        try {
+            perform();
+        } catch (Throwable e) {
+            err("Encountered an exception executing this command: " + e.getMessage());
+            plugin.getLogHandler().debug(Util.getUsefulStack(e, "executing command " + name));
+        }
+    }
 
-	protected final boolean isPlayer()
-	{
-		return player != null;
-	}
+    public abstract void perform();
 
-	private final boolean hasPermission()
-	{
-		return plugin.getPermissionHandler().hasPermission(sender, permission);
-	}
+    protected final boolean isPlayer() {
+        return player != null;
+    }
 
-	public final String getDescription()
-	{
-		return FormatUtil.format(description);
-	}
+    private final boolean hasPermission() {
+        return plugin.getPermissionHandler().hasPermission(sender, permission);
+    }
 
-	public final List<String> getAliases()
-	{
-		return aliases;
-	}
+    public final String getDescription() {
+        return FormatUtil.format(description);
+    }
 
-	public final String getName()
-	{
-		return name;
-	}
+    public final List<String> getAliases() {
+        return aliases;
+    }
 
-	public final String getUsageTemplate(final boolean displayHelp)
-	{
-		StringBuilder ret = new StringBuilder();
-		ret.append("&b/hg ");
+    public final String getName() {
+        return name;
+    }
 
-		ret.append(name);
+    public final String getUsageTemplate(final boolean displayHelp) {
+        StringBuilder ret = new StringBuilder();
+        ret.append("&b/hg ");
 
-		ret.append("&3 ");
-		for (String s : requiredArgs)
-			ret.append(String.format("<%s> ", s));
+        ret.append(name);
 
-		for (String s : optionalArgs)
-			ret.append(String.format("[%s] ", s));
+        ret.append("&3 ");
+        for (String s : requiredArgs)
+            ret.append(String.format("<%s> ", s));
 
-		if (displayHelp)
-			ret.append("&e" + description);
+        for (String s : optionalArgs)
+            ret.append(String.format("[%s] ", s));
 
-		return FormatUtil.format(ret.toString());
-	}
+        if (displayHelp)
+            ret.append("&e" + description);
 
-	protected final void sendMessage(Prefix prefix, String message)
-	{
-		messageHandler.sendMessage(prefix, message, player);
-	}
+        return FormatUtil.format(ret.toString());
+    }
 
-	protected final void sendMessage(String message)
-	{
-		sendMessage(Prefix.INFO, message);
-	}
+    protected final void sendMessage(Prefix prefix, String message) {
+        messageHandler.sendMessage(prefix, message, player);
+    }
 
-	protected final void sendFMessage(Prefix prefix, String message, String... args)
-	{
-		messageHandler.sendFMessage(prefix, message, player, args);
-	}
+    protected final void sendMessage(String message) {
+        sendMessage(Prefix.INFO, message);
+    }
 
-	protected final void sendFMessage(String message, String... args)
-	{
-		sendFMessage(Prefix.INFO, message, args);
-	}
+    protected final void sendFMessage(Prefix prefix, String message, String... args) {
+        messageHandler.sendFMessage(prefix, message, player, args);
+    }
 
-	protected final void err(String message)
-	{
-		sendMessage(Prefix.ERROR, message);
-	}
+    protected final void sendFMessage(String message, String... args) {
+        sendFMessage(Prefix.INFO, message, args);
+    }
 
-	protected final void invalidArgs()
-	{
-		err("Invalid arguments! Try: " + getUsageTemplate(false));
-	}
+    protected final void err(String message) {
+        sendMessage(Prefix.ERROR, message);
+    }
 
-	protected final void log(Level level, String string, Object... objects)
-	{
-		plugin.getLogHandler().log(level, string, objects);
-	}
+    protected final void invalidArgs() {
+        err("Invalid arguments! Try: " + getUsageTemplate(false));
+    }
 
-	protected final void log(String string, Object... objects)
-	{
-		plugin.getLogHandler().log(Level.INFO, string, objects);
-	}
+    protected final void log(Level level, String string, Object... objects) {
+        plugin.getLogHandler().log(level, string, objects);
+    }
 
-	protected final void debug(String string, Object... objects)
-	{
-		plugin.getLogHandler().debug(string, objects);
-	}
+    protected final void log(String string, Object... objects) {
+        plugin.getLogHandler().log(Level.INFO, string, objects);
+    }
 
-	protected final String capitalize(String string)
-	{
-		return WordUtils.capitalize(string);
-	}
+    protected final void debug(String string, Object... objects) {
+        plugin.getLogHandler().debug(string, objects);
+    }
+
+    protected final String capitalize(String string) {
+        return WordUtils.capitalize(string);
+    }
 }

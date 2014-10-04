@@ -8,29 +8,25 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 @Getter
-public class PlayerGameDeathEvent extends Event
-{
-	private static final HandlerList handlers = new HandlerList();
+public class PlayerGameDeathEvent extends Event {
+    private static final HandlerList handlers = new HandlerList();
 
-	private Player dead;
-	private Player killer;
-	private Game game;
+    private Player dead;
+    private Player killer;
+    private Game game;
 
-	public PlayerGameDeathEvent(Player dead, Player killer, Game game)
-	{
-		this.dead = dead;
-		this.killer = killer;
-		this.game = game;
-	}
+    public PlayerGameDeathEvent(Player dead, Player killer, Game game) {
+        this.dead = dead;
+        this.killer = killer;
+        this.game = game;
+    }
 
-	@Override
-	public HandlerList getHandlers()
-	{
-		return handlers;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	public static HandlerList getHandlerList()
-	{
-		return handlers;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }

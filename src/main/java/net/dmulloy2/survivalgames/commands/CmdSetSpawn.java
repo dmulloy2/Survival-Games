@@ -13,80 +13,64 @@ import org.bukkit.Location;
  * @author dmulloy2
  */
 
-public class CmdSetSpawn extends SurvivalGamesCommand
-{
-	public CmdSetSpawn(SurvivalGames plugin)
-	{
-		super(plugin);
-		this.name = "setspawn";
-		this.requiredArgs.add("id");
-		this.description = "Sets a spawn for the arena you are located in";
-		
-		this.permission = Permission.ADMIN_SETSPAWN;
-	}
+public class CmdSetSpawn extends SurvivalGamesCommand {
+    public CmdSetSpawn(SurvivalGames plugin) {
+        super(plugin);
+        this.name = "setspawn";
+        this.requiredArgs.add("id");
+        this.description = "Sets a spawn for the arena you are located in";
 
-	@Override
-	public void perform()
-	{
-		loadNextSpawn();
+        this.permission = Permission.ADMIN_SETSPAWN;
+    }
 
-		Location l = player.getLocation();
-		int game = gameManager.getBlockGameId(l);
+    @Override
+    public void perform() {
+        loadNextSpawn();
 
-		if (game == -1)
-		{
-			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinarena", player);
-			return;
-		}
-		
-		int i = 0;
-		if (args[0].equalsIgnoreCase("next"))
-		{
-			i = next.get(game);
-			next.put(game, next.get(game) + 1);
-		}
-		else
-		{
-			try
-			{
-				i = Integer.parseInt(args[0]);
-				if (i > next.get(game) + 1 || i < 1)
-				{
-					plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.between", player,
-							"num-" + next.get(game));
-					return;
-				}
-				if (i == next.get(game))
-				{
-					next.put(game, next.get(game) + 1);
-				}
-			}
-			catch (Exception e)
-			{
-				plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.badinput", player);
-				return;
-			}
-		}
-		
-		if (i == -1)
-		{
-			plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinside", player);
-			return;
-		}
-		
-		plugin.getSettingsManager().setSpawn(game, i, l.toVector());
-		plugin.getMessageHandler().sendFMessage(Prefix.INFO, "info.spawnset", player, "num-" + i, "arena-" + game);
-		return;
-	}
-	
-	private HashMap<Integer, Integer> next = new HashMap<Integer, Integer>();
+        Location l = player.getLocation();
+        int game = gameManager.getBlockGameId(l);
 
-	public void loadNextSpawn()
-	{
-		// Avoid Concurrency problems
-		for (Game g : gameManager.getGames().toArray(new Game[0]))
-		{ 
-			next.put(g.getID(), plugin.getSettingsManager().getSpawnCount(g.getID()) + 1);
-		}
-	}
+        if (game == -1) {
+            plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinarena", player);
+            return;
+        }
+
+        int i = 0;
+        if (args[0].equalsIgnoreCase("next")) {
+            i = next.get(game);
+            next.put(game, next.get(game) + 1);
+        } else {
+            try {
+                i = Integer.parseInt(args[0]);
+                if (i > next.get(game) + 1 || i < 1) {
+                    plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.between", player, "num-" + next.get(game));
+                    return;
+                }
+                if (i == next.get(game)) {
+                    next.put(game, next.get(game) + 1);
+                }
+            } catch (Exception e) {
+                plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.badinput", player);
+                return;
+            }
+        }
+
+        if (i == -1) {
+            plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinside", player);
+            return;
+        }
+
+        plugin.getSettingsManager().setSpawn(game, i, l.toVector());
+        plugin.getMessageHandler().sendFMessage(Prefix.INFO, "info.spawnset", player, "num-" + i, "arena-" + game);
+        return;
+    }
+
+    private HashMap<Integer, Integer> next = new HashMap<Integer, Integer>();
+
+    public void loadNextSpawn() {
+        // Avoid Concurrency problems
+        for (Game g : gameManager.getGames().toArray(new Game[0])) {
+            next.put(g.getID(), plugin.getSettingsManager().getSpawnCount(g.getID()) + 1);
+        }
+    }
 }

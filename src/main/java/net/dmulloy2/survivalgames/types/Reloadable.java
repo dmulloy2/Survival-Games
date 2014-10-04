@@ -7,7 +7,6 @@ package net.dmulloy2.survivalgames.types;
  * @author dmulloy2
  */
 
-public interface Reloadable
-{
-	void reload();
+public interface Reloadable {
+    void reload();
 }

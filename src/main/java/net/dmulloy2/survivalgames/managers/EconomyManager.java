@@ -5,36 +5,31 @@ import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class EconomyManager
-{
-	private Economy economy;
-	private boolean enabled;
+public class EconomyManager {
+    private Economy economy;
+    private boolean enabled;
 
-	private final SurvivalGames plugin;
-	public EconomyManager(SurvivalGames plugin)
-	{
-		this.plugin = plugin;
-		this.enabled = setupEconomy();
-	}
+    private final SurvivalGames plugin;
 
-	private boolean setupEconomy()
-	{
-		RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(Economy.class);
-		if (economyProvider != null)
-		{
-			this.economy = economyProvider.getProvider();
-		}
+    public EconomyManager(SurvivalGames plugin) {
+        this.plugin = plugin;
+        this.enabled = setupEconomy();
+    }
 
-		return economy != null;
-	}
+    private boolean setupEconomy() {
+        RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(Economy.class);
+        if (economyProvider != null) {
+            this.economy = economyProvider.getProvider();
+        }
 
-	public Economy getEcon()
-	{
-		return economy;
-	}
+        return economy != null;
+    }
 
-	public boolean econPresent()
-	{
-		return enabled;
-	}
+    public Economy getEcon() {
+        return economy;
+    }
+
+    public boolean econPresent() {
+        return enabled;
+    }
 }

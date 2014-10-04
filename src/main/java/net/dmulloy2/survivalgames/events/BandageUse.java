@@ -11,48 +11,43 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class BandageUse implements Listener
-{
-	private final SurvivalGames plugin;
-	public BandageUse(SurvivalGames plugin)
-	{
-		this.plugin = plugin;
-	}
+public class BandageUse implements Listener {
+    private final SurvivalGames plugin;
 
-	@EventHandler
-	public void onBandageUse(PlayerInteractEvent e)
-	{
-		Player player = e.getPlayer();
-		if (! plugin.getGameManager().isPlayerActive(player))
-			return;
+    public BandageUse(SurvivalGames plugin) {
+        this.plugin = plugin;
+    }
 
-		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
-		{
-			ItemStack stack = player.getItemInHand();
-			if (stack == null || stack.getType() == Material.AIR)
-				return;
+    @EventHandler
+    public void onBandageUse(PlayerInteractEvent e) {
+        Player player = e.getPlayer();
+        if (!plugin.getGameManager().isPlayerActive(player))
+            return;
 
-			if (stack.getType() == Material.PAPER)
-			{
-				player.getItemInHand().setAmount(stack.getAmount() - 1);
-				if (player.getItemInHand().getAmount() == 0)
-					player.getInventory().removeItem(player.getItemInHand());
-				player.updateInventory();
+        if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            ItemStack stack = player.getItemInHand();
+            if (stack == null || stack.getType() == Material.AIR)
+                return;
 
-				double amountToGive = amountToGive(player);
-				player.setHealth(player.getHealth() + amountToGive);
-				player.sendMessage(ChatColor.GREEN + "You used a bandage and got " + (amountToGive / 2) + " hearts!");
-			}
-		}
-	}
+            if (stack.getType() == Material.PAPER) {
+                player.getItemInHand().setAmount(stack.getAmount() - 1);
+                if (player.getItemInHand().getAmount() == 0)
+                    player.getInventory().removeItem(player.getItemInHand());
+                player.updateInventory();
 
-	private static final double HEALTH = 5.0D;
+                double amountToGive = amountToGive(player);
+                player.setHealth(player.getHealth() + amountToGive);
+                player.sendMessage(ChatColor.GREEN + "You used a bandage and got " + (amountToGive / 2) + " hearts!");
+            }
+        }
+    }
 
-	private double amountToGive(Player player)
-	{
-		if (player.getHealth() + HEALTH > 20.0D)
-			return 20.0D - HEALTH;
+    private static final double HEALTH = 5.0D;
 
-		return HEALTH;
-	}
+    private double amountToGive(Player player) {
+        if (player.getHealth() + HEALTH > 20.0D)
+            return 20.0D - HEALTH;
+
+        return HEALTH;
+    }
 }

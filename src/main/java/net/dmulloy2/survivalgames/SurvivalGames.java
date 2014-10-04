@@ -77,204 +77,185 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
  * Currently maintained by dmulloy2
  */
 
-public class SurvivalGames extends JavaPlugin implements Reloadable
-{
-	private @Getter boolean dbcon;
-	private @Getter boolean disabling;
-	private @Getter boolean configUpToDate;
+public class SurvivalGames extends JavaPlugin implements Reloadable {
+    private @Getter boolean dbcon;
+    private @Getter boolean disabling;
+    private @Getter boolean configUpToDate;
 
-	private @Getter int configVersion = 3;
+    private @Getter int configVersion = 3;
 
-	private @Getter GameManager gameManager;
-	private @Getter	HookManager hookManager;
-	private @Getter	StatsManager statsManager;
-	private @Getter	LobbyManager lobbyManager;
-	private @Getter	QueueManager queueManager;
-	private @Getter EconomyManager economyManager;
-	private @Getter	LoggingManager loggingManager;
-	private @Getter DatabaseManager databaseManager;
-	private @Getter	SettingsManager settingsManager;
-	private @Getter	ChestRatioStorage chestRatioStorage;
+    private @Getter GameManager gameManager;
+    private @Getter HookManager hookManager;
+    private @Getter StatsManager statsManager;
+    private @Getter LobbyManager lobbyManager;
+    private @Getter QueueManager queueManager;
+    private @Getter EconomyManager economyManager;
+    private @Getter LoggingManager loggingManager;
+    private @Getter DatabaseManager databaseManager;
+    private @Getter SettingsManager settingsManager;
+    private @Getter ChestRatioStorage chestRatioStorage;
 
-	private @Getter	PermissionHandler permissionHandler;
-	private @Getter	CommandHandler commandHandler;
-	private @Getter	MessageHandler messageHandler;
-	private @Getter	LogHandler logHandler;
+    private @Getter PermissionHandler permissionHandler;
+    private @Getter CommandHandler commandHandler;
+    private @Getter MessageHandler messageHandler;
+    private @Getter LogHandler logHandler;
 
-	private @Getter WorldEditPlugin worldEdit;
+    private @Getter WorldEditPlugin worldEdit;
 
-	private @Getter	String prefix = FormatUtil.format("&4[&6&lSG&4]&3 ");
+    private @Getter String prefix = FormatUtil.format("&4[&6&lSG&4]&3 ");
 
-	@Override
-	public void onEnable()
-	{
-		long start = System.currentTimeMillis();
+    @Override
+    public void onEnable() {
+        long start = System.currentTimeMillis();
 
-		// Register log handler first
-		logHandler = new LogHandler(this);
+        // Register log handler first
+        logHandler = new LogHandler(this);
 
-		// Register some managers
-		settingsManager = new SettingsManager(this);
-		statsManager = new StatsManager(this);
-		lobbyManager = new LobbyManager(this);
-		gameManager = new GameManager(this);
+        // Register some managers
+        settingsManager = new SettingsManager(this);
+        statsManager = new StatsManager(this);
+        lobbyManager = new LobbyManager(this);
+        gameManager = new GameManager(this);
 
-		permissionHandler = new PermissionHandler();
-		commandHandler = new CommandHandler(this);
-		messageHandler = new MessageHandler(this);
+        permissionHandler = new PermissionHandler();
+        commandHandler = new CommandHandler(this);
+        messageHandler = new MessageHandler(this);
 
-		// Register commands
-		commandHandler.setCommandPrefix("survivalgames");
-		commandHandler.registerCommand(new CmdAddWall(this));
-		commandHandler.registerCommand(new CmdCreateArena(this));
-		commandHandler.registerCommand(new CmdDelArena(this));
-		commandHandler.registerCommand(new CmdDisable(this));
-		commandHandler.registerCommand(new CmdEnable(this));
-		// commandHandler.registerCommand(new CmdFlag(this));
-		commandHandler.registerCommand(new CmdForceStart(this));
-		commandHandler.registerCommand(new CmdHelp(this));
-		commandHandler.registerCommand(new CmdJoin(this));
-		commandHandler.registerCommand(new CmdLeave(this));
-		commandHandler.registerCommand(new CmdLeaveQueue(this));
-		commandHandler.registerCommand(new CmdList(this));
-		commandHandler.registerCommand(new CmdListArenas(this));
-		commandHandler.registerCommand(new CmdReload(this));
-		commandHandler.registerCommand(new CmdResetSpawns(this));
-		commandHandler.registerCommand(new CmdSetLobbySpawn(this));
-		commandHandler.registerCommand(new CmdSetSpawn(this));
-		commandHandler.registerCommand(new CmdSpectate(this));
-		commandHandler.registerCommand(new CmdTeleport(this));
-		commandHandler.registerCommand(new CmdVersion(this));
-		commandHandler.registerCommand(new CmdVote(this));
+        // Register commands
+        commandHandler.setCommandPrefix("survivalgames");
+        commandHandler.registerCommand(new CmdAddWall(this));
+        commandHandler.registerCommand(new CmdCreateArena(this));
+        commandHandler.registerCommand(new CmdDelArena(this));
+        commandHandler.registerCommand(new CmdDisable(this));
+        commandHandler.registerCommand(new CmdEnable(this));
+        // commandHandler.registerCommand(new CmdFlag(this));
+        commandHandler.registerCommand(new CmdForceStart(this));
+        commandHandler.registerCommand(new CmdHelp(this));
+        commandHandler.registerCommand(new CmdJoin(this));
+        commandHandler.registerCommand(new CmdLeave(this));
+        commandHandler.registerCommand(new CmdLeaveQueue(this));
+        commandHandler.registerCommand(new CmdList(this));
+        commandHandler.registerCommand(new CmdListArenas(this));
+        commandHandler.registerCommand(new CmdReload(this));
+        commandHandler.registerCommand(new CmdResetSpawns(this));
+        commandHandler.registerCommand(new CmdSetLobbySpawn(this));
+        commandHandler.registerCommand(new CmdSetSpawn(this));
+        commandHandler.registerCommand(new CmdSpectate(this));
+        commandHandler.registerCommand(new CmdTeleport(this));
+        commandHandler.registerCommand(new CmdVersion(this));
+        commandHandler.registerCommand(new CmdVote(this));
 
-		// Hook into WorldEdit
-		worldEdit = hookIntoWorldEdit();
-		if (worldEdit == null)
-		{
-			$(Level.WARNING, "WorldEdit plugin not found. You will not be able to create new arenas.");
-		}
+        // Hook into WorldEdit
+        worldEdit = hookIntoWorldEdit();
+        if (worldEdit == null) {
+            log(Level.WARNING, "WorldEdit plugin not found. You will not be able to create new arenas.");
+        }
 
-		// Try loading everything that uses SQL
-		try
-		{
-			FileConfiguration c = settingsManager.getConfig();
-			if (c.getBoolean("stats.enabled"))
-				databaseManager = new DatabaseManager(this);
+        // Try loading everything that uses SQL
+        try {
+            FileConfiguration c = settingsManager.getConfig();
+            if (c.getBoolean("stats.enabled"))
+                databaseManager = new DatabaseManager(this);
 
-			queueManager = new QueueManager(this);
+            queueManager = new QueueManager(this);
 
-			statsManager.setup(c.getBoolean("stats.enabled"));
-			dbcon = true;
-		}
-		catch (Exception e)
-		{
-			$(Level.SEVERE, "Could not connect to the database ({0}). Check your settings!", e.getMessage());
+            statsManager.setup(c.getBoolean("stats.enabled"));
+            dbcon = true;
+        } catch (Exception e) {
+            log(Level.SEVERE, "Could not connect to the database ({0}). Check your settings!", e.getMessage());
 
-			getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
-		chestRatioStorage = new ChestRatioStorage(this);
-		economyManager = new EconomyManager(this);
-		hookManager = new HookManager(this);
+        chestRatioStorage = new ChestRatioStorage(this);
+        economyManager = new EconomyManager(this);
+        hookManager = new HookManager(this);
 
-		// Register events
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(new PlaceEvent(this), this);
-		pm.registerEvents(new BreakEvent(this), this);
-		pm.registerEvents(new DeathEvent(this), this);
-		pm.registerEvents(new MoveEvent(this), this);
-		pm.registerEvents(new CommandCatch(this), this);
-		pm.registerEvents(new SignClickEvent(this), this);
-		pm.registerEvents(new ChestReplaceEvent(this), this);
-		pm.registerEvents(new LogoutEvent(this), this);
-		pm.registerEvents(new JoinEvent(this), this);
-		pm.registerEvents(new TeleportEvent(this), this);
+        // Register events
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PlaceEvent(this), this);
+        pm.registerEvents(new BreakEvent(this), this);
+        pm.registerEvents(new DeathEvent(this), this);
+        pm.registerEvents(new MoveEvent(this), this);
+        pm.registerEvents(new CommandCatch(this), this);
+        pm.registerEvents(new SignClickEvent(this), this);
+        pm.registerEvents(new ChestReplaceEvent(this), this);
+        pm.registerEvents(new LogoutEvent(this), this);
+        pm.registerEvents(new JoinEvent(this), this);
+        pm.registerEvents(new TeleportEvent(this), this);
 
-		loggingManager = new LoggingManager(this);
-		pm.registerEvents(loggingManager, this);
+        loggingManager = new LoggingManager(this);
+        pm.registerEvents(loggingManager, this);
 
-		pm.registerEvents(new SpectatorEvents(this), this);
-		pm.registerEvents(new BandageUse(this), this);
-		pm.registerEvents(new KitEvents(this), this);
-		pm.registerEvents(new KeepLobbyLoadedEvent(this), this);
+        pm.registerEvents(new SpectatorEvents(this), this);
+        pm.registerEvents(new BandageUse(this), this);
+        pm.registerEvents(new KitEvents(this), this);
+        pm.registerEvents(new KeepLobbyLoadedEvent(this), this);
 
-		for (Player pl : getServer().getOnlinePlayers())
-		{
-			if (gameManager.getBlockGameId(pl.getLocation()) != -1)
-			{
-				pl.teleport(settingsManager.getLobbySpawn());
-			}
-		}
+        for (Player pl : getServer().getOnlinePlayers()) {
+            if (gameManager.getBlockGameId(pl.getLocation()) != -1) {
+                pl.teleport(settingsManager.getLobbySpawn());
+            }
+        }
 
-		$("{0} has been enabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
-	}
+        log("{0} has been enabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
+    }
 
-	@Override
-	public void onDisable()
-	{
-		long start = System.currentTimeMillis();
+    @Override
+    public void onDisable() {
+        long start = System.currentTimeMillis();
 
-		disabling = true;
+        disabling = true;
 
-		getServer().getScheduler().cancelTasks(this);
+        getServer().getScheduler().cancelTasks(this);
 
-		settingsManager.saveSpawns();
-		settingsManager.saveSystemConfig();
+        settingsManager.saveSpawns();
+        settingsManager.saveSystemConfig();
 
-		for (Game g : gameManager.getGames())
-		{
-			g.disable();
-		}
+        for (Game g : gameManager.getGames()) {
+            g.disable();
+        }
 
-		$("{0} has been disabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
-	}
+        log("{0} has been disabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
+    }
 
-	public WorldEditPlugin hookIntoWorldEdit()
-	{
-		PluginManager pm = getServer().getPluginManager();
-		if (pm.isPluginEnabled("WorldEdit"))
-		{
-			Plugin worldEdit = pm.getPlugin("WorldEdit");
-			if (worldEdit instanceof WorldEditPlugin)
-			{
-				return (WorldEditPlugin) worldEdit;
-			}
-		}
+    public WorldEditPlugin hookIntoWorldEdit() {
+        PluginManager pm = getServer().getPluginManager();
+        if (pm.isPluginEnabled("WorldEdit")) {
+            Plugin worldEdit = pm.getPlugin("WorldEdit");
+            if (worldEdit instanceof WorldEditPlugin) {
+                return (WorldEditPlugin) worldEdit;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public void $(Level l, String msg, Object... obj)
-	{
-		logHandler.log(l, msg, obj);
-	}
+    public void log(Level level, String msg, Object... obj) {
+        logHandler.log(level, msg, obj);
+    }
 
-	public void $(String msg, Object... obj)
-	{
-		logHandler.log(Level.INFO, msg, obj);
-	}
+    public void log(String msg, Object... obj) {
+        logHandler.log(Level.INFO, msg, obj);
+    }
 
-	public void debug(String msg, Object... obj)
-	{
-		logHandler.debug(msg, obj);
-	}
+    public void debug(String msg, Object... obj) {
+        logHandler.debug(msg, obj);
+    }
 
-	public void debug(int a)
-	{
-		debug(String.valueOf(a));
-	}
+    public void debug(int a) {
+        debug(String.valueOf(a));
+    }
 
-	public void setConfigUpToDate(boolean upToDate)
-	{
-		this.configUpToDate = upToDate;
-	}
+    public void setConfigUpToDate(boolean upToDate) {
+        this.configUpToDate = upToDate;
+    }
 
-	@Override
-	public void reload()
-	{
-		PluginManager pm = getServer().getPluginManager();
-		pm.disablePlugin(this);
-		pm.enablePlugin(this);
-	}
+    @Override
+    public void reload() {
+        PluginManager pm = getServer().getPluginManager();
+        pm.disablePlugin(this);
+        pm.enablePlugin(this);
+    }
 }

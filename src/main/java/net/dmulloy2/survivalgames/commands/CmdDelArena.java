@@ -11,39 +11,35 @@ import org.bukkit.configuration.file.FileConfiguration;
  * @author dmulloy2
  */
 
-public class CmdDelArena extends SurvivalGamesCommand
-{
-	public CmdDelArena(SurvivalGames plugin)
-	{
-		super(plugin);
-		this.name = "delarena";
-		this.description = "Delete an arena";
-		
-		this.permission = Permission.ADMIN_DELARENA;
-	}
+public class CmdDelArena extends SurvivalGamesCommand {
+    public CmdDelArena(SurvivalGames plugin) {
+        super(plugin);
+        this.name = "delarena";
+        this.description = "Delete an arena";
 
-	@Override
-	public void perform()
-	{
-		FileConfiguration s = plugin.getSettingsManager().getSystemConfig();
+        this.permission = Permission.ADMIN_DELARENA;
+    }
 
-		int arena = Integer.parseInt(args[0]);
-		Game g = gameManager.getGame(arena);
+    @Override
+    public void perform() {
+        FileConfiguration s = plugin.getSettingsManager().getSystemConfig();
 
-		if (g == null)
-		{
-			sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", "arena-" + args[0]);
-			return;
-		}
+        int arena = Integer.parseInt(args[0]);
+        Game g = gameManager.getGame(arena);
 
-		g.disable();
-		s.set("sg-system.arenas." + arena + ".enabled", false);
-		s.set("sg-system.arenano", s.getInt("sg-system.arenano") - 1);
+        if (g == null) {
+            sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", "arena-" + args[0]);
+            return;
+        }
 
-		sendFMessage(Prefix.INFO, "info.deleted", "input-Arena");
-		plugin.getSettingsManager().saveSystemConfig();
-		gameManager.hotRemoveArena(arena);
+        g.disable();
+        s.set("sg-system.arenas." + arena + ".enabled", false);
+        s.set("sg-system.arenano", s.getInt("sg-system.arenano") - 1);
 
-		plugin.getLobbyManager().removeSignsForArena(arena);
-	}
+        sendFMessage(Prefix.INFO, "info.deleted", "input-Arena");
+        plugin.getSettingsManager().saveSystemConfig();
+        gameManager.hotRemoveArena(arena);
+
+        plugin.getLobbyManager().removeSignsForArena(arena);
+    }
 }

@@ -14,59 +14,47 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 // TODO: I feel like this should be used for *something*
-public class ThirstManager implements Listener
-{
-	private final SurvivalGames plugin;
-	public ThirstManager(SurvivalGames plugin)
-	{
-		this.plugin = plugin;
-	}
-	
-	public void startThirst()
-	{
-		new BukkitRunnable()
-		{
-			@Override
-			public void run()
-			{
-				for (Game g : plugin.getGameManager().getGames())
-				{
-					for (Player p : g.getAllPlayers())
-					{
-						removeThirst(p, 1);
-					}
-				}
-			}
+public class ThirstManager implements Listener {
+    private final SurvivalGames plugin;
 
-		}.runTaskTimer(plugin, 60L, 200L);
-	}
+    public ThirstManager(SurvivalGames plugin) {
+        this.plugin = plugin;
+    }
 
-	public void removeThirst(Player p, int amount)
-	{
-		p.setLevel(p.getLevel() - amount);
-	}
+    public void startThirst() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Game g : plugin.getGameManager().getGames()) {
+                    for (Player p : g.getAllPlayers()) {
+                        removeThirst(p, 1);
+                    }
+                }
+            }
 
-	public void addThirst(Player p, int amount)
-	{
-		p.setLevel(p.getLevel() + amount);
-	}
+        }.runTaskTimer(plugin, 60L, 200L);
+    }
 
-	public void startThirst(Player p)
-	{
-		p.setLevel(30);
-	}
+    public void removeThirst(Player p, int amount) {
+        p.setLevel(p.getLevel() - amount);
+    }
 
-	@EventHandler
-	public void onPlayerDrinkWater(PlayerInteractEvent e)
-	{
-		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
-		{
-			if (e.getPlayer().getItemInHand() == new ItemStack(Material.POTION))
-			{
-				e.getPlayer().getInventory().removeItem(new ItemStack(Material.POTION, 1));
-				addThirst(e.getPlayer(), 5);
-				e.getPlayer().sendMessage(ChatColor.GREEN + "You drank water.");
-			}
-		}
-	}
+    public void addThirst(Player p, int amount) {
+        p.setLevel(p.getLevel() + amount);
+    }
+
+    public void startThirst(Player p) {
+        p.setLevel(30);
+    }
+
+    @EventHandler
+    public void onPlayerDrinkWater(PlayerInteractEvent e) {
+        if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (e.getPlayer().getItemInHand() == new ItemStack(Material.POTION)) {
+                e.getPlayer().getInventory().removeItem(new ItemStack(Material.POTION, 1));
+                addThirst(e.getPlayer(), 5);
+                e.getPlayer().sendMessage(ChatColor.GREEN + "You drank water.");
+            }
+        }
+    }
 }

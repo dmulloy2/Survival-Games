@@ -16,63 +16,54 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 @AllArgsConstructor
-public class DeathEvent implements Listener
-{
-	private final SurvivalGames plugin;
+public class DeathEvent implements Listener {
+    private final SurvivalGames plugin;
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerDeath(EntityDamageEvent event)
-	{
-		if (event.getEntityType() != EntityType.PLAYER)
-			return;
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDeath(EntityDamageEvent event) {
+        if (event.getEntityType() != EntityType.PLAYER)
+            return;
 
-		Player player = (Player) event.getEntity();
-		int gameId = plugin.getGameManager().getPlayerGameId(player);
-		if (gameId == -1)
-			return;
+        Player player = (Player) event.getEntity();
+        int gameId = plugin.getGameManager().getPlayerGameId(player);
+        if (gameId == -1)
+            return;
 
-		if (! plugin.getGameManager().isPlayerActive(player))
-			return;
+        if (!plugin.getGameManager().isPlayerActive(player))
+            return;
 
-		Game game = plugin.getGameManager().getGame(gameId);
-		if (game.getMode() != Game.GameMode.INGAME)
-		{
-			event.setCancelled(true);
-			return;
-		}
+        Game game = plugin.getGameManager().getGame(gameId);
+        if (game.getMode() != Game.GameMode.INGAME) {
+            event.setCancelled(true);
+            return;
+        }
 
-		if (game.isProtectionOn())
-		{
-			event.setCancelled(true);
-			return;
-		}
+        if (game.isProtectionOn()) {
+            event.setCancelled(true);
+            return;
+        }
 
-		if (player.getHealth() <= event.getDamage())
-		{
-			event.setCancelled(true);
-			player.setHealth(player.getMaxHealth());
-			player.setFoodLevel(20);
-			player.setFireTicks(0);
-			PlayerInventory inv = player.getInventory();
-			Location l = player.getLocation();
+        if (player.getHealth() <= event.getDamage()) {
+            event.setCancelled(true);
+            player.setHealth(player.getMaxHealth());
+            player.setFoodLevel(20);
+            player.setFireTicks(0);
+            PlayerInventory inv = player.getInventory();
+            Location l = player.getLocation();
 
-			for (ItemStack i : inv.getContents())
-			{
-				if (i != null)
-				{
-					l.getWorld().dropItemNaturally(l, i);
-				}
-			}
+            for (ItemStack i : inv.getContents()) {
+                if (i != null) {
+                    l.getWorld().dropItemNaturally(l, i);
+                }
+            }
 
-			for (ItemStack i : inv.getArmorContents())
-			{
-				if (i != null && i.getType() != Material.AIR)
-				{
-					l.getWorld().dropItemNaturally(l, i);
-				}
-			}
+            for (ItemStack i : inv.getArmorContents()) {
+                if (i != null && i.getType() != Material.AIR) {
+                    l.getWorld().dropItemNaturally(l, i);
+                }
+            }
 
-			game.killPlayer(player, false);
-		}
-	}
+            game.killPlayer(player, false);
+        }
+    }
 }

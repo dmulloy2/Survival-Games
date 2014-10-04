@@ -14,58 +14,49 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-public class BreakEvent implements Listener
-{
-	public List<Material> allowedBreak = new ArrayList<Material>();
+public class BreakEvent implements Listener {
+    public List<Material> allowedBreak = new ArrayList<Material>();
 
-	private final SurvivalGames plugin;
-	public BreakEvent(SurvivalGames plugin)
-	{
-		this.plugin = plugin;
-		
-		for (String s : plugin.getSettingsManager().getConfig().getStringList("block.break.whitelist"))
-		{
-			allowedBreak.add(MaterialUtil.getMaterial(s));
-		}
-	}
+    private final SurvivalGames plugin;
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onBlockBreak(BlockBreakEvent event)
-	{
-		Player p = event.getPlayer();
-		int pid = plugin.getGameManager().getPlayerGameId(p);
+    public BreakEvent(SurvivalGames plugin) {
+        this.plugin = plugin;
 
-		if (pid == -1)
-		{
-			int blockgameid = plugin.getGameManager().getBlockGameId(event.getBlock().getLocation());
+        for (String s : plugin.getSettingsManager().getConfig().getStringList("block.break.whitelist")) {
+            allowedBreak.add(MaterialUtil.getMaterial(s));
+        }
+    }
 
-			if (blockgameid != -1)
-			{
-				if (plugin.getGameManager().getGame(blockgameid).getGameMode() != Game.GameMode.DISABLED)
-				{
-					event.setCancelled(true);
-				}
-			}
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player p = event.getPlayer();
+        int pid = plugin.getGameManager().getPlayerGameId(p);
 
-			return;
-		}
+        if (pid == -1) {
+            int blockgameid = plugin.getGameManager().getBlockGameId(event.getBlock().getLocation());
 
-		Game g = plugin.getGameManager().getGame(pid);
+            if (blockgameid != -1) {
+                if (plugin.getGameManager().getGame(blockgameid).getGameMode() != Game.GameMode.DISABLED) {
+                    event.setCancelled(true);
+                }
+            }
 
-		if (g.getMode() == Game.GameMode.DISABLED)
-		{
-			return;
-		}
+            return;
+        }
 
-		if (g.getMode() != Game.GameMode.INGAME)
-		{
-			event.setCancelled(true);
-			return;
-		}
+        Game g = plugin.getGameManager().getGame(pid);
 
-		if (!allowedBreak.contains(event.getBlock().getType()))
-		{
-			event.setCancelled(true);
-		}
-	}
+        if (g.getMode() == Game.GameMode.DISABLED) {
+            return;
+        }
+
+        if (g.getMode() != Game.GameMode.INGAME) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (!allowedBreak.contains(event.getBlock().getType())) {
+            event.setCancelled(true);
+        }
+    }
 }
