@@ -1,95 +1,191 @@
+/**
+ * (c) 2014 dmulloy2
+ */
 package net.dmulloy2.survivalgames.util;
 
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 
+import net.dmulloy2.survivalgames.types.StringJoiner;
+
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 
 /**
- * Util used for general formatting
- * 
+ * Util used for general formatting.
+ *
  * @author dmulloy2
  */
 
 public class FormatUtil {
+    private FormatUtil() {
+    }
+
     /**
-     * Formats a given string and its object
-     * 
-     * @param format
-     *            - Base string
-     * @param objects
-     *            - Objects to format in
+     * Formats a given string with its objects.
+     *
+     * @param format Base string
+     * @param objects Objects to format in
      * @return Formatted string
+     * @see {@link MessageFormat#format(String, Object...)}
      */
     public static String format(String format, Object... objects) {
-        String ret = MessageFormat.format(format, objects);
-        // ret = WordUtils.capitalize(ret, new char[]{'.'});
-        return ChatColor.translateAlternateColorCodes('&', ret);
+        Validate.notNull(format, "format cannot be null!");
+
+        try {
+            format = MessageFormat.format(format, objects);
+        } catch (Throwable ex) {
+        }
+
+        return replaceColors(format);
     }
 
+    private static final String[] rainbowColors = new String[] { "c", "6", "e", "a", "b", "d", "5" };
+
     /**
-     * Formats a given string and its objects for logging
-     * 
-     * @param string
-     *            - Base string
-     * @param objects
-     *            - Objects to format in
-     * @return Formatted string for logging
+     * Replaces color codes in a given string. Includes rainbow.
+     *
+     * @param message Message to replace color codes in
+     * @return Formatted chat message
      */
-    public static String formatLog(String string, Object... objects) {
-        return MessageFormat.format(string, objects);
+    public static String replaceColors(String message) {
+        Validate.notNull(message, "message cannot be null!");
+        message = message.replaceAll("(&([zZ]))", "&z");
+        if (message.contains("&z")) {
+            StringBuilder ret = new StringBuilder();
+            String[] ss = message.split("&z");
+            ret.append(ss[0]);
+            ss[0] = null;
+
+            for (String s : ss) {
+                if (s != null) {
+                    int index = 0;
+                    while (index < s.length() && s.charAt(index) != '&') {
+                        ret.append("&" + rainbowColors[index % rainbowColors.length]);
+                        ret.append(s.charAt(index));
+                        index++;
+                    }
+
+                    if (index < s.length()) {
+                        ret.append(s.substring(index));
+                    }
+                }
+            }
+
+            message = ret.toString();
+        }
+
+        // Format the colors
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
     /**
-     * Returns the "Friendly" name of a material
-     * 
-     * @param mat
-     *            - Material to get the "friendly" name for
-     * @return The "friendly" name for the given material
+     * Returns a user-friendly representation of a given Object. This is mostly
+     * used for {@link Enum} constants.
+     * <p>
+     * If the object or any of its superclasses (minus Object) do not implement
+     * a toString() method, the object's simple name will be returned.
+     *
+     * @param obj Object to get the user-friendly representation of
+     * @return A user-friendly representation of the given Object.
      */
-    public static String getFriendlyName(Material mat) {
-        return getFriendlyName(mat.toString());
+    public static String getFriendlyName(Object obj) {
+        Validate.notNull(obj, "obj cannot be null!");
+
+        try {
+            // Clever little method to check if the method isn't declared by a class other than Object.
+            Method method = obj.getClass().getMethod("toString");
+            if (method.getDeclaringClass().getSuperclass() == null) {
+                return obj.getClass().getSimpleName();
+            }
+        } catch (Throwable ex) {
+        }
+
+        return getFriendlyName(obj.toString());
     }
 
     /**
-     * Returns the "Friendly" name of an entity
-     * 
-     * @param mat
-     *            - Entity to get the "friendly" name for
-     * @return The "friendly" name for the given entity
-     */
-    public static String getFriendlyName(EntityType entityType) {
-        return getFriendlyName(entityType.toString());
-    }
-
-    /**
-     * Returns the "Friendly" version of a given string
-     * 
-     * @param mat
-     *            - String to get the "friendly" version for
-     * @return The "friendly" version of the given string
+     * Returns a user-friendly version of a given String.
+     *
+     * @param string String to get the user-friendly version of
+     * @return A user-friendly version of the given String.
      */
     public static String getFriendlyName(String string) {
+        Validate.notNull(string, "string cannot be null!");
+
         String ret = string.toLowerCase();
         ret = ret.replaceAll("_", " ");
-        return (WordUtils.capitalize(ret));
+        return WordUtils.capitalize(ret);
     }
+
+    private static final List<String> VOWELS = Arrays.asList("a", "e", "i", "o", "u");
 
     /**
      * Returns the proper article of a given string
-     * 
-     * @param string
-     *            - String to get the article for
-     * @return The article that should go with the string
+     *
+     * @param string String to get the article for
+     * @return The proper article of a given string
      */
     public static String getArticle(String string) {
+        Validate.notNull(string, "string cannot be null!");
+
         string = string.toLowerCase();
-        if (string.startsWith("a") || string.startsWith("e") || string.startsWith("i") || string.startsWith("o") || string.startsWith("u")) {
-            return "an";
+        for (String vowel : VOWELS) {
+            if (string.startsWith(vowel))
+                return "an";
         }
 
         return "a";
+    }
+
+    /**
+     * Returns the proper plural of a given string
+     *
+     * @param string String to get the plural for
+     * @return The proper plural of a given string
+     */
+    public static String getPlural(String string, int amount) {
+        Validate.notNull(string, "string cannot be null!");
+
+        amount = Math.abs(amount);
+        if (amount == 0 || amount > 1) {
+            if (!string.toLowerCase().endsWith("s"))
+                return string + "s";
+        }
+
+        return string;
+    }
+
+    /**
+     * Joins together multiple given strings with the given glue using the
+     * {@link StringJoiner} class.
+     *
+     * @param delimiter String to join the args together with
+     * @param args Strings to join together
+     * @return Multiple strings joined together with the given glue.
+     * @see {@link StringJoiner}
+     */
+    public static String join(String delimiter, String... args) {
+        Validate.notNull(delimiter, "glue cannot be null");
+        Validate.noNullElements(args, "args cannot have null elements!");
+
+        return new StringJoiner(delimiter).appendAll(args).toString();
+    }
+
+    /**
+     * Joins together multiple given strings with a single space using the
+     * {@link StringJoiner} class.
+     *
+     * @param args Strings to join together
+     * @return Multiple strings joined together with a space
+     * @see {@link StringJoiner}
+     */
+    public static String join(String... args) {
+        Validate.noNullElements(args, "args cannot have null elements!");
+
+        return StringJoiner.SPACE.newString().appendAll(args).toString();
     }
 }

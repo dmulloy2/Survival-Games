@@ -1,22 +1,41 @@
+/**
+ * (c) 2014 dmulloy2
+ */
 package net.dmulloy2.survivalgames.util;
 
-import java.util.ArrayList;
+import java.lang.reflect.Method;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.UUID;
 
-import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.types.StringJoiner;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.CommandBlock;
+import org.bukkit.block.Furnace;
+import org.bukkit.block.Jukebox;
+import org.bukkit.block.NoteBlock;
+import org.bukkit.block.Sign;
+import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
 /**
- * Base Util class
- * 
+ * General utility class.
+ *
  * @author dmulloy2
  */
 
@@ -25,119 +44,152 @@ public class Util {
     }
 
     /**
-     * Gets the Player from a given name
-     * 
-     * @param name
-     *        - Player name or partial name
-     * @return Player from the given name, null if none exists
-     * @see {@link org.bukkit.Server#matchPlayer(String)}
+     * Gets the Player from a given name or {@link UUID}.
+     *
+     * @param identifier Player name or UUID
+     * @return Player from the given name or UUID, null if none exists.
+     * @see {@link Bukkit#getPlayer(UUID)}
+     * @see {@link Bukkit#matchPlayer(String)}
      */
-    public static Player matchPlayer(String name) {
-        List<Player> players = Bukkit.matchPlayer(name);
+    public static Player matchPlayer(String identifier) {
+        Validate.notNull(identifier, "identifier cannot be null!");
 
-        if (players.size() >= 1)
-            return players.get(0);
+        // First, get by UUID
+        if (identifier.length() == 36)
+            return Bukkit.getPlayer(UUID.fromString(identifier));
 
-        return null;
+        // Last, get by name
+        return Bukkit.getPlayer(identifier);
     }
 
     /**
-     * Gets the OfflinePlayer from a given name
-     * 
-     * @param name
-     *        - Player name or partial name
-     * @return OfflinePlayer from the given name, null if none exists
+     * Gets the OfflinePlayer from a given name or {@link UUID}.
+     * <p>
+     * Use of this method is discouraged as it is potentially blocking.
+     *
+     * @param identifier Player name or UUID
+     * @return OfflinePlayer from the given name or UUID, null if none exists
+     * @see {@link #matchPlayer(String)}
+     * @see {@link Bukkit#getOfflinePlayer(UUID)}
+     * @see {@link Bukkit#getOfflinePlayer(String)}
      */
-    public static OfflinePlayer matchOfflinePlayer(String name) {
-        Player player = matchPlayer(name);
+    @SuppressWarnings("deprecation") // Bukkit#getOfflinePlayer(String)
+    public static OfflinePlayer matchOfflinePlayer(String identifier) {
+        Validate.notNull(identifier, "identifier cannot be null!");
+
+        // Check online players first
+        Player player = matchPlayer(identifier);
         if (player != null)
             return player;
 
-        for (OfflinePlayer o : Bukkit.getOfflinePlayers()) {
-            if (o.getName().equalsIgnoreCase(name))
-                return o;
+        // Then check UUID
+        if (identifier.length() == 36)
+            return Bukkit.getOfflinePlayer(UUID.fromString(identifier));
+
+        OfflinePlayer op = Bukkit.getOfflinePlayer(identifier);
+        return op.hasPlayedBefore() ? op : null;
+    }
+
+    private static Method getOnlinePlayers;
+
+    /**
+     * Gets a list of online {@link Player}s. This also provides backwards
+     * compatibility as Bukkit changed <code>getOnlinePlayers</code>.
+     *
+     * @return A list of online Players
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Player> getOnlinePlayers() {
+        try {
+            // Provide backwards compatibility
+            if (getOnlinePlayers == null)
+                getOnlinePlayers = Bukkit.class.getMethod("getOnlinePlayers");
+            if (getOnlinePlayers.getReturnType() != Collection.class)
+                return Arrays.asList((Player[]) getOnlinePlayers.invoke(null));
+        } catch (Throwable ex) {
         }
-
-        return null;
+        return (List<Player>) Bukkit.getOnlinePlayers();
     }
 
     /**
-     * Returns whether or not a player is banned
-     * 
-     * @param p
-     *        - OfflinePlayer to check for banned status
-     * @return Whether or not the player is banned
+     * Whether or not a player is banned.
+     *
+     * @param identifier Player name or UUID
+     * @return True if the player is banned, false if not
      */
-    public static boolean isBanned(OfflinePlayer p) {
-        return isBanned(p.getName());
-    }
-
-    /**
-     * Returns whether or not a player is banned
-     * 
-     * @param p
-     *        - Player name to check for banned status
-     * @return Whether or not the player is banned
-     */
-    public static boolean isBanned(String p) {
+    public static boolean isBanned(String identifier) {
+        Validate.notNull(identifier, "identifier cannot be null!");
         for (OfflinePlayer banned : Bukkit.getBannedPlayers()) {
-            if (banned.getName().equalsIgnoreCase(p))
+            if (identifier.equalsIgnoreCase(banned.getName()) || identifier.equals(banned.getUniqueId().toString()))
                 return true;
         }
 
         return false;
     }
 
+    private static Random random;
+
     /**
-     * Returns a random integer out of x
-     * 
-     * @param x
-     *        - Integer the random should be out of
-     * @return A random integer out of x
+     * Returns a pseudorandom integer out of <code>x</code>.
+     *
+     * @param x Integer the random should be out of
+     * @return A random integer out of x.
+     * @throws IllegalArgumentException if <code>x</code> is less than 0.
      */
     public static int random(int x) {
-        Random rand = new Random();
-        return rand.nextInt(x);
+        Validate.isTrue(x > 0, "x cannot be negative!");
+
+        if (random == null)
+            random = new Random();
+
+        return random.nextInt(x);
     }
 
     /**
-     * Plays an effect to all online players
-     * 
-     * @param effect
-     *        - Effect type to play
-     * @param loc
-     *        - Location where the effect should be played
-     * @param data
-     *        - Data
+     * Plays an effect to all online players.
+     *
+     * @param effect Effect type to play
+     * @param loc Location where the effect should be played
+     * @param data Effect data, can be null
      * @see {@link Player#playEffect(Location, Effect, Object)}
      */
     public static <T> void playEffect(Effect effect, Location loc, T data) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.playEffect(loc, effect, data);
+        Validate.notNull(effect, "effect cannot be null!");
+        Validate.notNull(loc, "loc cannot be null!");
+
+        for (Player player : getOnlinePlayers()) {
+            if (player.getWorld().getUID().equals(loc.getWorld().getUID()))
+                player.playEffect(loc, effect, data);
         }
     }
 
     /**
-     * Returns whether or not two locations are identical
-     * 
-     * @param loc1
-     *        - First location
-     * @param loc2
-     *        - Second location
-     * @return Whether or not the two locations are identical
+     * Whether or not two locations are similar. This does not take pitch or yaw
+     * into account.
+     *
+     * @param loc First location
+     * @param loc2 Second location
+     * @return True if the locations are similar, false if not
      */
     public static boolean checkLocation(Location loc, Location loc2) {
-        return loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ() && loc.getWorld().equals(loc2.getWorld());
+        Validate.notNull(loc, "loc cannot be null!");
+        Validate.notNull(loc2, "loc2 cannot be null!");
+
+        if (loc.equals(loc2))
+            return true;
+
+        return loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ() && loc.getWorld().getUID().equals(loc2.getWorld().getUID());
     }
 
     /**
-     * Turns a {@link Location} into a string for debug purpouses
-     * 
-     * @param loc
-     *        - {@link Location} to convert
+     * Turns a {@link Location} into a string for debug purpouses.
+     *
+     * @param loc {@link Location} to convert
      * @return String for debug purpouses
      */
     public static String locationToString(Location loc) {
+        Validate.notNull(loc, "loc cannot be null!");
+
         StringBuilder ret = new StringBuilder();
         ret.append("World: " + loc.getWorld().getName());
         ret.append(" X: " + loc.getBlockX());
@@ -147,67 +199,256 @@ public class Util {
     }
 
     /**
-     * Returns a useful Stack Trace for debugging purpouses
-     * 
-     * @param e
-     *        - Underlying {@link Throwable}
-     * @param circumstance
-     *        - Circumstance in which the Exception occured
+     * Returns a useful Stack Trace for debugging purpouses.
+     *
+     * @param ex Underlying {@link Throwable}
+     * @param circumstance Circumstance in which the Exception occured
      */
-    public static String getUsefulStack(Throwable e, String circumstance) {
-        StringBuilder ret = new StringBuilder();
-        ret.append("Encountered an exception while " + circumstance + ":" + '\n');
-        ret.append(e.getClass().getName() + ": " + e.getMessage() + '\n');
-        ret.append("Affected classes: " + '\n');
+    public static String getUsefulStack(Throwable ex, String circumstance) {
+        Validate.notNull(ex, "ex cannot be null!");
 
-        for (StackTraceElement ste : e.getStackTrace()) {
-            if (ste.getClassName().contains(SurvivalGames.class.getPackage().getName()))
-                ret.append('\t' + ste.toString() + '\n');
+        StringJoiner joiner = new StringJoiner("\n");
+        joiner.append("Encountered an exception" + (circumstance != null ? " while " + circumstance : "") + ": " + ex.toString());
+        joiner.append("Affected classes:");
+
+        for (StackTraceElement ste : ex.getStackTrace()) {
+            String className = ste.getClassName();
+            if (!className.contains("net.minecraft")) {
+                StringBuilder line = new StringBuilder();
+                line.append("  " + className + "." + ste.getMethodName());
+                if (ste.getLineNumber() > 0)
+                    line.append("(Line " + ste.getLineNumber() + ")");
+                else
+                    line.append("(Native Method)");
+
+                String jar = getWorkingJar(className);
+                if (jar != null)
+                    line.append(" [" + jar + "]");
+
+                joiner.append(line.toString());
+            }
         }
 
-        if (ret.lastIndexOf("\n") >= 0) {
-            ret.replace(ret.lastIndexOf("\n"), ret.length(), "");
+        while (ex.getCause() != null) {
+            ex = ex.getCause();
+            joiner.append("Caused by: " + ex.toString());
+            joiner.append("Affected classes:");
+            for (StackTraceElement ste : ex.getStackTrace()) {
+                String className = ste.getClassName();
+                if (!className.contains("net.minecraft")) {
+                    StringBuilder line = new StringBuilder();
+                    line.append("  " + className + "." + ste.getMethodName());
+                    if (ste.getLineNumber() > 0)
+                        line.append("(Line " + ste.getLineNumber() + ")");
+                    else
+                        line.append("(Native Method)");
+
+                    String jar = getWorkingJar(className);
+                    if (jar != null)
+                        line.append(" [" + jar + "]");
+
+                    joiner.append(line.toString());
+                }
+            }
         }
 
-        return ret.toString();
+        return joiner.toString();
     }
 
     /**
-     * Constructs a new list from an existing {@link List}
-     * <p>
-     * This fixes concurrency for some reason
-     * <p>
-     * Should not be used to edit the base List
-     * 
-     * @param list
-     *        - Base {@link List}
-     * @return a new list from the given list
+     * Gets the current thread's stack.
+     *
+     * @return The current thread's stack
      */
-    public static <T> List<T> newList(List<T> list) {
-        return new ArrayList<T>(list);
+    public static final String getThreadStack() {
+        try {
+            throw new Exception("Thread Stack");
+        } catch (Exception ex) {
+            return getUsefulStack(ex, null);
+        }
     }
 
     /**
-     * Constructs a new {@link List} paramaterized with <code>T</code>
-     * 
-     * @param objects
-     *        - Array of <code>T</code> to create the list with
-     * @return a new {@link List} from the given objects
+     * Gets the working jar of a given Class. This is the same as
+     * {@link #getWorkingJar(Class)}, but the class name is passed through
+     * {@link Class#forName(String)} first.
+     *
+     * @param clazzName Class name
+     * @return The working jar, or null if not found
      */
-    @SafeVarargs
-    public static <T> List<T> toList(T... objects) {
-        List<T> ret = new ArrayList<T>();
+    public static final String getWorkingJar(String clazzName) {
+        try {
+            return getWorkingJar(Class.forName(clazzName));
+        } catch (Throwable ex) {
+        }
+        return null;
+    }
 
-        for (T t : objects) {
-            ret.add(t);
+    /**
+     * Gets the working jar of a given {@link Class}.
+     *
+     * @param clazz Class to get the jar for
+     * @return The working jar, or null if not found
+     */
+    public static final String getWorkingJar(Class<?> clazz) {
+        try {
+            String path = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+            path = URLDecoder.decode(path, "UTF-8");
+            path = path.substring(path.lastIndexOf("/") + 1);
+            return !path.isEmpty() ? path : null;
+        } catch (Throwable ex) {
+        }
+        return null;
+    }
+
+    /**
+     * Filters duplicate entries from a {@link Map} according to the original
+     * map.
+     *
+     * @param map {@link Map} to filter
+     * @param original Original map
+     * @return Filtered map
+     */
+    public static <K, V> Map<K, V> filterDuplicateEntries(Map<K, V> map, Map<K, V> original) {
+        Validate.notNull(map, "map cannot be null!");
+        Validate.notNull(original, "original cannot be null!");
+
+        for (Entry<K, V> entry : new LinkedHashMap<>(map).entrySet()) {
+            K key = entry.getKey();
+            if (original.containsKey(key)) {
+                V val = entry.getValue();
+                V def = original.get(key);
+                if (val.equals(def)) {
+                    map.remove(key);
+                }
+            }
         }
 
+        return map;
+    }
+
+    /**
+     * Gets the key mapped to a given value in a given map.
+     *
+     * @param map Map containing the value
+     * @param value Value to get the key for
+     * @return The key, or null if not found
+     */
+    public static <K, V> K getKey(Map<K, V> map, V value) {
+        Validate.notNull(map, "map cannot be null!");
+        Validate.notNull(value, "value cannot be null!");
+
+        for (Entry<K, V> entry : new HashMap<>(map).entrySet()) {
+            if (entry.getValue().equals(value))
+                return entry.getKey();
+        }
+
+        return null;
+    }
+
+    /**
+     * Parses a given {@link Object} (preferably a {@link String}) and returns a
+     * boolean value.
+     *
+     * @param object Object to parse
+     * @return Boolean value from the given object. Defaults to
+     *         <code>false</code>
+     */
+    public static boolean toBoolean(Object object) {
+        Validate.notNull(object, "object cannot be null!");
+
+        if (object instanceof Boolean) {
+            return ((Boolean) object).booleanValue();
+        }
+
+        if (object instanceof String) {
+            String str = (String) object;
+            return str.startsWith("y") || str.startsWith("t") || str.startsWith("on") || str.startsWith("+") || str.startsWith("1");
+        }
+
+        return Boolean.parseBoolean(object.toString());
+    }
+
+    /**
+     * Sets a {@link Block}'s {@link MaterialData}. Exists because Bukkit's
+     * BlockState API sucks.
+     * <p>
+     * This method is deprecated and is not guaranteed to work.
+     *
+     * @param block Block to set data of
+     * @param data Data to set
+     */
+    @SuppressWarnings("deprecation")
+    public static void setData(Block block, MaterialData data) {
+        Validate.notNull(block, "block cannot be null!");
+        Validate.notNull(data, "data cannot be null!");
+
+        block.setData(data.getData());
+        block.getState().update(true);
+    }
+
+    /**
+     * Returns a <code>String</code> representation of a {@link BlockState},
+     * since BlockStates do not define a <code>toString()</code> method.
+     *
+     * @param state BlockState to represent
+     * @return The string representation
+     */
+    public static String blockStateToString(BlockState state) {
+        Validate.notNull(state, "state cannot be null!");
+
+        if (state instanceof Sign) {
+            Sign sign = (Sign) state;
+            return "Sign { lines = " + Arrays.toString(sign.getLines()) + " }";
+        } else if (state instanceof CommandBlock) {
+            CommandBlock cmd = (CommandBlock) state;
+            return "CommandBlock { command = " + cmd.getCommand() + ", name = " + cmd.getName() + " }";
+        } else if (state instanceof Jukebox) {
+            Jukebox jukebox = (Jukebox) state;
+            return "Jukebox { playing = " + FormatUtil.getFriendlyName(jukebox.getPlaying()) + " }";
+        } else if (state instanceof NoteBlock) {
+            NoteBlock note = (NoteBlock) state;
+            return "NoteBlock { note = " + FormatUtil.getFriendlyName(note.getNote().getTone()) + " }";
+        } else if (state instanceof Skull) {
+            Skull skull = (Skull) state;
+            return "Skull { type = " + FormatUtil.getFriendlyName(skull.getSkullType()) + ", owner = " + skull.getOwner() + " }";
+        } else if (state instanceof Furnace) {
+            Furnace furnace = (Furnace) state;
+            return "Furnace { burnTime = " + furnace.getBurnTime() + ", cookTime = " + furnace.getCookTime() + " }";
+        } else {
+            return "BlockState { type = " + FormatUtil.getFriendlyName(state.getType()) + " }";
+        }
+    }
+
+    /**
+     * Concatenates two arrays of the same type.
+     *
+     * @param first First array
+     * @param second Second array
+     * @return Concatenated array
+     */
+    public static <T> T[] concat(T[] first, T[] second) {
+        Validate.notNull(first, "first cannot be null!");
+        Validate.notNull(second, "second cannot be null!");
+
+        T[] ret = Arrays.copyOf(first, first.length + second.length);
+        System.arraycopy(second, 0, ret, first.length, second.length);
         return ret;
     }
 
-    @SuppressWarnings("deprecation")
-    public static void setData(Block block, MaterialData data) {
-        block.setData(data.getData());
-        block.getState().update(true);
+    /**
+     * Whether or not an Enum type exists with a given name in a given class.
+     *
+     * @param clazz Enum class
+     * @param name Type name
+     * @return True if the type exists, false if not
+     */
+    public static <T extends Enum<T>> boolean isEnumType(Class<T> clazz, String name) {
+        try {
+            Enum.valueOf(clazz, name.toUpperCase());
+            return true;
+        } catch (Throwable ex) {
+        }
+        return false;
     }
 }
