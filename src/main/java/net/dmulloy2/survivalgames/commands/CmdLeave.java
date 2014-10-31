@@ -16,11 +16,11 @@ public class CmdLeave extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        if (gameManager.getPlayerGameId(player) == -1) {
+        if (gameHandler.getPlayerGameId(player) == -1) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notingame", player);
             return;
         }
 
-        gameManager.removePlayer(player, true);
+        gameHandler.removePlayer(player, true);
     }
 }

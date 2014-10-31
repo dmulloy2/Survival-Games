@@ -84,8 +84,8 @@ public class Game {
     }
 
     public void reloadConfig() {
-        config = plugin.getSettingsManager().getConfig();
-        system = plugin.getSettingsManager().getSystemConfig();
+        config = plugin.getSettingsHandler().getConfig();
+        system = plugin.getSettingsHandler().getSystemConfig();
     }
 
     public void $(String msg) {
@@ -108,9 +108,9 @@ public class Game {
         int y1 = system.getInt("sg-system.arenas." + gameID + ".y2");
         int z1 = system.getInt("sg-system.arenas." + gameID + ".z2");
 
-        Location max = new Location(plugin.getSettingsManager().getGameWorld(gameID), Math.max(x, x1), Math.max(y, y1), Math.max(z, z1));
+        Location max = new Location(plugin.getSettingsHandler().getGameWorld(gameID), Math.max(x, x1), Math.max(y, y1), Math.max(z, z1));
         debug("[Max] " + Util.locationToString(max));
-        Location min = new Location(plugin.getSettingsManager().getGameWorld(gameID), Math.min(x, x1), Math.min(y, y1), Math.min(z, z1));
+        Location min = new Location(plugin.getSettingsHandler().getGameWorld(gameID), Math.min(x, x1), Math.min(y, y1), Math.min(z, z1));
         debug("[Min] " + Util.locationToString(min));
 
         arena = new Arena(min, max);
@@ -123,19 +123,19 @@ public class Game {
 
         mode = GameMode.WAITING;
 
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
     }
 
     public void reloadFlags() {
-        flags = plugin.getSettingsManager().getGameFlags(gameID);
+        flags = plugin.getSettingsHandler().getGameFlags(gameID);
     }
 
     public void saveFlags() {
-        plugin.getSettingsManager().saveGameFlags(flags, gameID);
+        plugin.getSettingsHandler().saveGameFlags(flags, gameID);
     }
 
     public void loadspawns() {
-        for (int a = 1; a <= plugin.getSettingsManager().getSpawnCount(gameID); a++) {
+        for (int a = 1; a <= plugin.getSettingsHandler().getSpawnCount(gameID); a++) {
             spawns.put(a, null);
             spawnCount = a;
         }
@@ -167,7 +167,7 @@ public class Game {
             plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gameenabled", "arena-" + gameID);
         }
         disabled = false;
-        int b = (plugin.getSettingsManager().getSpawnCount(gameID) > queue.size()) ? queue.size() : plugin.getSettingsManager().getSpawnCount(gameID);
+        int b = (plugin.getSettingsHandler().getSpawnCount(gameID) > queue.size()) ? queue.size() : plugin.getSettingsHandler().getSpawnCount(gameID);
         for (int a = 0; a < b; a++) {
             addPlayer(plugin.getServer().getPlayer(queue.remove(0)));
         }
@@ -178,7 +178,7 @@ public class Game {
             c++;
         }
 
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
 
         plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamewaiting", "arena-" + gameID);
     }
@@ -188,7 +188,7 @@ public class Game {
     // -------------------------//
     public boolean addPlayer(Player p) {
         UUID id = p.getUniqueId();
-        if (plugin.getSettingsManager().getLobbySpawn() == null) {
+        if (plugin.getSettingsHandler().getLobbySpawn() == null) {
             plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.nolobbyspawn", p);
             return false;
         }
@@ -199,12 +199,12 @@ public class Game {
             return false;
         }
 
-        plugin.getHookManager().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + spawns.size(), "players-" + activePlayers.size());
+        plugin.getHookHandler().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + spawns.size(), "players-" + activePlayers.size());
 
-        plugin.getGameManager().removeFromOtherQueues(p, gameID);
+        plugin.getGameHandler().removeFromOtherQueues(p, gameID);
 
-        if (plugin.getGameManager().getPlayerGameId(p) != -1) {
-            if (plugin.getGameManager().isPlayerActive(p)) {
+        if (plugin.getGameHandler().getPlayerGameId(p) != -1) {
+            if (plugin.getGameHandler().isPlayerActive(p)) {
                 plugin.getMessageHandler().sendMessage(Prefix.ERROR, "Cannot join multiple games!", p);
                 return false;
             }
@@ -217,12 +217,12 @@ public class Game {
             removeSpectator(p);
 
         if (mode == GameMode.WAITING || mode == GameMode.STARTING) {
-            if (activePlayers.size() < plugin.getSettingsManager().getSpawnCount(gameID)) {
+            if (activePlayers.size() < plugin.getSettingsHandler().getSpawnCount(gameID)) {
                 plugin.getMessageHandler().sendMessage(Prefix.INFO, "Joining Arena " + gameID, p);
-                PlayerJoinArenaEvent joinarena = new PlayerJoinArenaEvent(p, plugin.getGameManager().getGame(gameID));
+                PlayerJoinArenaEvent joinarena = new PlayerJoinArenaEvent(p, plugin.getGameHandler().getGame(gameID));
                 plugin.getServer().getPluginManager().callEvent(joinarena);
                 boolean placed = false;
-                int spawnCount = plugin.getSettingsManager().getSpawnCount(gameID);
+                int spawnCount = plugin.getSettingsHandler().getSpawnCount(gameID);
 
                 for (int a = 1; a <= spawnCount; a++) {
                     if (spawns.get(a) == null) {
@@ -230,22 +230,22 @@ public class Game {
                         spawns.put(a, id);
                         p.setGameMode(org.bukkit.GameMode.SURVIVAL);
 
-                        p.teleport(plugin.getSettingsManager().getLobbySpawn());
+                        p.teleport(plugin.getSettingsHandler().getLobbySpawn());
                         saveInv(p);
                         clearInv(p);
-                        p.teleport(plugin.getSettingsManager().getSpawnPoint(gameID, a));
+                        p.teleport(plugin.getSettingsHandler().getSpawnPoint(gameID, a));
 
                         p.setHealth(p.getMaxHealth());
                         p.setFoodLevel(20);
                         clearInv(p);
 
                         activePlayers.add(id);
-                        plugin.getStatsManager().addPlayer(p, gameID);
+                        plugin.getStatsHandler().addPlayer(p, gameID);
 
                         hookvars.put("activeplayers", activePlayers.size() + "");
-                        plugin.getLobbyManager().updateWall(gameID);
+                        plugin.getLobbyHandler().updateWall(gameID);
                         showMenu(p);
-                        plugin.getHookManager().runHook("GAME_POST_ADDPLAYER", "activePlayers-" + activePlayers.size());
+                        plugin.getHookHandler().runHook("GAME_POST_ADDPLAYER", "activePlayers-" + activePlayers.size());
 
                         if (spawnCount == activePlayers.size()) {
                             countdown(5);
@@ -260,7 +260,7 @@ public class Game {
                     return false;
                 }
 
-            } else if (plugin.getSettingsManager().getSpawnCount(gameID) == 0) {
+            } else if (plugin.getSettingsHandler().getSpawnCount(gameID) == 0) {
                 plugin.getMessageHandler().sendMessage(Prefix.WARNING, "No spawns set for Arena " + gameID + "!", p);
                 return false;
             } else {
@@ -268,7 +268,7 @@ public class Game {
                 return false;
             }
 
-            msgFall(Prefix.INFO, "game.playerjoingame", "player-" + p.getName(), "activeplayers-" + getActivePlayers(), "maxplayers-" + plugin.getSettingsManager().getSpawnCount(gameID));
+            msgFall(Prefix.INFO, "game.playerjoingame", "player-" + p.getName(), "activeplayers-" + getActivePlayers(), "maxplayers-" + plugin.getSettingsHandler().getSpawnCount(gameID));
             if (activePlayers.size() >= config.getInt("auto-start-players") && !countdownRunning)
                 countdown(config.getInt("auto-start-time"));
 
@@ -301,7 +301,7 @@ public class Game {
             plugin.getMessageHandler().sendMessage(Prefix.INFO, "Cannot join game!", p);
         }
 
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
         return false;
     }
 
@@ -313,16 +313,16 @@ public class Game {
     // Kit Menu
     // -------------------------//
     public void showMenu(Player p) {
-        plugin.getGameManager().openKitMenu(p);
+        plugin.getGameHandler().openKitMenu(p);
         Inventory i = plugin.getServer().createInventory(p, 90, ChatColor.RED + "" + ChatColor.BOLD + "Kit Selection");
 
         int a = 0;
         int b = 0;
 
-        List<Kit> kits = plugin.getGameManager().getKits(p);
+        List<Kit> kits = plugin.getGameHandler().getKits(p);
         plugin.debug(kits + "");
-        if (kits == null || kits.size() == 0 || !plugin.getSettingsManager().getKits().getBoolean("enabled")) {
-            plugin.getGameManager().leaveKitMenu(p);
+        if (kits == null || kits.size() == 0 || !plugin.getSettingsHandler().getKits().getBoolean("enabled")) {
+            plugin.getGameHandler().leaveKitMenu(p);
             return;
         }
 
@@ -386,7 +386,7 @@ public class Game {
             plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playervote", player, "player-" + pl.getName(), "voted-" + vote, "players-" + getActivePlayers());
         }
 
-        plugin.getHookManager().runHook("PLAYER_VOTE", "player-" + pl.getName());
+        plugin.getHookHandler().runHook("PLAYER_VOTE", "player-" + pl.getName());
 
         if ((((vote + 0.0) / (getActivePlayers() + 0.0)) >= (config.getInt("auto-start-vote") + 0.0) / 100) && getActivePlayers() > 1) {
             countdown(config.getInt("auto-start-time"));
@@ -406,7 +406,7 @@ public class Game {
                 Player pl = plugin.getServer().getPlayer(id);
                 plugin.getMessageHandler().sendMessage(Prefix.WARNING, "Not enough players!", pl);
                 mode = GameMode.WAITING;
-                plugin.getLobbyManager().updateWall(gameID);
+                plugin.getLobbyHandler().updateWall(gameID);
             }
 
             return;
@@ -423,7 +423,7 @@ public class Game {
             }
 
             if (config.getBoolean("restock-chest")) {
-                plugin.getSettingsManager().getGameWorld(gameID).setTime(0);
+                plugin.getSettingsHandler().getGameWorld(gameID).setTime(0);
                 tasks.add(new NightChecker().runTaskLater(plugin, 14400).getTaskId());
 
                 gcount++;
@@ -452,7 +452,7 @@ public class Game {
         }
 
         mode = GameMode.INGAME;
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
         plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamestarted", "arena-" + gameID);
     }
 
@@ -486,7 +486,7 @@ public class Game {
 
                         }
                         count--;
-                        plugin.getLobbyManager().updateWall(gameID);
+                        plugin.getLobbyHandler().updateWall(gameID);
                     } else {
                         startGame();
                         plugin.getServer().getScheduler().cancelTask(tid);
@@ -501,11 +501,11 @@ public class Game {
     // Remove a player
     // -------------------------//
     public void removePlayer(Player p, boolean left) {
-        p.teleport(plugin.getSettingsManager().getLobbySpawn());
+        p.teleport(plugin.getSettingsHandler().getLobbySpawn());
         if (mode == GameMode.INGAME) {
             killPlayer(p, left);
         } else {
-            plugin.getStatsManager().removePlayer(p, gameID);
+            plugin.getStatsHandler().removePlayer(p, gameID);
             restoreInv(p);
             activePlayers.remove(p);
             inactivePlayers.remove(p);
@@ -516,13 +516,13 @@ public class Game {
                 }
             }
 
-            plugin.getLobbyManager().clearSigns(gameID);
+            plugin.getLobbyHandler().clearSigns(gameID);
 
             msgFall(Prefix.INFO, "game.playerleavegame", "player-" + p.getName());
         }
 
-        plugin.getHookManager().runHook("PLAYER_REMOVED", "player-" + p.getName());
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getHookHandler().runHook("PLAYER_REMOVED", "player-" + p.getName());
+        plugin.getLobbyHandler().updateWall(gameID);
     }
 
     // -------------------------//
@@ -532,10 +532,10 @@ public class Game {
         clearInv(p);
 
         if (!left) {
-            p.teleport(plugin.getSettingsManager().getLobbySpawn());
+            p.teleport(plugin.getSettingsHandler().getLobbySpawn());
         }
 
-        plugin.getStatsManager().playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
+        plugin.getStatsHandler().playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
 
         if (!activePlayers.contains(p))
             return;
@@ -558,7 +558,7 @@ public class Game {
                             plugin.getServer().getPluginManager().callEvent(leavearena);
                             msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + ((killer != null) ? (NameUtil.getAuthors().contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName() : "Unknown"), "item-" + ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType()) : "Unknown Item"));
                             if (killer != null && p != null)
-                                plugin.getStatsManager().addKill(killer, p, gameID);
+                                plugin.getStatsHandler().addKill(killer, p, gameID);
                         } else {
                             msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getLastDamageCause().getEntityType());
                         }
@@ -574,7 +574,7 @@ public class Game {
                             plugin.getServer().getPluginManager().callEvent(leavearena);
                             msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getKiller().getName());
                             if (killer != null && p != null)
-                                plugin.getStatsManager().addKill(killer, p, gameID);
+                                plugin.getStatsHandler().addKill(killer, p, gameID);
                         } else {
                             msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getLastDamageCause().getCause());
                         }
@@ -600,7 +600,7 @@ public class Game {
         }
 
         if (getActivePlayers() <= config.getInt("endgame.players") && config.getBoolean("endgame.fire-lighting.enabled") && !endgameRunning) {
-            tasks.add(new EndgameManager().runTaskTimer(plugin, 0, config.getInt("endgame.fire-lighting.interval") * 20).getTaskId());
+            tasks.add(new EndgameHandler().runTaskTimer(plugin, 0, config.getInt("endgame.fire-lighting.interval") * 20).getTaskId());
         }
 
         if (activePlayers.size() < 2 && mode != GameMode.WAITING) {
@@ -608,7 +608,7 @@ public class Game {
             endGame();
         }
 
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
     }
 
     // -------------------------//
@@ -620,10 +620,10 @@ public class Game {
 
         UUID uuid = activePlayers.get(0);
         Player win = plugin.getServer().getPlayer(uuid);
-        win.teleport(plugin.getSettingsManager().getLobbySpawn());
+        win.teleport(plugin.getSettingsHandler().getLobbySpawn());
         restoreInv(win);
         plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "game.playerwin", "arena-" + gameID, "victim-" + victim.getName(), "player-" + win.getName());
-        plugin.getLobbyManager().display(new String[] { win.getName(), "", "Won the ", "Survival Games!" }, gameID);
+        plugin.getLobbyHandler().display(new String[] { win.getName(), "", "Won the ", "Survival Games!" }, gameID);
 
         mode = GameMode.FINISHING;
         if (config.getBoolean("reward.enabled", false)) {
@@ -643,15 +643,15 @@ public class Game {
         PlayerWinEvent winEvent = new PlayerWinEvent(win, victim, this);
         plugin.getServer().getPluginManager().callEvent(winEvent);
 
-        plugin.getStatsManager().playerWin(win, gameID, new Date().getTime() - startTime);
-        plugin.getStatsManager().saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
+        plugin.getStatsHandler().playerWin(win, gameID, new Date().getTime() - startTime);
+        plugin.getStatsHandler().saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
 
         activePlayers.clear();
         inactivePlayers.clear();
         spawns.clear();
 
         loadspawns();
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
         plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gameend", "arena-" + gameID);
     }
 
@@ -663,8 +663,8 @@ public class Game {
 
         resetArena();
 
-        plugin.getLobbyManager().clearSigns(gameID);
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getLobbyHandler().clearSigns(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
     }
 
     // -------------------------//
@@ -702,7 +702,7 @@ public class Game {
         queue.clear();
 
         endGame();
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
         plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "broadcast.gamedisabled", "arena-" + gameID);
     }
 
@@ -722,9 +722,9 @@ public class Game {
         endgameRunning = false;
 
         plugin.getServer().getScheduler().cancelTask(endgameTaskID);
-        plugin.getGameManager().gameEndCallBack(gameID);
-        plugin.getQueueManager().rollback(gameID);
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getGameHandler().gameEndCallBack(gameID);
+        plugin.getQueueHandler().rollback(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
     }
 
     public void resetCallback() {
@@ -734,7 +734,7 @@ public class Game {
             mode = GameMode.DISABLED;
         }
 
-        plugin.getLobbyManager().updateWall(gameID);
+        plugin.getLobbyHandler().updateWall(gameID);
     }
 
     // -------------------------//
@@ -764,9 +764,9 @@ public class Game {
 
         saveInv(p);
         clearInv(p);
-        p.teleport(plugin.getSettingsManager().getSpawnPoint(gameID, 1).add(0, 10, 0));
+        p.teleport(plugin.getSettingsHandler().getSpawnPoint(gameID, 1).add(0, 10, 0));
 
-        plugin.getHookManager().runHook("PLAYER_SPECTATE", "player-" + p.getName());
+        plugin.getHookHandler().runHook("PLAYER_SPECTATE", "player-" + p.getName());
 
         for (Player pl : plugin.getServer().getOnlinePlayers()) {
             pl.hidePlayer(p);
@@ -825,7 +825,7 @@ public class Game {
         player.setHealth(player.getMaxHealth());
         player.setFoodLevel(20);
         player.setSaturation(20);
-        player.teleport(plugin.getSettingsManager().getLobbySpawn());
+        player.teleport(plugin.getSettingsHandler().getLobbySpawn());
 
         SpectatorUtil.removeSpectator(player);
     }
@@ -882,13 +882,13 @@ public class Game {
 
         @Override
         public void run() {
-            if (plugin.getSettingsManager().getGameWorld(gameID).getTime() > 14000) {
+            if (plugin.getSettingsHandler().getGameWorld(gameID).getTime() > 14000) {
                 for (UUID id : new ArrayList<>(activePlayers)) {
                     Player pl = plugin.getServer().getPlayer(id);
                     plugin.getMessageHandler().sendMessage(Prefix.INFO, "Chests restocked!", pl);
                 }
 
-                plugin.getGameManager().getOpenedChest().get(gameID).clear();
+                plugin.getGameHandler().getOpenedChest().get(gameID).clear();
                 reset = true;
             }
         }
@@ -897,7 +897,7 @@ public class Game {
     // -------------------------//
     // Ending Games
     // -------------------------//
-    public class EndgameManager extends BukkitRunnable {
+    public class EndgameHandler extends BukkitRunnable {
         @Override
         public void run() {
             for (UUID uuid : new ArrayList<>(activePlayers)) {
@@ -920,7 +920,7 @@ public class Game {
                 for (Entry<Integer, UUID> entry : new HashMap<>(spawns).entrySet()) {
                     if (entry.getValue() == id) {
                         Player player = plugin.getServer().getPlayer(id);
-                        player.teleport(plugin.getSettingsManager().getSpawnPoint(gameID, entry.getKey()));
+                        player.teleport(plugin.getSettingsHandler().getSpawnPoint(gameID, entry.getKey()));
                         break;
                     }
                 }

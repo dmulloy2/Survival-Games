@@ -16,6 +16,6 @@ public class CmdLeaveQueue extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        gameManager.removeFromOtherQueues(player, -1);
+        gameHandler.removeFromOtherQueues(player, -1);
     }
 }

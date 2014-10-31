@@ -18,17 +18,17 @@ public class CommandCatch implements Listener {
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         String m = event.getMessage();
 
-        if (!plugin.getGameManager().isPlayerActive(event.getPlayer()) && !plugin.getGameManager().isPlayerInactive(event.getPlayer()) && !plugin.getGameManager().isSpectator(event.getPlayer())) {
+        if (!plugin.getGameHandler().isPlayerActive(event.getPlayer()) && !plugin.getGameHandler().isPlayerInactive(event.getPlayer()) && !plugin.getGameHandler().isSpectator(event.getPlayer())) {
             return;
         }
 
         if (m.equalsIgnoreCase("/list")) {
-            for (String s : plugin.getGameManager().getStringList(plugin.getGameManager().getPlayerGameId(event.getPlayer()))) {
+            for (String s : plugin.getGameHandler().getStringList(plugin.getGameHandler().getPlayerGameId(event.getPlayer()))) {
                 event.getPlayer().sendMessage(s);
             }
             return;
         }
-        if (!plugin.getSettingsManager().getConfig().getBoolean("disallow-commands")) {
+        if (!plugin.getSettingsHandler().getConfig().getBoolean("disallow-commands")) {
             return;
         }
 
@@ -36,7 +36,7 @@ public class CommandCatch implements Listener {
             return;
         } else if (m.startsWith("/sg") || m.startsWith("/survivalgames") || m.startsWith("/hg") || m.startsWith("/hungergames") || m.startsWith("/msg")) {
             return;
-        } else if (plugin.getSettingsManager().getConfig().getStringList("cmdwhitelist").contains(m)) {
+        } else if (plugin.getSettingsHandler().getConfig().getStringList("cmdwhitelist").contains(m)) {
             return;
         }
 

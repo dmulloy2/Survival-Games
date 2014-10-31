@@ -23,7 +23,7 @@ public class CmdTeleport extends SurvivalGamesCommand {
         try {
             int a = Integer.parseInt(args[0]);
             try {
-                player.teleport(plugin.getSettingsManager().getSpawnPoint(a, 1));
+                player.teleport(plugin.getSettingsHandler().getSpawnPoint(a, 1));
             } catch (Exception e) {
                 plugin.getMessageHandler().sendMessage(Prefix.ERROR, "error.nospawns", player);
             }

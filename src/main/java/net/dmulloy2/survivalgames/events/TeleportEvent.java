@@ -18,11 +18,11 @@ public class TeleportEvent implements Listener {
     @EventHandler
     public void playerTeleport(PlayerTeleportEvent event) {
         Player p = event.getPlayer();
-        int id = plugin.getGameManager().getPlayerGameId(p);
+        int id = plugin.getGameHandler().getPlayerGameId(p);
         if (id == -1) {
             return;
         }
-        if (plugin.getGameManager().getGame(id).isPlayerActive(p) && event.getCause() == PlayerTeleportEvent.TeleportCause.COMMAND) {
+        if (plugin.getGameHandler().getGame(id).isPlayerActive(p) && event.getCause() == PlayerTeleportEvent.TeleportCause.COMMAND) {
             p.sendMessage(ChatColor.RED + " Cannot teleport while ingame!");
             event.setCancelled(true);
         }

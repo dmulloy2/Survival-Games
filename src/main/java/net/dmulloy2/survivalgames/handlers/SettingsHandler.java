@@ -1,4 +1,4 @@
-package net.dmulloy2.survivalgames.managers;
+package net.dmulloy2.survivalgames.handlers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,9 +8,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
-import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.util.Util;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,33 +19,31 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 
-public class SettingsManager {
+public class SettingsHandler {
     private FileConfiguration spawns;
     private FileConfiguration system;
     private FileConfiguration kits;
     private FileConfiguration messages;
     private FileConfiguration chest;
 
-    private File f; // spawns
-    private File f2; // system
-    private File f3; // kits
-    private File f4; // messages
-    private File f5; // chest
+    private File spawnsFile;
+    private File systemFile;
+    private File kitsFile;
+    private File messagesFile;
+    private File chestsFile;
 
-    private @Getter final int KIT_VERSION = 1;
-    private @Getter final int MESSAGE_VERSION = 1;
-    private @Getter final int CHEST_VERSION = 0;
-    private @Getter final int SPAWN_VERSION = 0;
-    private @Getter final int SYSTEM_VERSION = 0;
+    private static final int KIT_VERSION = 1;
+    private static final int MESSAGE_VERSION = 1;
+    private static final int CHEST_VERSION = 0;
+    private static final int SPAWN_VERSION = 0;
+    private static final int SYSTEM_VERSION = 0;
+    private static final int CONFIG_VERSION = 3;
 
     private final SurvivalGames plugin;
-
-    public SettingsManager(SurvivalGames plugin) {
+    public SettingsHandler(SurvivalGames plugin) {
         this.plugin = plugin;
 
-        if (plugin.getConfig().getInt("config-version") == plugin.getConfigVersion()) {
-            plugin.setConfigUpToDate(true);
-        } else {
+        if (plugin.getConfig().getInt("config-version") != CONFIG_VERSION) {
             File config = new File(plugin.getDataFolder(), "config.yml");
             config.delete();
         }
@@ -52,26 +51,25 @@ public class SettingsManager {
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
 
-        f = new File(plugin.getDataFolder(), "spawns.yml");
-        f2 = new File(plugin.getDataFolder(), "system.yml");
-        f3 = new File(plugin.getDataFolder(), "kits.yml");
-        f4 = new File(plugin.getDataFolder(), "messages.yml");
-        f5 = new File(plugin.getDataFolder(), "chest.yml");
+        spawnsFile = new File(plugin.getDataFolder(), "spawns.yml");
+        systemFile = new File(plugin.getDataFolder(), "system.yml");
+        kitsFile = new File(plugin.getDataFolder(), "kits.yml");
+        messagesFile = new File(plugin.getDataFolder(), "messages.yml");
+        chestsFile = new File(plugin.getDataFolder(), "chest.yml");
 
         try {
-            if (!f.exists())
-                f.createNewFile();
-            if (!f2.exists())
-                f2.createNewFile();
-            if (!f3.exists())
+            if (!spawnsFile.exists())
+                spawnsFile.createNewFile();
+            if (!systemFile.exists())
+                systemFile.createNewFile();
+            if (!kitsFile.exists())
                 loadFile("kits.yml");
-            if (!f4.exists())
+            if (!messagesFile.exists())
                 loadFile("messages.yml");
-            if (!f5.exists())
+            if (!chestsFile.exists())
                 loadFile("chest.yml");
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Throwable ex) {
+            ex.printStackTrace();
         }
 
         reloadSystem();
@@ -89,8 +87,8 @@ public class SettingsManager {
         saveMessages();
     }
 
-    public void set(String arg0, Object arg1) {
-        plugin.getConfig().set(arg0, arg1);
+    public void set(String key, Object value) {
+        plugin.getConfig().set(key, value);
     }
 
     public FileConfiguration getConfig() {
@@ -120,7 +118,6 @@ public class SettingsManager {
     public World getGameWorld(int game) {
         if (system.getString("sg-system.arenas." + game + ".world") == null) {
             return null;
-
         }
 
         return plugin.getServer().getWorld(system.getString("sg-system.arenas." + game + ".world"));
@@ -131,7 +128,7 @@ public class SettingsManager {
     }
 
     public boolean moveFile(File ff) {
-        plugin.log("Moving outdated config file. " + f.getName());
+        plugin.log("Moving outdated config file. " + spawnsFile.getName());
         String name = ff.getName();
         File ff2 = new File(plugin.getDataFolder(), getNextName(name, 0));
         return ff.renameTo(ff2);
@@ -147,9 +144,9 @@ public class SettingsManager {
     }
 
     public void reloadSpawns() {
-        spawns = YamlConfiguration.loadConfiguration(f);
+        spawns = YamlConfiguration.loadConfiguration(spawnsFile);
         if (spawns.getInt("version", 0) != SPAWN_VERSION) {
-            moveFile(f);
+            moveFile(spawnsFile);
             reloadSpawns();
         }
         spawns.set("version", SPAWN_VERSION);
@@ -157,9 +154,9 @@ public class SettingsManager {
     }
 
     public void reloadSystem() {
-        system = YamlConfiguration.loadConfiguration(f2);
+        system = YamlConfiguration.loadConfiguration(systemFile);
         if (system.getInt("version", 0) != SYSTEM_VERSION) {
-            moveFile(f2);
+            moveFile(systemFile);
             reloadSystem();
         }
         system.set("version", SYSTEM_VERSION);
@@ -167,18 +164,18 @@ public class SettingsManager {
     }
 
     public void reloadKits() {
-        kits = YamlConfiguration.loadConfiguration(f3);
+        kits = YamlConfiguration.loadConfiguration(kitsFile);
         if (kits.getInt("version", 0) != KIT_VERSION) {
-            moveFile(f3);
+            moveFile(kitsFile);
             loadFile("kits.yml");
             reloadKits();
         }
     }
 
     public void reloadMessages() {
-        messages = YamlConfiguration.loadConfiguration(f4);
+        messages = YamlConfiguration.loadConfiguration(messagesFile);
         if (messages.getInt("version", 0) != MESSAGE_VERSION) {
-            moveFile(f4);
+            moveFile(messagesFile);
             loadFile("messages.yml");
             reloadMessages();
         }
@@ -187,9 +184,9 @@ public class SettingsManager {
     }
 
     public void reloadChest() {
-        chest = YamlConfiguration.loadConfiguration(f5);
+        chest = YamlConfiguration.loadConfiguration(chestsFile);
         if (chest.getInt("version", 0) != CHEST_VERSION) {
-            moveFile(f5);
+            moveFile(chestsFile);
             loadFile("chest.yml");
             reloadChest();
         }
@@ -197,7 +194,7 @@ public class SettingsManager {
 
     public void saveSystemConfig() {
         try {
-            system.save(f2);
+            system.save(systemFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -205,7 +202,7 @@ public class SettingsManager {
 
     public void saveSpawns() {
         try {
-            spawns.save(f);
+            spawns.save(spawnsFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -213,7 +210,7 @@ public class SettingsManager {
 
     public void saveKits() {
         try {
-            kits.save(f3);
+            kits.save(kitsFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -221,7 +218,7 @@ public class SettingsManager {
 
     public void saveMessages() {
         try {
-            messages.save(f4);
+            messages.save(messagesFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -229,7 +226,7 @@ public class SettingsManager {
 
     public void saveChest() {
         try {
-            chest.save(f5);
+            chest.save(chestsFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -239,46 +236,42 @@ public class SettingsManager {
         return spawns.getInt("spawns." + gameid + ".count");
     }
 
-    // TODO: Implement per-arena settings aka flags
-    public HashMap<String, Object> getGameFlags(int a) {
-        HashMap<String, Object> flags = new HashMap<String, Object>();
-
-        flags.put("AUTOSTART_PLAYERS", system.getInt("sg-system.arenas." + a + ".flags.autostart"));
-        flags.put("AUTOSTART_VOTE", system.getInt("sg-system.arenas." + a + ".flags.vote"));
-        flags.put("ENDGAME_ENABLED", system.getBoolean("sg-system.arenas." + a + ".flags.endgame-enabled"));
-        flags.put("ENDGAME_PLAYERS", system.getInt("sg-system.arenas." + a + ".flags.endgame-players"));
-        flags.put("ENDGAME_CHEST", system.getBoolean("sg-system.arenas." + a + ".flags.endgame-chest"));
-        flags.put("ENDGAME_LIGHTNING", system.getBoolean("sg-system.arenas." + a + ".flags.endgame-lightning"));
-        flags.put("DUEL_PLAYERS", system.getInt("sg-system.arenas." + a + ".flags.endgame-duel-players"));
-        flags.put("DUEL_TIME", system.getInt("sg-system.arenas." + a + ".flags.endgame-duel-time"));
-        flags.put("DUEL_ENABLED", system.getBoolean("sg-system.arenas." + a + ".flags.endgame-duel"));
-        flags.put("ARENA_NAME", system.getString("sg-system.arenas." + a + ".flags.arena-name"));
-        flags.put("ARENA_COST", system.getInt("sg-system.arenas." + a + ".flags.arena-cost"));
-        flags.put("ARENA_REWARD", system.getInt("sg-system.arenas." + a + ".flags.arena-reward"));
-        flags.put("ARENA_MAXTIME", system.getInt("sg-system.arenas." + a + ".flags.arena-maxtime"));
-        flags.put("SPONSOR_ENABLED", system.getBoolean("sg-system.arenas." + a + ".flags.sponsor-enabled"));
-        flags.put("SPONSOR_MODE", system.getInt("sg-system.arenas." + a + ".flags.sponsor-mode"));
-
+    public Map<String, Object> getGameFlags(int id) {
+        Map<String, Object> flags = new HashMap<String, Object>();
+        flags.put("AUTOSTART_PLAYERS", system.getInt("sg-system.arenas." + id + ".flags.autostart"));
+        flags.put("AUTOSTART_VOTE", system.getInt("sg-system.arenas." + id + ".flags.vote"));
+        flags.put("ENDGAME_ENABLED", system.getBoolean("sg-system.arenas." + id + ".flags.endgame-enabled"));
+        flags.put("ENDGAME_PLAYERS", system.getInt("sg-system.arenas." + id + ".flags.endgame-players"));
+        flags.put("ENDGAME_CHEST", system.getBoolean("sg-system.arenas." + id + ".flags.endgame-chest"));
+        flags.put("ENDGAME_LIGHTNING", system.getBoolean("sg-system.arenas." + id + ".flags.endgame-lightning"));
+        flags.put("DUEL_PLAYERS", system.getInt("sg-system.arenas." + id + ".flags.endgame-duel-players"));
+        flags.put("DUEL_TIME", system.getInt("sg-system.arenas." + id + ".flags.endgame-duel-time"));
+        flags.put("DUEL_ENABLED", system.getBoolean("sg-system.arenas." + id + ".flags.endgame-duel"));
+        flags.put("ARENA_NAME", system.getString("sg-system.arenas." + id + ".flags.arena-name"));
+        flags.put("ARENA_COST", system.getInt("sg-system.arenas." + id + ".flags.arena-cost"));
+        flags.put("ARENA_REWARD", system.getInt("sg-system.arenas." + id + ".flags.arena-reward"));
+        flags.put("ARENA_MAXTIME", system.getInt("sg-system.arenas." + id + ".flags.arena-maxtime"));
+        flags.put("SPONSOR_ENABLED", system.getBoolean("sg-system.arenas." + id + ".flags.sponsor-enabled"));
+        flags.put("SPONSOR_MODE", system.getInt("sg-system.arenas." + id + ".flags.sponsor-mode"));
         return flags;
-
     }
 
-    public void saveGameFlags(Map<String, Object> flags, int a) {
-        system.set("sg-system.arenas." + a + ".flags.autostart", flags.get("AUTOSTART_PLAYERS"));
-        system.set("sg-system.arenas." + a + ".flags.vote", flags.get("AUTOSTART_VOTE"));
-        system.set("sg-system.arenas." + a + ".flags.endgame-enabled", flags.get("ENDGAME_ENABLED"));
-        system.set("sg-system.arenas." + a + ".flags.endgame-players", flags.get("ENDGAME_PLAYERS"));
-        system.set("sg-system.arenas." + a + ".flags.endgame-chest", flags.get("ENDGAME_CHEST"));
-        system.set("sg-system.arenas." + a + ".flags.endgame-lightning", flags.get("ENDGAME_LIGHTNING"));
-        system.set("sg-system.arenas." + a + ".flags.endgame-duel-players", flags.get("DUEL_PLAYERS"));
-        system.set("sg-system.arenas." + a + ".flags.endgame-duel-time", flags.get("DUEL_TIME"));
-        system.set("sg-system.arenas." + a + ".flags.endgame-duel", flags.get("DUEL_ENABLED"));
-        system.set("sg-system.arenas." + a + ".flags.arena-name", flags.get("ARENA_NAME"));
-        system.set("sg-system.arenas." + a + ".flags.arena-cost", flags.get("ARENA_COST"));
-        system.set("sg-system.arenas." + a + ".flags.arena-reward", flags.get("ARENA_REWARD"));
-        system.set("sg-system.arenas." + a + ".flags.arena-maxtime", flags.get("ARENA_MAXTIME"));
-        system.set("sg-system.arenas." + a + ".flags.sponsor-enabled", flags.get("SPONSOR_ENABLED"));
-        system.set("sg-system.arenas." + a + ".flags.sponsor-mode", flags.get("SPONSOR_MODE"));
+    public void saveGameFlags(Map<String, Object> flags, int id) {
+        system.set("sg-system.arenas." + id + ".flags.autostart", flags.get("AUTOSTART_PLAYERS"));
+        system.set("sg-system.arenas." + id + ".flags.vote", flags.get("AUTOSTART_VOTE"));
+        system.set("sg-system.arenas." + id + ".flags.endgame-enabled", flags.get("ENDGAME_ENABLED"));
+        system.set("sg-system.arenas." + id + ".flags.endgame-players", flags.get("ENDGAME_PLAYERS"));
+        system.set("sg-system.arenas." + id + ".flags.endgame-chest", flags.get("ENDGAME_CHEST"));
+        system.set("sg-system.arenas." + id + ".flags.endgame-lightning", flags.get("ENDGAME_LIGHTNING"));
+        system.set("sg-system.arenas." + id + ".flags.endgame-duel-players", flags.get("DUEL_PLAYERS"));
+        system.set("sg-system.arenas." + id + ".flags.endgame-duel-time", flags.get("DUEL_TIME"));
+        system.set("sg-system.arenas." + id + ".flags.endgame-duel", flags.get("DUEL_ENABLED"));
+        system.set("sg-system.arenas." + id + ".flags.arena-name", flags.get("ARENA_NAME"));
+        system.set("sg-system.arenas." + id + ".flags.arena-cost", flags.get("ARENA_COST"));
+        system.set("sg-system.arenas." + id + ".flags.arena-reward", flags.get("ARENA_REWARD"));
+        system.set("sg-system.arenas." + id + ".flags.arena-maxtime", flags.get("ARENA_MAXTIME"));
+        system.set("sg-system.arenas." + id + ".flags.sponsor-enabled", flags.get("SPONSOR_ENABLED"));
+        system.set("sg-system.arenas." + id + ".flags.sponsor-mode", flags.get("SPONSOR_MODE"));
 
         saveSystemConfig();
     }
@@ -286,7 +279,8 @@ public class SettingsManager {
     public Location getLobbySpawn() {
         try {
             return new Location(plugin.getServer().getWorld(system.getString("sg-system.lobby.spawn.world")), system.getInt("sg-system.lobby.spawn.x"), system.getInt("sg-system.lobby.spawn.y"), system.getInt("sg-system.lobby.spawn.z"));
-        } catch (Exception e) {
+        } catch (Throwable ex) {
+            plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "getting lobby spawn"));
             return null;
         }
     }
@@ -311,12 +305,11 @@ public class SettingsManager {
             spawns.set("spawns." + gameid + ".count", spawnid);
         }
         try {
-            spawns.save(f);
-        } catch (IOException e) {
-            //
+            spawns.save(spawnsFile);
+        } catch (IOException ignored) {
         }
 
-        plugin.getGameManager().getGame(gameid).addSpawn();
+        plugin.getGameHandler().getGame(gameid).addSpawn();
 
     }
 

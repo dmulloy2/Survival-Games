@@ -40,11 +40,11 @@ public class SignClickEvent implements Listener {
 
             try {
                 if (lines[2].equalsIgnoreCase("Auto Assign")) {
-                    plugin.getGameManager().autoAddPlayer(e.getPlayer());
+                    plugin.getGameHandler().autoAddPlayer(e.getPlayer());
                 } else {
                     String game = lines[2].replace("Arena ", "");
                     int gameno = Integer.parseInt(game);
-                    plugin.getGameManager().addPlayer(e.getPlayer(), gameno);
+                    plugin.getGameHandler().addPlayer(e.getPlayer(), gameno);
                 }
             } catch (Throwable ex) {
                 // Do nothing...

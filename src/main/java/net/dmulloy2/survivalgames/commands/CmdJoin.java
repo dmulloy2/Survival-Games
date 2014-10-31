@@ -24,18 +24,18 @@ public class CmdJoin extends SurvivalGamesCommand {
         if (args.length == 1) {
             try {
                 int a = Integer.parseInt(args[0]);
-                gameManager.addPlayer(player, a);
+                gameHandler.addPlayer(player, a);
             } catch (NumberFormatException e) {
                 plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notanumber", player, "input-" + args[0]);
             }
         } else {
             if (plugin.getPermissionHandler().hasPermission(player, Permission.PLAYER_JOIN_LOBBY)) {
-                if (gameManager.getPlayerGameId(player) != -1) {
+                if (gameHandler.getPlayerGameId(player) != -1) {
                     plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.alreadyingame", player);
                     return;
                 }
 
-                player.teleport(plugin.getSettingsManager().getLobbySpawn());
+                player.teleport(plugin.getSettingsHandler().getLobbySpawn());
             } else {
                 plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.nopermission", player);
             }

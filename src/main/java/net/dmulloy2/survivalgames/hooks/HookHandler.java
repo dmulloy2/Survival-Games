@@ -6,19 +6,19 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class HookManager {
+public class HookHandler {
     private HashMap<String, HookBase> hooks;
 
     private final SurvivalGames plugin;
 
-    public HookManager(SurvivalGames plugin) {
+    public HookHandler(SurvivalGames plugin) {
         this.plugin = plugin;
         this.hooks = new HashMap<String, HookBase>();
         this.hooks.put("c", new CommandHook(plugin));
     }
 
     public void runHook(String hook, String... args) {
-        FileConfiguration c = plugin.getSettingsManager().getConfig();
+        FileConfiguration c = plugin.getSettingsHandler().getConfig();
 
         for (String str : c.getStringList("hooks." + hook)) {
             String[] split = str.split("!");
@@ -52,7 +52,7 @@ public class HookManager {
                 }
             }
             if (!flag) {
-                plugin.log("HookManager Condition does not contian a compare operator: " + split);
+                plugin.log("HookHandler Condition does not contian a compare operator: " + split);
                 return false;
             }
             try {
@@ -89,7 +89,7 @@ public class HookManager {
                     }
                 }
             } catch (Exception e) {
-                plugin.log("HookManager: Error parsing value for: " + split);
+                plugin.log("HookHandler: Error parsing value for: " + split);
                 return false;
             }
         }

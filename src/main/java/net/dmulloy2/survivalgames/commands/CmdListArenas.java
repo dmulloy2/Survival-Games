@@ -25,7 +25,7 @@ public class CmdListArenas extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        List<Game> games = gameManager.getGames();
+        List<Game> games = gameHandler.getGames();
         if (games.isEmpty()) {
             plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.noarenasexist", player);
             return;
@@ -56,7 +56,7 @@ public class CmdListArenas extends SurvivalGamesCommand {
             line.append(ChatColor.YELLOW + "    [");
             line.append(game.getActivePlayers() + "/");
             line.append(game.getInactivePlayers() + "/");
-            line.append(plugin.getSettingsManager().getSpawnCount(game.getID()));
+            line.append(plugin.getSettingsHandler().getSpawnCount(game.getID()));
             line.append("]");
             lines.add(line.toString());
         }

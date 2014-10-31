@@ -19,9 +19,9 @@ public class KitEvents implements Listener {
     public void itemClick(InventoryClickEvent e) {
         if (e.getWhoClicked() instanceof Player) {
             Player p = (Player) e.getWhoClicked();
-            if (plugin.getGameManager().isInKitMenu(p)) {
+            if (plugin.getGameHandler().isInKitMenu(p)) {
                 if (e.getRawSlot() == e.getSlot()) {
-                    plugin.getGameManager().selectKit(p, e.getRawSlot() % 9);
+                    plugin.getGameHandler().selectKit(p, e.getRawSlot() % 9);
                 }
                 e.setCancelled(true);
             }
@@ -30,6 +30,6 @@ public class KitEvents implements Listener {
 
     @EventHandler
     public void InvClose(InventoryCloseEvent e) {
-        plugin.getGameManager().leaveKitMenu((Player) e.getPlayer());
+        plugin.getGameHandler().leaveKitMenu((Player) e.getPlayer());
     }
 }

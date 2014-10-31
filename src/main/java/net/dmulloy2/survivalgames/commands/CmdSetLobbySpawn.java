@@ -19,7 +19,7 @@ public class CmdSetLobbySpawn extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        plugin.getSettingsManager().setLobbySpawn(player.getLocation());
+        plugin.getSettingsHandler().setLobbySpawn(player.getLocation());
         plugin.getMessageHandler().sendFMessage(Prefix.INFO, "info.lobbyspawn", player);
     }
 }

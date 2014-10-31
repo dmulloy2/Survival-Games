@@ -25,7 +25,7 @@ public class Kit {
     }
 
     public void load() {
-        FileConfiguration c = plugin.getSettingsManager().getKits();
+        FileConfiguration c = plugin.getSettingsHandler().getKits();
         cost = c.getDouble("kits." + name + ".cost", 0);
 
         icon = ItemReader.read(c.getString("kits." + name + ".icon"));

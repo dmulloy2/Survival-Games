@@ -62,7 +62,7 @@ public class PlayerStatsSession {
         this.time = time;
         death = 1;
         position = pos;
-        pppoints = plugin.getGameManager().getGame(arenaid).getInactivePlayers();
+        pppoints = plugin.getGameHandler().getGame(arenaid).getInactivePlayers();
     }
 
     public void setTime(long time) {
@@ -70,7 +70,7 @@ public class PlayerStatsSession {
     }
 
     public void addkillStreak(int ks) {
-        ksbon = ksbon + (plugin.getSettingsManager().getConfig().getInt("stats.points.killstreak.base") * (plugin.getSettingsManager().getConfig().getInt("stats.points.killstreak.multiplier") + ks));
+        ksbon = ksbon + (plugin.getSettingsHandler().getConfig().getInt("stats.points.killstreak.base") * (plugin.getSettingsHandler().getConfig().getInt("stats.points.killstreak.multiplier") + ks));
         int level = ks;
         if (level > 5)
             level = 5;
@@ -79,7 +79,7 @@ public class PlayerStatsSession {
     }
 
     public void calcPoints() {
-        FileConfiguration c = plugin.getSettingsManager().getConfig();
+        FileConfiguration c = plugin.getSettingsHandler().getConfig();
         int kpoints = kills * c.getInt("stats.points.kill");
         int ppoints = pppoints * c.getInt("stats.points.position");
         int kspoints = ksbon;
@@ -107,7 +107,7 @@ public class PlayerStatsSession {
 
     public String createQuery() {
         calcPoints();
-        String query = "INSERT INTO " + plugin.getSettingsManager().getSqlPrefix() + "playerstats VALUES(NULL,";
+        String query = "INSERT INTO " + plugin.getSettingsHandler().getSqlPrefix() + "playerstats VALUES(NULL,";
         query = query + gameno + "," + arenaid + ",'" + player.getName() + "'," + points + "," + position + "," + kills + "," + death + ",";
         String killeds = "'";
 

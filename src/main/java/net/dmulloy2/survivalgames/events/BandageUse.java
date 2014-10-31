@@ -21,7 +21,7 @@ public class BandageUse implements Listener {
     @EventHandler
     public void onBandageUse(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        if (!plugin.getGameManager().isPlayerActive(player))
+        if (!plugin.getGameHandler().isPlayerActive(player))
             return;
 
         if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {

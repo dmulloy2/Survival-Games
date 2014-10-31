@@ -24,14 +24,14 @@ public class CmdEnable extends SurvivalGamesCommand {
     public void perform() {
         try {
             if (args.length == 0) {
-                for (Game g : gameManager.getGames()) {
+                for (Game g : gameHandler.getGames()) {
                     if (g.getMode() == GameMode.DISABLED)
                         g.enable();
                 }
 
                 plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.all", player, "input-enabled");
             } else {
-                gameManager.enableGame(Integer.parseInt(args[0]));
+                gameHandler.enableGame(Integer.parseInt(args[0]));
                 plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.state", player, "arena-" + args[0], "input-enabled");
             }
         } catch (NumberFormatException e) {

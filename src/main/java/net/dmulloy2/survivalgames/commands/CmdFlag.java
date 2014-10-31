@@ -1,11 +1,12 @@
 package net.dmulloy2.survivalgames.commands;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
 import net.dmulloy2.survivalgames.types.Prefix;
+import net.dmulloy2.util.NumberUtil;
 
 /**
  * @author dmulloy2
@@ -25,14 +26,20 @@ public class CmdFlag extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        Game g = gameManager.getGame(Integer.parseInt(args[0]));
-        if (g == null) {
-            plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", player, "arena-" + args[0]);
+        int id = NumberUtil.toInt(args[0]);
+        if (id == -1) {
+            err("Invalid number: {0}", args[0]);
             return;
         }
 
-        HashMap<String, Object> z = plugin.getSettingsManager().getGameFlags(g.getID());
-        z.put(args[1].toUpperCase(), args[2]);
-        plugin.getSettingsManager().saveGameFlags(z, g.getID());
+        Game game = gameHandler.getGame(id);
+        if (game == null) {
+            plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", player, "arena-" + id);
+            return;
+        }
+
+        Map<String, Object> flags = plugin.getSettingsHandler().getGameFlags(id);
+        flags.put(args[1].toLowerCase(), args[2]);
+        plugin.getSettingsHandler().saveGameFlags(flags, id);
     }
 }

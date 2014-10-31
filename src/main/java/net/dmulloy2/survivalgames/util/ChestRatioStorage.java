@@ -17,7 +17,7 @@ public class ChestRatioStorage {
     private int maxlevel = 0;
 
     public ChestRatioStorage(SurvivalGames plugin) {
-        FileConfiguration conf = plugin.getSettingsManager().getChest();
+        FileConfiguration conf = plugin.getSettingsHandler().getChest();
 
         for (int clevel = 1; clevel <= 16; clevel++) {
             List<ItemStack> lvl = new ArrayList<ItemStack>();

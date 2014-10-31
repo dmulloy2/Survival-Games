@@ -18,6 +18,6 @@ public class CmdCreateArena extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        gameManager.createArenaFromSelection(player);
+        gameHandler.createArenaFromSelection(player);
     }
 }

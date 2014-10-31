@@ -23,13 +23,13 @@ public class CmdDisable extends SurvivalGamesCommand {
     public void perform() {
         try {
             if (args.length == 0) {
-                for (Game g : gameManager.getGames()) {
+                for (Game g : gameHandler.getGames()) {
                     g.disable();
                 }
 
                 plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.all", player, "input-disabled");
             } else {
-                gameManager.disableGame(Integer.parseInt(args[0]));
+                gameHandler.disableGame(Integer.parseInt(args[0]));
                 plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.state", player, "arena-" + args[0], "input-disabled");
             }
         } catch (NumberFormatException e) {

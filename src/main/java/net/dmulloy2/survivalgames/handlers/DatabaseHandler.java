@@ -1,4 +1,4 @@
-package net.dmulloy2.survivalgames.managers;
+package net.dmulloy2.survivalgames.handlers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,13 +11,13 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class DatabaseManager {
+public class DatabaseHandler {
     private Connection conn;
     private Logger log;
 
     private final SurvivalGames plugin;
 
-    public DatabaseManager(SurvivalGames plugin) {
+    public DatabaseHandler(SurvivalGames plugin) {
         this.plugin = plugin;
         this.log = plugin.getLogger();
         this.connect();
@@ -69,7 +69,7 @@ public class DatabaseManager {
 
     public boolean connect() {
         // log.info("Connecting to database...");
-        FileConfiguration c = plugin.getSettingsManager().getConfig();
+        FileConfiguration c = plugin.getSettingsHandler().getConfig();
         String host = c.getString("sql.host", "localhost");
         int port = c.getInt("sql.port", 3306);
         String db = c.getString("sql.database", "SurvivalGames");

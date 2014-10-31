@@ -41,16 +41,16 @@ import net.dmulloy2.survivalgames.events.PlaceEvent;
 import net.dmulloy2.survivalgames.events.SignClickEvent;
 import net.dmulloy2.survivalgames.events.SpectatorEvents;
 import net.dmulloy2.survivalgames.events.TeleportEvent;
+import net.dmulloy2.survivalgames.handlers.DatabaseHandler;
+import net.dmulloy2.survivalgames.handlers.EconomyHandler;
+import net.dmulloy2.survivalgames.handlers.GameHandler;
+import net.dmulloy2.survivalgames.handlers.LobbyHandler;
+import net.dmulloy2.survivalgames.handlers.LoggingHandler;
 import net.dmulloy2.survivalgames.handlers.MessageHandler;
-import net.dmulloy2.survivalgames.hooks.HookManager;
-import net.dmulloy2.survivalgames.managers.DatabaseManager;
-import net.dmulloy2.survivalgames.managers.EconomyManager;
-import net.dmulloy2.survivalgames.managers.GameManager;
-import net.dmulloy2.survivalgames.managers.LobbyManager;
-import net.dmulloy2.survivalgames.managers.LoggingManager;
-import net.dmulloy2.survivalgames.managers.QueueManager;
-import net.dmulloy2.survivalgames.managers.SettingsManager;
-import net.dmulloy2.survivalgames.stats.StatsManager;
+import net.dmulloy2.survivalgames.handlers.QueueHandler;
+import net.dmulloy2.survivalgames.handlers.SettingsHandler;
+import net.dmulloy2.survivalgames.hooks.HookHandler;
+import net.dmulloy2.survivalgames.stats.StatsHandler;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.util.ChestRatioStorage;
 import net.dmulloy2.types.Reloadable;
@@ -79,27 +79,21 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
  */
 
 public class SurvivalGames extends SwornPlugin implements Reloadable {
-    private @Getter boolean dbcon;
-    private @Getter boolean disabling;
-    private @Getter boolean configUpToDate;
-
-    private @Getter int configVersion = 3;
-
-    private @Getter GameManager gameManager;
-    private @Getter HookManager hookManager;
-    private @Getter StatsManager statsManager;
-    private @Getter LobbyManager lobbyManager;
-    private @Getter QueueManager queueManager;
-    private @Getter EconomyManager economyManager;
-    private @Getter LoggingManager loggingManager;
-    private @Getter DatabaseManager databaseManager;
-    private @Getter SettingsManager settingsManager;
-    private @Getter ChestRatioStorage chestRatioStorage;
-
+    private @Getter GameHandler gameHandler;
+    private @Getter HookHandler hookHandler;
+    private @Getter StatsHandler statsHandler;
+    private @Getter LobbyHandler lobbyHandler;
+    private @Getter QueueHandler queueHandler;
     private @Getter MessageHandler messageHandler;
+    private @Getter EconomyHandler economyHandler;
+    private @Getter LoggingHandler loggingHandler;
+    private @Getter DatabaseHandler databaseHandler;
+    private @Getter SettingsHandler settingsHandler;
+    private @Getter ChestRatioStorage chestRatioStorage;
 
     private @Getter WorldEditPlugin worldEdit;
 
+    private @Getter boolean disabling;
     private @Getter String prefix = FormatUtil.format("&4[&6&lSG&4]&3 ");
 
     @Override
@@ -109,11 +103,11 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
         // Register log handler first
         logHandler = new LogHandler(this);
 
-        // Register some managers
-        settingsManager = new SettingsManager(this);
-        statsManager = new StatsManager(this);
-        lobbyManager = new LobbyManager(this);
-        gameManager = new GameManager(this);
+        // Register some Handlers
+        settingsHandler = new SettingsHandler(this);
+        statsHandler = new StatsHandler(this);
+        lobbyHandler = new LobbyHandler(this);
+        gameHandler = new GameHandler(this);
 
         permissionHandler = new PermissionHandler(this);
         commandHandler = new CommandHandler(this);
@@ -149,15 +143,15 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
         }
 
         // Try loading everything that uses SQL
+
         try {
-            FileConfiguration c = settingsManager.getConfig();
+            FileConfiguration c = settingsHandler.getConfig();
             if (c.getBoolean("stats.enabled"))
-                databaseManager = new DatabaseManager(this);
+                databaseHandler = new DatabaseHandler(this);
 
-            queueManager = new QueueManager(this);
+            queueHandler = new QueueHandler(this);
 
-            statsManager.setup(c.getBoolean("stats.enabled"));
-            dbcon = true;
+            statsHandler.setup(c.getBoolean("stats.enabled"));
         } catch (Throwable ex) {
             log(Level.SEVERE, Util.getUsefulStack(ex, "connecting to the database. Check your settings!"));
             getServer().getPluginManager().disablePlugin(this);
@@ -165,8 +159,8 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
         }
 
         chestRatioStorage = new ChestRatioStorage(this);
-        economyManager = new EconomyManager(this);
-        hookManager = new HookManager(this);
+        economyHandler = new EconomyHandler(this);
+        hookHandler = new HookHandler(this);
 
         // Register events
         PluginManager pm = getServer().getPluginManager();
@@ -181,8 +175,8 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
         pm.registerEvents(new JoinEvent(this), this);
         pm.registerEvents(new TeleportEvent(this), this);
 
-        loggingManager = new LoggingManager(this);
-        pm.registerEvents(loggingManager, this);
+        loggingHandler = new LoggingHandler(this);
+        pm.registerEvents(loggingHandler, this);
 
         pm.registerEvents(new SpectatorEvents(this), this);
         pm.registerEvents(new BandageUse(this), this);
@@ -190,8 +184,8 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
         pm.registerEvents(new KeepLobbyLoadedEvent(this), this);
 
         for (Player pl : getServer().getOnlinePlayers()) {
-            if (gameManager.getBlockGameId(pl.getLocation()) != -1) {
-                pl.teleport(settingsManager.getLobbySpawn());
+            if (gameHandler.getBlockGameId(pl.getLocation()) != -1) {
+                pl.teleport(settingsHandler.getLobbySpawn());
             }
         }
 
@@ -206,10 +200,10 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
 
         getServer().getScheduler().cancelTasks(this);
 
-        settingsManager.saveSpawns();
-        settingsManager.saveSystemConfig();
+        settingsHandler.saveSpawns();
+        settingsHandler.saveSystemConfig();
 
-        for (Game g : gameManager.getGames()) {
+        for (Game g : gameHandler.getGames()) {
             g.disable();
         }
 
@@ -242,10 +236,6 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
 
     public void debug(int a) {
         debug(String.valueOf(a));
-    }
-
-    public void setConfigUpToDate(boolean upToDate) {
-        this.configUpToDate = upToDate;
     }
 
     @Override

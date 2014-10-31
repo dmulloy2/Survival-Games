@@ -19,6 +19,6 @@ public class CmdAddWall extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        lobbyManager.setLobbySignsFromSelection(player, Integer.parseInt(args[0]));
+        lobbyHandler.setLobbySignsFromSelection(player, Integer.parseInt(args[0]));
     }
 }

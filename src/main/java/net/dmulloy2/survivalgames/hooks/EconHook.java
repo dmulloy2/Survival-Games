@@ -14,8 +14,8 @@ public class EconHook implements HookBase {
 
     @Override
     public void executeHook(String player, String[] args) {
-        if (plugin.getEconomyManager().econPresent()) {
-            Economy econ = plugin.getEconomyManager().getEcon();
+        if (plugin.getEconomyHandler().econPresent()) {
+            Economy econ = plugin.getEconomyHandler().getEcon();
             String split[] = args[1].split(" ");
             if (split.length == 3) {
                 Player p = plugin.getServer().getPlayer(split[1]);

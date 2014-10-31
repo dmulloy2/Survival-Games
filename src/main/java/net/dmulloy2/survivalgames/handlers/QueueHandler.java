@@ -1,4 +1,4 @@
-package net.dmulloy2.survivalgames.managers;
+package net.dmulloy2.survivalgames.handlers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,13 +21,13 @@ import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class QueueManager {
+public class QueueHandler {
     private ConcurrentHashMap<Integer, List<BlockData>> queue = new ConcurrentHashMap<Integer, List<BlockData>>();
     private File baseDir;
 
     private final SurvivalGames plugin;
 
-    public QueueManager(SurvivalGames plugin) {
+    public QueueHandler(SurvivalGames plugin) {
         this.plugin = plugin;
         this.baseDir = new File(plugin.getDataFolder(), "ArenaData");
 
@@ -35,7 +35,7 @@ public class QueueManager {
             if (!baseDir.exists())
                 baseDir.mkdirs();
 
-            for (Game g : plugin.getGameManager().getGames()) {
+            for (Game g : plugin.getGameHandler().getGames()) {
                 ensureFile(g.getID());
             }
         } catch (Throwable ex) {
@@ -55,9 +55,9 @@ public class QueueManager {
 
         List<Entity> removelist = new ArrayList<Entity>();
 
-        for (Entity e : plugin.getSettingsManager().getGameWorld(id).getEntities()) {
+        for (Entity e : plugin.getSettingsHandler().getGameWorld(id).getEntities()) {
             if (!(e instanceof Player) && !(e instanceof NPC)) {
-                if (plugin.getGameManager().getBlockGameId(e.getLocation()) == id) {
+                if (plugin.getGameHandler().getBlockGameId(e.getLocation()) == id) {
                     removelist.add(e);
                 }
             }
@@ -153,13 +153,13 @@ public class QueueManager {
     }
 
     public final void rollback(int id, boolean shutdown, int totalRollback, int iteration, long time) {
-        Game game = plugin.getGameManager().getGame(id);
+        Game game = plugin.getGameHandler().getGame(id);
         List<BlockData> data = queue.get(id);
         if (data != null) {
             int a = data.size() - 1;
             int rb = 0;
             long t1 = new Date().getTime();
-            int pt = plugin.getSettingsManager().getConfig().getInt("rollback.per-tick", 100);
+            int pt = plugin.getSettingsHandler().getConfig().getInt("rollback.per-tick", 100);
             while (a >= 0 && (rb < pt || shutdown)) {
                 plugin.debug("Resetting " + a);
                 BlockData result = data.get(a);

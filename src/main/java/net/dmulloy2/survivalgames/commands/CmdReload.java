@@ -38,22 +38,22 @@ public class CmdReload extends SurvivalGamesCommand implements Reloadable {
         }
 
         if (args[0].equalsIgnoreCase("settings")) {
-            plugin.getSettingsManager().reloadChest();
-            plugin.getSettingsManager().reloadKits();
-            plugin.getSettingsManager().reloadMessages();
-            plugin.getSettingsManager().reloadSpawns();
-            plugin.getSettingsManager().reloadSystem();
-            plugin.getSettingsManager().reloadConfig();
+            plugin.getSettingsHandler().reloadChest();
+            plugin.getSettingsHandler().reloadKits();
+            plugin.getSettingsHandler().reloadMessages();
+            plugin.getSettingsHandler().reloadSpawns();
+            plugin.getSettingsHandler().reloadSystem();
+            plugin.getSettingsHandler().reloadConfig();
 
-            for (Game g : gameManager.getGames()) {
+            for (Game g : gameHandler.getGames()) {
                 g.reloadConfig();
             }
 
             plugin.getMessageHandler().sendMessage(Prefix.INFO, "Settings Reloaded", player);
             return;
         } else if (args[0].equalsIgnoreCase("games")) {
-            for (Game g : gameManager.getGames()) {
-                plugin.getQueueManager().rollback(g.getID());
+            for (Game g : gameHandler.getGames()) {
+                plugin.getQueueHandler().rollback(g.getID());
 
                 g.disable();
                 g.enable();

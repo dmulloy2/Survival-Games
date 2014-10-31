@@ -1,4 +1,4 @@
-package net.dmulloy2.survivalgames.managers;
+package net.dmulloy2.survivalgames.handlers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
-public class LobbyManager {
+public class LobbyHandler {
     private HashMap<Integer, List<LobbyWall>> signs = new HashMap<Integer, List<LobbyWall>>();
 
     public @Getter HashSet<Chunk> lobbychunks = new HashSet<Chunk>();
@@ -28,10 +28,10 @@ public class LobbyManager {
 
     private final SurvivalGames plugin;
 
-    public LobbyManager(SurvivalGames plugin) {
+    public LobbyHandler(SurvivalGames plugin) {
         this.plugin = plugin;
 
-        this.s = plugin.getSettingsManager().getSystemConfig();
+        this.s = plugin.getSettingsHandler().getSystemConfig();
 
         for (int a = 1; a <= s.getInt("sg-system.lobby.signno"); a++) {
             loadSign(a);
@@ -130,8 +130,8 @@ public class LobbyManager {
             return;
         }
 
-        FileConfiguration c = plugin.getSettingsManager().getSystemConfig();
-        SettingsManager s = plugin.getSettingsManager();
+        FileConfiguration c = plugin.getSettingsHandler().getSystemConfig();
+        SettingsHandler s = plugin.getSettingsHandler();
         if (!c.getBoolean("sg-system.lobby.sign.set", false)) {
             c.set("sg-system.lobby.sign.set", true);
             s.saveSystemConfig();

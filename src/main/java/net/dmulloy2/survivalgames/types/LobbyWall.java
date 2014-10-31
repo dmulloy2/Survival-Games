@@ -39,7 +39,7 @@ public class LobbyWall {
                 BlockState b = l.getBlock().getState();
                 if (b instanceof Sign) {
                     signs.add((Sign) b);
-                    plugin.getLobbyManager().lobbychunks.add(b.getChunk());
+                    plugin.getLobbyHandler().lobbychunks.add(b.getChunk());
                     plugin.debug("usingx - " + b.getLocation().toString());
                 } else {
                     plugin.debug("Not a sign" + b.getType().toString());
@@ -53,7 +53,7 @@ public class LobbyWall {
                 BlockState b = l.getBlock().getState();
                 if (b instanceof Sign) {
                     signs.add((Sign) b);
-                    plugin.getLobbyManager().lobbychunks.add(b.getChunk());
+                    plugin.getLobbyHandler().lobbychunks.add(b.getChunk());
                     plugin.debug("notx - " + b.getLocation().toString());
                 } else {
                     plugin.debug("Not a sign" + b.getType().toString());
@@ -97,7 +97,7 @@ public class LobbyWall {
         }
 
         clear();
-        Game game = plugin.getGameManager().getGame(gameid);
+        Game game = plugin.getGameHandler().getGame(gameid);
         Sign s0 = signs.get(0);
         Sign s1 = signs.get(1);
 
@@ -109,7 +109,7 @@ public class LobbyWall {
         // sign 1
         s1.setLine(0, game.getName());
         s1.setLine(1, game.getMode() + "");
-        s1.setLine(2, game.getActivePlayers() + "/" + ChatColor.GRAY + game.getInactivePlayers() + ChatColor.BLACK + "/" + plugin.getSettingsManager().getSpawnCount(game.getID()));
+        s1.setLine(2, game.getActivePlayers() + "/" + ChatColor.GRAY + game.getInactivePlayers() + ChatColor.BLACK + "/" + plugin.getSettingsHandler().getSpawnCount(game.getID()));
 
         // live update line s1
         if (game.getMode() == Game.GameMode.STARTING) {

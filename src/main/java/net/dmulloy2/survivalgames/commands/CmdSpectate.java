@@ -21,8 +21,8 @@ public class CmdSpectate extends SurvivalGamesCommand {
     @Override
     public void perform() {
         if (args.length == 0) {
-            if (gameManager.isSpectator(player)) {
-                gameManager.removeSpectator(player);
+            if (gameHandler.isSpectator(player)) {
+                gameHandler.removeSpectator(player);
                 return;
             }
 
@@ -30,16 +30,16 @@ public class CmdSpectate extends SurvivalGamesCommand {
             return;
         }
 
-        if (plugin.getSettingsManager().getSpawnCount(Integer.parseInt(args[0])) == 0) {
+        if (plugin.getSettingsHandler().getSpawnCount(Integer.parseInt(args[0])) == 0) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.nospawns", player);
             return;
         }
 
-        if (gameManager.isPlayerActive(player)) {
+        if (gameHandler.isPlayerActive(player)) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.specingame", player);
             return;
         }
 
-        gameManager.getGame(Integer.parseInt(args[0])).addSpectator(player);
+        gameHandler.getGame(Integer.parseInt(args[0])).addSpectator(player);
     }
 }

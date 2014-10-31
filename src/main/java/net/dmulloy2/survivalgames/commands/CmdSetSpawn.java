@@ -28,7 +28,7 @@ public class CmdSetSpawn extends SurvivalGamesCommand {
         loadNextSpawn();
 
         Location l = player.getLocation();
-        int game = gameManager.getBlockGameId(l);
+        int game = gameHandler.getBlockGameId(l);
 
         if (game == -1) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinarena", player);
@@ -60,7 +60,7 @@ public class CmdSetSpawn extends SurvivalGamesCommand {
             return;
         }
 
-        plugin.getSettingsManager().setSpawn(game, i, l.toVector());
+        plugin.getSettingsHandler().setSpawn(game, i, l.toVector());
         plugin.getMessageHandler().sendFMessage(Prefix.INFO, "info.spawnset", player, "num-" + i, "arena-" + game);
         return;
     }
@@ -69,8 +69,8 @@ public class CmdSetSpawn extends SurvivalGamesCommand {
 
     public void loadNextSpawn() {
         // Avoid Concurrency problems
-        for (Game g : gameManager.getGames().toArray(new Game[0])) {
-            next.put(g.getID(), plugin.getSettingsManager().getSpawnCount(g.getID()) + 1);
+        for (Game g : gameHandler.getGames().toArray(new Game[0])) {
+            next.put(g.getID(), plugin.getSettingsHandler().getSpawnCount(g.getID()) + 1);
         }
     }
 }

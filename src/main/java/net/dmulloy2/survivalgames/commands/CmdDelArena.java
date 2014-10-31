@@ -22,10 +22,10 @@ public class CmdDelArena extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        FileConfiguration s = plugin.getSettingsManager().getSystemConfig();
+        FileConfiguration s = plugin.getSettingsHandler().getSystemConfig();
 
         int arena = Integer.parseInt(args[0]);
-        Game g = gameManager.getGame(arena);
+        Game g = gameHandler.getGame(arena);
 
         if (g == null) {
             sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", "arena-" + args[0]);
@@ -37,9 +37,9 @@ public class CmdDelArena extends SurvivalGamesCommand {
         s.set("sg-system.arenano", s.getInt("sg-system.arenano") - 1);
 
         sendFMessage(Prefix.INFO, "info.deleted", "input-Arena");
-        plugin.getSettingsManager().saveSystemConfig();
-        gameManager.hotRemoveArena(arena);
+        plugin.getSettingsHandler().saveSystemConfig();
+        gameHandler.hotRemoveArena(arena);
 
-        plugin.getLobbyManager().removeSignsForArena(arena);
+        plugin.getLobbyHandler().removeSignsForArena(arena);
     }
 }

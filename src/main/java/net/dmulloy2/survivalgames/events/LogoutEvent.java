@@ -21,22 +21,22 @@ public class LogoutEvent implements Listener {
             return;
 
         try {
-            plugin.getGameManager().removeFromOtherQueues(player, -1);
+            plugin.getGameHandler().removeFromOtherQueues(player, -1);
         } catch (Throwable ex) {
         }
 
-        int id = plugin.getGameManager().getPlayerGameId(player);
-        if (plugin.getGameManager().isSpectator(player)) {
-            plugin.getGameManager().removeSpectator(player);
+        int id = plugin.getGameHandler().getPlayerGameId(player);
+        if (plugin.getGameHandler().isSpectator(player)) {
+            plugin.getGameHandler().removeSpectator(player);
         }
 
         if (id == -1)
             return;
 
-        if (plugin.getGameManager().getGameMode(id) == Game.GameMode.INGAME) {
-            plugin.getGameManager().getGame(id).killPlayer(player, true);
+        if (plugin.getGameHandler().getGameMode(id) == Game.GameMode.INGAME) {
+            plugin.getGameHandler().getGame(id).killPlayer(player, true);
         } else {
-            plugin.getGameManager().getGame(id).removePlayer(player, true);
+            plugin.getGameHandler().getGame(id).removePlayer(player, true);
         }
     }
 }

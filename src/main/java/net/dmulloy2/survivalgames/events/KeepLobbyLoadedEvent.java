@@ -15,7 +15,7 @@ public class KeepLobbyLoadedEvent implements Listener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent e) {
-        if (plugin.getLobbyManager().getLobbychunks().contains(e.getChunk())) {
+        if (plugin.getLobbyHandler().getLobbychunks().contains(e.getChunk())) {
             plugin.debug("Kept lobby chunk from unloading!");
             e.setCancelled(true);
         }

@@ -1,17 +1,17 @@
-package net.dmulloy2.survivalgames.managers;
+package net.dmulloy2.survivalgames.handlers;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class EconomyManager {
+public class EconomyHandler {
     private Economy economy;
     private boolean enabled;
 
     private final SurvivalGames plugin;
 
-    public EconomyManager(SurvivalGames plugin) {
+    public EconomyHandler(SurvivalGames plugin) {
         this.plugin = plugin;
         this.enabled = setupEconomy();
     }

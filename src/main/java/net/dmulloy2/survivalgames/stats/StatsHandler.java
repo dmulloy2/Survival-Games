@@ -17,7 +17,7 @@ import net.dmulloy2.survivalgames.types.Prefix;
 
 import org.bukkit.entity.Player;
 
-public class StatsManager {
+public class StatsHandler {
     private List<PreparedStatement> queue = new ArrayList<>();
     private DatabaseDumper dumper = new DatabaseDumper();
 
@@ -27,7 +27,7 @@ public class StatsManager {
 
     private final SurvivalGames plugin;
 
-    public StatsManager(SurvivalGames plugin) {
+    public StatsHandler(SurvivalGames plugin) {
         this.plugin = plugin;
     }
 
@@ -35,13 +35,13 @@ public class StatsManager {
         enabled = b;
         if (b) {
             try {
-                PreparedStatement s = plugin.getDatabaseManager().createStatement(" CREATE TABLE " + plugin.getSettingsManager().getSqlPrefix() + "playerstats(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, gameno int,arenaid int, player text, points int,position int," + " kills int, death int, killed text,time int, ks1 int, ks2 int,ks3 int, ks4 int, ks5 int)");
+                PreparedStatement s = plugin.getDatabaseHandler().createStatement(" CREATE TABLE " + plugin.getSettingsHandler().getSqlPrefix() + "playerstats(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, gameno int,arenaid int, player text, points int,position int," + " kills int, death int, killed text,time int, ks1 int, ks2 int,ks3 int, ks4 int, ks5 int)");
 
-                PreparedStatement s1 = plugin.getDatabaseManager().createStatement(" CREATE TABLE " + plugin.getSettingsManager().getSqlPrefix() + "gamestats(gameno int NOT NULL AUTO_INCREMENT PRIMARY KEY, arenaid int, players int, winner text, time int )");
+                PreparedStatement s1 = plugin.getDatabaseHandler().createStatement(" CREATE TABLE " + plugin.getSettingsHandler().getSqlPrefix() + "gamestats(gameno int NOT NULL AUTO_INCREMENT PRIMARY KEY, arenaid int, players int, winner text, time int )");
 
-                DatabaseMetaData dbm = plugin.getDatabaseManager().getMysqlConnection().getMetaData();
-                ResultSet tables = dbm.getTables(null, null, plugin.getSettingsManager().getSqlPrefix() + "playerstats", null);
-                ResultSet tables1 = dbm.getTables(null, null, plugin.getSettingsManager().getSqlPrefix() + "gamestats", null);
+                DatabaseMetaData dbm = plugin.getDatabaseHandler().getMysqlConnection().getMetaData();
+                ResultSet tables = dbm.getTables(null, null, plugin.getSettingsHandler().getSqlPrefix() + "playerstats", null);
+                ResultSet tables1 = dbm.getTables(null, null, plugin.getSettingsHandler().getSqlPrefix() + "gamestats", null);
 
                 if (!tables.next()) {
                     s.execute();
@@ -90,7 +90,7 @@ public class StatsManager {
         if (kslevel > 3) {
             plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "killstreak.level" + ((kslevel > 5) ? 5 : kslevel), "player-" + p.getName());
         } else if (kslevel > 0) {
-            for (Player pl : plugin.getGameManager().getGame(arenaid).getAllPlayers()) {
+            for (Player pl : plugin.getGameHandler().getGame(arenaid).getAllPlayers()) {
                 plugin.getMessageHandler().sendFMessage(Prefix.INFO, "killstreak.level" + ((kslevel > 5) ? 5 : kslevel), pl, "player-" + p.getName());
             }
         }
@@ -101,11 +101,11 @@ public class StatsManager {
             return;
 
         int gameno = 0;
-        Game g = plugin.getGameManager().getGame(arenaid);
+        Game g = plugin.getGameHandler().getGame(arenaid);
 
         try {
             long time1 = new Date().getTime();
-            PreparedStatement s2 = plugin.getDatabaseManager().createStatement("SELECT * FROM " + plugin.getSettingsManager().getSqlPrefix() + "gamestats ORDER BY gameno DESC LIMIT 1");
+            PreparedStatement s2 = plugin.getDatabaseHandler().createStatement("SELECT * FROM " + plugin.getSettingsHandler().getSqlPrefix() + "gamestats ORDER BY gameno DESC LIMIT 1");
             ResultSet rs = s2.executeQuery();
             rs.next();
             gameno = rs.getInt(1) + 1;
@@ -118,7 +118,7 @@ public class StatsManager {
             g.setRBStatus("Error: getno");
         }
 
-        addSQL("INSERT INTO " + plugin.getSettingsManager().getSqlPrefix() + "gamestats VALUES(NULL," + arenaid + "," + players + ",'" + winner.getName() + "'," + time + ")");
+        addSQL("INSERT INTO " + plugin.getSettingsHandler().getSqlPrefix() + "gamestats VALUES(NULL," + arenaid + "," + players + ",'" + winner.getName() + "'," + time + ")");
 
         for (PlayerStatsSession s : arenas.get(arenaid).values()) {
             s.setGameID(gameno);
@@ -128,7 +128,7 @@ public class StatsManager {
     }
 
     private void addSQL(String query) {
-        addSQL(plugin.getDatabaseManager().createStatement(query));
+        addSQL(plugin.getDatabaseHandler().createStatement(query));
     }
 
     private void addSQL(PreparedStatement s) {
@@ -147,7 +147,7 @@ public class StatsManager {
                 try {
                     s.execute();
                 } catch (Exception e) {
-                    plugin.getDatabaseManager().connect();
+                    plugin.getDatabaseHandler().connect();
                 }
             }
         }

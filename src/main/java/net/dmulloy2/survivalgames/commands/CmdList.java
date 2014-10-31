@@ -22,12 +22,12 @@ public class CmdList extends SurvivalGamesCommand {
         int gid = 0;
         try {
             if (args.length == 0) {
-                gid = gameManager.getPlayerGameId(player);
+                gid = gameHandler.getPlayerGameId(player);
             } else {
                 gid = Integer.parseInt(args[0]);
             }
 
-            for (String s : gameManager.getStringList(gid)) {
+            for (String s : gameHandler.getStringList(gid)) {
                 player.sendMessage(s);
             }
         } catch (NumberFormatException ex) {

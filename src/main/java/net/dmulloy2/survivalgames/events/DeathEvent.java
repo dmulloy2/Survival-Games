@@ -25,14 +25,14 @@ public class DeathEvent implements Listener {
             return;
 
         Player player = (Player) event.getEntity();
-        int gameId = plugin.getGameManager().getPlayerGameId(player);
+        int gameId = plugin.getGameHandler().getPlayerGameId(player);
         if (gameId == -1)
             return;
 
-        if (!plugin.getGameManager().isPlayerActive(player))
+        if (!plugin.getGameHandler().isPlayerActive(player))
             return;
 
-        Game game = plugin.getGameManager().getGame(gameId);
+        Game game = plugin.getGameHandler().getGame(gameId);
         if (game.getMode() != Game.GameMode.INGAME) {
             event.setCancelled(true);
             return;

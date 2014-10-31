@@ -1,4 +1,4 @@
-package net.dmulloy2.survivalgames.managers;
+package net.dmulloy2.survivalgames.handlers;
 
 import java.util.HashMap;
 
@@ -26,12 +26,12 @@ import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class LoggingManager implements Listener {
+public class LoggingHandler implements Listener {
     private @Getter HashMap<String, Integer> i = new HashMap<String, Integer>();
 
     private final SurvivalGames plugin;
 
-    public LoggingManager(SurvivalGames plugin) {
+    public LoggingHandler(SurvivalGames plugin) {
         this.plugin = plugin;
 
         i.put("BCHANGE", 1);
@@ -171,25 +171,25 @@ public class LoggingManager implements Listener {
     }
 
     public void logBlockCreated(Block b) {
-        if (plugin.getGameManager().getBlockGameId(b.getLocation()) == -1)
+        if (plugin.getGameHandler().getBlockGameId(b.getLocation()) == -1)
             return;
 
-        if (plugin.getGameManager().getGameMode(plugin.getGameManager().getBlockGameId(b.getLocation())) == Game.GameMode.DISABLED)
+        if (plugin.getGameHandler().getGameMode(plugin.getGameHandler().getBlockGameId(b.getLocation())) == Game.GameMode.DISABLED)
             return;
 
-        plugin.getQueueManager().add(new BlockData(plugin.getGameManager().getBlockGameId(b.getLocation()), b.getWorld().getName(), null, null, b.getType(), b.getState().getData(), b.getX(), b.getY(), b.getZ(), null));
+        plugin.getQueueHandler().add(new BlockData(plugin.getGameHandler().getBlockGameId(b.getLocation()), b.getWorld().getName(), null, null, b.getType(), b.getState().getData(), b.getX(), b.getY(), b.getZ(), null));
     }
 
     public void logBlockDestoryed(Block b) {
-        if (plugin.getGameManager().getBlockGameId(b.getLocation()) == -1)
+        if (plugin.getGameHandler().getBlockGameId(b.getLocation()) == -1)
             return;
 
-        if (plugin.getGameManager().getGameMode(plugin.getGameManager().getBlockGameId(b.getLocation())) == Game.GameMode.DISABLED)
+        if (plugin.getGameHandler().getGameMode(plugin.getGameHandler().getBlockGameId(b.getLocation())) == Game.GameMode.DISABLED)
             return;
 
         if (b.getType() == Material.FIRE)
             return;
 
-        plugin.getQueueManager().add(new BlockData(plugin.getGameManager().getBlockGameId(b.getLocation()), b.getWorld().getName(), null, null, b.getType(), b.getState().getData(), b.getX(), b.getY(), b.getZ(), null));
+        plugin.getQueueHandler().add(new BlockData(plugin.getGameHandler().getBlockGameId(b.getLocation()), b.getWorld().getName(), null, null, b.getType(), b.getState().getData(), b.getX(), b.getY(), b.getZ(), null));
     }
 }

@@ -26,16 +26,16 @@ public class MoveEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void frozenSpawnHandler(PlayerMoveEvent e) {
-        if (plugin.getGameManager().getPlayerGameId(e.getPlayer()) == -1) {
+        if (plugin.getGameHandler().getPlayerGameId(e.getPlayer()) == -1) {
             positions.remove(e.getPlayer());
             return;
         }
-        if (plugin.getGameManager().getGame(plugin.getGameManager().getPlayerGameId(e.getPlayer())).getMode() == Game.GameMode.INGAME) {
+        if (plugin.getGameHandler().getGame(plugin.getGameHandler().getPlayerGameId(e.getPlayer())).getMode() == Game.GameMode.INGAME) {
             return;
         }
 
-        GameMode mo3 = plugin.getGameManager().getGameMode(plugin.getGameManager().getPlayerGameId(e.getPlayer()));
-        if (plugin.getGameManager().isPlayerActive(e.getPlayer()) && mo3 != Game.GameMode.INGAME) {
+        GameMode mo3 = plugin.getGameHandler().getGameMode(plugin.getGameHandler().getPlayerGameId(e.getPlayer()));
+        if (plugin.getGameHandler().isPlayerActive(e.getPlayer()) && mo3 != Game.GameMode.INGAME) {
             if (positions.get(e.getPlayer().getName()) == null) {
                 positions.put(e.getPlayer().getName(), e.getPlayer().getLocation().toVector());
                 return;

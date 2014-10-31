@@ -20,7 +20,7 @@ public class JoinEvent implements Listener {
     public void PlayerJoin(PlayerJoinEvent e) {
         final Player p = e.getPlayer();
 
-        if (plugin.getGameManager().getBlockGameId(p.getLocation()) != -1) {
+        if (plugin.getGameHandler().getBlockGameId(p.getLocation()) != -1) {
             new TeleportTask(p).runTaskLater(plugin, 5L);
         }
     }
@@ -34,7 +34,7 @@ public class JoinEvent implements Listener {
 
         @Override
         public void run() {
-            player.teleport(plugin.getSettingsManager().getLobbySpawn());
+            player.teleport(plugin.getSettingsHandler().getLobbySpawn());
         }
     }
 }

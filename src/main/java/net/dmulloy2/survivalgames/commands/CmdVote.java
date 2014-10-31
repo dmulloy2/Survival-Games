@@ -19,12 +19,12 @@ public class CmdVote extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        int game = gameManager.getPlayerGameId(player);
+        int game = gameHandler.getPlayerGameId(player);
         if (game == -1) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinarena", player);
             return;
         }
 
-        gameManager.getGame(gameManager.getPlayerGameId(player)).vote(player);
+        gameHandler.getGame(gameHandler.getPlayerGameId(player)).vote(player);
     }
 }

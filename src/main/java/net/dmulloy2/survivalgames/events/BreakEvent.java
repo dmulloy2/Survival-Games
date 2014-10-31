@@ -22,7 +22,7 @@ public class BreakEvent implements Listener {
     public BreakEvent(SurvivalGames plugin) {
         this.plugin = plugin;
 
-        for (String s : plugin.getSettingsManager().getConfig().getStringList("block.break.whitelist")) {
+        for (String s : plugin.getSettingsHandler().getConfig().getStringList("block.break.whitelist")) {
             allowedBreak.add(MaterialUtil.getMaterial(s));
         }
     }
@@ -30,13 +30,13 @@ public class BreakEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
         Player p = event.getPlayer();
-        int pid = plugin.getGameManager().getPlayerGameId(p);
+        int pid = plugin.getGameHandler().getPlayerGameId(p);
 
         if (pid == -1) {
-            int blockgameid = plugin.getGameManager().getBlockGameId(event.getBlock().getLocation());
+            int blockgameid = plugin.getGameHandler().getBlockGameId(event.getBlock().getLocation());
 
             if (blockgameid != -1) {
-                if (plugin.getGameManager().getGame(blockgameid).getGameMode() != Game.GameMode.DISABLED) {
+                if (plugin.getGameHandler().getGame(blockgameid).getGameMode() != Game.GameMode.DISABLED) {
                     event.setCancelled(true);
                 }
             }
@@ -44,7 +44,7 @@ public class BreakEvent implements Listener {
             return;
         }
 
-        Game g = plugin.getGameManager().getGame(pid);
+        Game g = plugin.getGameHandler().getGame(pid);
 
         if (g.getMode() == Game.GameMode.DISABLED) {
             return;

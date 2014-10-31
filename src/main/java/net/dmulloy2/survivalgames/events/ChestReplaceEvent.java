@@ -33,11 +33,11 @@ public class ChestReplaceEvent implements Listener {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             BlockState clicked = e.getClickedBlock().getState();
             if (clicked instanceof Chest || clicked instanceof DoubleChest) {
-                int gameid = plugin.getGameManager().getPlayerGameId(e.getPlayer());
+                int gameid = plugin.getGameHandler().getPlayerGameId(e.getPlayer());
                 if (gameid != -1) {
-                    Game game = plugin.getGameManager().getGame(gameid);
+                    Game game = plugin.getGameHandler().getGame(gameid);
                     if (game.getMode() == GameMode.INGAME) {
-                        HashSet<Block> openedChest = plugin.getGameManager().getOpenedChest().get(gameid);
+                        HashSet<Block> openedChest = plugin.getGameHandler().getOpenedChest().get(gameid);
                         openedChest = (openedChest == null) ? new HashSet<Block>() : openedChest;
                         if (!openedChest.contains(e.getClickedBlock())) {
                             Inventory[] invs = ((clicked instanceof Chest)) ? new Inventory[] { ((Chest) clicked).getBlockInventory() } : new Inventory[] { ((DoubleChest) clicked).getLeftSide().getInventory(), ((DoubleChest) clicked).getRightSide().getInventory() };
@@ -63,7 +63,7 @@ public class ChestReplaceEvent implements Listener {
                         }
 
                         openedChest.add(e.getClickedBlock());
-                        plugin.getGameManager().getOpenedChest().put(gameid, openedChest);
+                        plugin.getGameHandler().getOpenedChest().put(gameid, openedChest);
                     } else {
                         e.setCancelled(true);
                         return;

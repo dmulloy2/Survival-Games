@@ -1,4 +1,4 @@
-package net.dmulloy2.survivalgames.managers;
+package net.dmulloy2.survivalgames.handlers;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
@@ -14,10 +14,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 // TODO: I feel like this should be used for *something*
-public class ThirstManager implements Listener {
+public class ThirstHandler implements Listener {
     private final SurvivalGames plugin;
 
-    public ThirstManager(SurvivalGames plugin) {
+    public ThirstHandler(SurvivalGames plugin) {
         this.plugin = plugin;
     }
 
@@ -25,7 +25,7 @@ public class ThirstManager implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (Game g : plugin.getGameManager().getGames()) {
+                for (Game g : plugin.getGameHandler().getGames()) {
                     for (Player p : g.getAllPlayers()) {
                         removeThirst(p, 1);
                     }

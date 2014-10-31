@@ -25,7 +25,7 @@ public class MessageHandler {
         this.plugin = plugin;
         this.prefixes = new HashMap<Prefix, String>();
 
-        FileConfiguration f = plugin.getSettingsManager().getMessageConfig();
+        FileConfiguration f = plugin.getSettingsHandler().getMessageConfig();
         prefixes.put(Prefix.MAIN, replaceColors(f.getString("prefix.main", plugin.getPrefix())));
         prefixes.put(Prefix.INFO, replaceColors(f.getString("prefix.states.info", "")));
         prefixes.put(Prefix.WARNING, replaceColors(f.getString("prefix.states.warning", "&c[Warning] ")));
@@ -38,14 +38,14 @@ public class MessageHandler {
      * adding the correct prefix
      */
     public void sendFMessage(Prefix type, String input, Player player, String... args) {
-        String msg = plugin.getSettingsManager().getMessageConfig().getString("messages." + input);
+        String msg = plugin.getSettingsHandler().getMessageConfig().getString("messages." + input);
         if (msg == null) {
             player.sendMessage(ChatColor.RED + "Failed to load message for messages." + input);
             logMessage(Prefix.WARNING, "Failed to load message for messages." + input);
             return;
         }
 
-        if (!plugin.getSettingsManager().getMessageConfig().getBoolean("messages." + input + "_enabled", true)) {
+        if (!plugin.getSettingsHandler().getMessageConfig().getBoolean("messages." + input + "_enabled", true)) {
             return;
         }
 
@@ -93,13 +93,13 @@ public class MessageHandler {
     }
 
     public void broadcastFMessage(Prefix type, String input, String... args) {
-        String msg = plugin.getSettingsManager().getMessageConfig().getString("messages." + input);
+        String msg = plugin.getSettingsHandler().getMessageConfig().getString("messages." + input);
         if (msg == null) {
             logMessage(Prefix.WARNING, "Failed to load message for messages." + input);
             return;
         }
 
-        if (!plugin.getSettingsManager().getMessageConfig().getBoolean("messages." + input + "_enabled", true)) {
+        if (!plugin.getSettingsHandler().getMessageConfig().getBoolean("messages." + input + "_enabled", true)) {
             return;
         }
 

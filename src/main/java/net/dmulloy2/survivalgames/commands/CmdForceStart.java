@@ -29,7 +29,7 @@ public class CmdForceStart extends SurvivalGamesCommand {
         } else if (args.length >= 1) {
             game = Integer.parseInt(args[0]);
         } else {
-            game = gameManager.getPlayerGameId(player);
+            game = gameHandler.getPlayerGameId(player);
         }
 
         if (game == -1) {
@@ -37,12 +37,12 @@ public class CmdForceStart extends SurvivalGamesCommand {
             return;
         }
 
-        if (gameManager.getGame(game).getActivePlayers() < 2) {
+        if (gameHandler.getGame(game).getActivePlayers() < 2) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notenoughtplayers", player);
             return;
         }
 
-        Game g = gameManager.getGame(game);
+        Game g = gameHandler.getGame(game);
         if (g.getMode() != Game.GameMode.WAITING && !player.hasPermission("sg.admin.restart")) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.alreadyingame", player);
             return;

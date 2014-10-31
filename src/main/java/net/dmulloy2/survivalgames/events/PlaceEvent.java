@@ -22,7 +22,7 @@ public class PlaceEvent implements Listener {
     public PlaceEvent(SurvivalGames plugin) {
         this.plugin = plugin;
 
-        for (String s : plugin.getSettingsManager().getConfig().getStringList("block.place.whitelist")) {
+        for (String s : plugin.getSettingsHandler().getConfig().getStringList("block.place.whitelist")) {
             allowedPlace.add(MaterialUtil.getMaterial(s));
         }
     }
@@ -30,12 +30,12 @@ public class PlaceEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
-        int id = plugin.getGameManager().getPlayerGameId(p);
+        int id = plugin.getGameHandler().getPlayerGameId(p);
 
         if (id == -1) {
-            int gameblockid = plugin.getGameManager().getBlockGameId(event.getBlock().getLocation());
+            int gameblockid = plugin.getGameHandler().getBlockGameId(event.getBlock().getLocation());
             if (gameblockid != -1) {
-                if (plugin.getGameManager().getGame(gameblockid).getGameMode() != Game.GameMode.DISABLED) {
+                if (plugin.getGameHandler().getGame(gameblockid).getGameMode() != Game.GameMode.DISABLED) {
                     event.setCancelled(true);
                 }
             }
@@ -43,7 +43,7 @@ public class PlaceEvent implements Listener {
             return;
         }
 
-        Game g = plugin.getGameManager().getGame(id);
+        Game g = plugin.getGameHandler().getGame(id);
         if (g.isPlayerInactive(p))
             return;
 

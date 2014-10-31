@@ -4,9 +4,9 @@ import java.util.logging.Level;
 
 import net.dmulloy2.commands.Command;
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.handlers.GameHandler;
+import net.dmulloy2.survivalgames.handlers.LobbyHandler;
 import net.dmulloy2.survivalgames.handlers.MessageHandler;
-import net.dmulloy2.survivalgames.managers.GameManager;
-import net.dmulloy2.survivalgames.managers.LobbyManager;
 import net.dmulloy2.survivalgames.types.Prefix;
 
 import org.apache.commons.lang.WordUtils;
@@ -19,16 +19,16 @@ public abstract class SurvivalGamesCommand extends Command {
     protected final SurvivalGames plugin;
 
     protected MessageHandler messageHandler;
-    protected LobbyManager lobbyManager;
-    protected GameManager gameManager;
+    protected LobbyHandler lobbyHandler;
+    protected GameHandler gameHandler;
 
     public SurvivalGamesCommand(SurvivalGames plugin) {
         super(plugin);
         this.plugin = plugin;
 
         this.messageHandler = plugin.getMessageHandler();
-        this.lobbyManager = plugin.getLobbyManager();
-        this.gameManager = plugin.getGameManager();
+        this.lobbyHandler = plugin.getLobbyHandler();
+        this.gameHandler = plugin.getGameHandler();
     }
 
     protected final void sendMessage(Prefix prefix, String message) {

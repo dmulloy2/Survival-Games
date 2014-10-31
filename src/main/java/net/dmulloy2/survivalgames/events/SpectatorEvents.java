@@ -31,7 +31,7 @@ public class SpectatorEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getGameManager().isSpectator(player)) {
+        if (plugin.getGameHandler().isSpectator(player)) {
             event.setCancelled(true);
         }
     }
@@ -39,7 +39,7 @@ public class SpectatorEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockDamage(BlockDamageEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getGameManager().isSpectator(player)) {
+        if (plugin.getGameHandler().isSpectator(player)) {
             event.setCancelled(true);
         }
     }
@@ -47,7 +47,7 @@ public class SpectatorEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getGameManager().isSpectator(player)) {
+        if (plugin.getGameHandler().isSpectator(player)) {
             event.setCancelled(true);
         }
     }
@@ -79,7 +79,7 @@ public class SpectatorEvents implements Listener {
                     if (meta.hasOwner()) {
                         Player p = plugin.getServer().getPlayerExact(meta.getOwner());
                         if (p != null) {
-                            if (plugin.getGameManager().isPlayerActive(p)) {
+                            if (plugin.getGameHandler().isPlayerActive(p)) {
                                 event.setCancelled(true);
                                 player.teleport(p);
                             }
@@ -103,7 +103,7 @@ public class SpectatorEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSignChange(PlayerPickupItemEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getGameManager().isSpectator(player)) {
+        if (plugin.getGameHandler().isSpectator(player)) {
             event.setCancelled(true);
         }
     }
@@ -112,7 +112,7 @@ public class SpectatorEvents implements Listener {
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player) {
             Player player = (Player) event.getDamager();
-            if (plugin.getGameManager().isSpectator(player)) {
+            if (plugin.getGameHandler().isSpectator(player)) {
                 event.setCancelled(true);
             }
         }
@@ -122,7 +122,7 @@ public class SpectatorEvents implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            if (plugin.getGameManager().isSpectator(player)) {
+            if (plugin.getGameHandler().isSpectator(player)) {
                 event.setCancelled(true);
             }
         }
