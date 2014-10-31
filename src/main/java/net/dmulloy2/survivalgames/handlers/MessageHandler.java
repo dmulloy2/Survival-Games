@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Prefix;
-import net.dmulloy2.survivalgames.util.Util;
+import net.dmulloy2.util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;

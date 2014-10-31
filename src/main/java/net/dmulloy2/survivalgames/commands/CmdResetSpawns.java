@@ -12,7 +12,7 @@ public class CmdResetSpawns extends SurvivalGamesCommand {
     public CmdResetSpawns(SurvivalGames plugin) {
         super(plugin);
         this.name = "resetspawns";
-        this.requiredArgs.add("id");
+        this.addRequiredArg("id");
         this.description = "Resets spawns for Arena <id>";
 
         this.permission = Permission.ADMIN_RESETSPAWNS;

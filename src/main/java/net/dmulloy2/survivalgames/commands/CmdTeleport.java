@@ -12,7 +12,7 @@ public class CmdTeleport extends SurvivalGamesCommand {
     public CmdTeleport(SurvivalGames plugin) {
         super(plugin);
         this.name = "teleport";
-        this.requiredArgs.add("id");
+        this.addRequiredArg("id");
         this.description = "Teleport to an arena's spawn";
 
         this.permission = Permission.STAFF_TELEPORT;

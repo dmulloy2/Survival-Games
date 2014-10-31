@@ -5,5 +5,8 @@ package net.dmulloy2.survivalgames.types;
  */
 
 public enum Prefix {
-    MAIN, INFO, WARNING, ERROR;
+    MAIN,
+    INFO,
+    WARNING,
+    ERROR;
 }

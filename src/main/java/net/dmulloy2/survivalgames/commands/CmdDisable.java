@@ -13,7 +13,7 @@ public class CmdDisable extends SurvivalGamesCommand {
     public CmdDisable(SurvivalGames plugin) {
         super(plugin);
         this.name = "disable";
-        this.optionalArgs.add("id");
+        this.addOptionalArg("id");
         this.description = "Disables arena <id>";
 
         this.permission = Permission.STAFF_DISABLE;

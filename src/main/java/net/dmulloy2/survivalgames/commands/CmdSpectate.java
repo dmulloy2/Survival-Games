@@ -12,7 +12,7 @@ public class CmdSpectate extends SurvivalGamesCommand {
     public CmdSpectate(SurvivalGames plugin) {
         super(plugin);
         this.name = "spectate";
-        this.optionalArgs.add("id");
+        this.addOptionalArg("id");
         this.description = "Spectate a running arena";
 
         this.permission = Permission.PLAYER_SPECTATE;

@@ -14,7 +14,7 @@ public class CmdEnable extends SurvivalGamesCommand {
     public CmdEnable(SurvivalGames plugin) {
         super(plugin);
         this.name = "enable";
-        this.optionalArgs.add("id");
+        this.addOptionalArg("id");
         this.description = "Enables arena <id>";
 
         this.permission = Permission.STAFF_ENABLE;

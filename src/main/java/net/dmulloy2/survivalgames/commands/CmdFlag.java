@@ -15,9 +15,9 @@ public class CmdFlag extends SurvivalGamesCommand {
     public CmdFlag(SurvivalGames plugin) {
         super(plugin);
         this.name = "flag";
-        this.requiredArgs.add("id");
-        this.requiredArgs.add("flag");
-        this.requiredArgs.add("value");
+        this.addRequiredArg("id");
+        this.addRequiredArg("flag");
+        this.addRequiredArg("value");
         this.description = "Modifies an arena-specific setting";
 
         this.permission = Permission.ADMIN_FLAG;

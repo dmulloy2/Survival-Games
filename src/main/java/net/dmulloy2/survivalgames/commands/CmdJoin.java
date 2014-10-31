@@ -13,7 +13,7 @@ public class CmdJoin extends SurvivalGamesCommand {
         super(plugin);
         this.name = "join";
         this.aliases.add("j");
-        this.optionalArgs.add("arena");
+        this.addOptionalArg("arena");
         this.description = "Join the lobby";
 
         this.permission = Permission.PLAYER_JOIN;

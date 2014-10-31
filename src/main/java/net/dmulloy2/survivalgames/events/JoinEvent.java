@@ -1,7 +1,6 @@
 package net.dmulloy2.survivalgames.events;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.util.UpdateChecker;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,10 +23,6 @@ public class JoinEvent implements Listener {
         if (plugin.getGameManager().getBlockGameId(p.getLocation()) != -1) {
             new TeleportTask(p).runTaskLater(plugin, 5L);
         }
-
-        if ((p.isOp() || p.hasPermission("sg.admin.reload")) && plugin.getSettingsManager().getConfig().getBoolean("check-for-update", true)) {
-            new UpdateNotifyTask(p).runTaskLater(plugin, 60L);
-        }
     }
 
     public class TeleportTask extends BukkitRunnable {
@@ -40,19 +35,6 @@ public class JoinEvent implements Listener {
         @Override
         public void run() {
             player.teleport(plugin.getSettingsManager().getLobbySpawn());
-        }
-    }
-
-    public class UpdateNotifyTask extends BukkitRunnable {
-        private Player player;
-
-        public UpdateNotifyTask(Player player) {
-            this.player = player;
-        }
-
-        @Override
-        public void run() {
-            new UpdateChecker().check(player, plugin);
         }
     }
 }

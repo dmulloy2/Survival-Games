@@ -4,7 +4,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.util.Util;
+import net.dmulloy2.util.Util;
 
 public class Webserver extends Thread {
     private final SurvivalGames plugin;

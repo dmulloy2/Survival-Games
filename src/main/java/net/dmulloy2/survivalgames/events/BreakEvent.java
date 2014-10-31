@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
-import net.dmulloy2.survivalgames.util.MaterialUtil;
+import net.dmulloy2.util.MaterialUtil;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

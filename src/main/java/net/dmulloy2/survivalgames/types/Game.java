@@ -16,7 +16,7 @@ import net.dmulloy2.survivalgames.util.ItemReader;
 import net.dmulloy2.survivalgames.util.Kit;
 import net.dmulloy2.survivalgames.util.NameUtil;
 import net.dmulloy2.survivalgames.util.SpectatorUtil;
-import net.dmulloy2.survivalgames.util.Util;
+import net.dmulloy2.util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -34,7 +34,15 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class Game {
     public static enum GameMode {
-        DISABLED, LOADING, INACTIVE, WAITING, STARTING, INGAME, FINISHING, RESETTING, ERROR
+        DISABLED,
+        LOADING,
+        INACTIVE,
+        WAITING,
+        STARTING,
+        INGAME,
+        FINISHING,
+        RESETTING,
+        ERROR
     }
 
     private GameMode mode = GameMode.DISABLED;
@@ -548,11 +556,11 @@ public class Game {
                             Player killer = p.getKiller();
                             PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, killer, this);
                             plugin.getServer().getPluginManager().callEvent(leavearena);
-                            msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-" + (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + ((killer != null) ? (NameUtil.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName() : "Unknown"), "item-" + ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType()) : "Unknown Item"));
+                            msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + ((killer != null) ? (NameUtil.getAuthors().contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName() : "Unknown"), "item-" + ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType()) : "Unknown Item"));
                             if (killer != null && p != null)
                                 plugin.getStatsManager().addKill(killer, p, gameID);
                         } else {
-                            msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-" + (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getLastDamageCause().getEntityType());
+                            msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getLastDamageCause().getEntityType());
                         }
                         break;
                     case FIRE:
@@ -564,15 +572,15 @@ public class Game {
                             Player killer = p.getKiller();
                             PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, killer, this);
                             plugin.getServer().getPluginManager().callEvent(leavearena);
-                            msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-" + (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getKiller().getName());
+                            msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getKiller().getName());
                             if (killer != null && p != null)
                                 plugin.getStatsManager().addKill(killer, p, gameID);
                         } else {
-                            msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-" + (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getLastDamageCause().getCause());
+                            msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getLastDamageCause().getCause());
                         }
                         break;
                     default:
-                        msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-" + (NameUtil.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getLastDamageCause().getCause());
+                        msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getLastDamageCause().getCause());
                         break;
                 }
 

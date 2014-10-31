@@ -2,6 +2,8 @@ package net.dmulloy2.survivalgames.util;
 
 import java.util.HashMap;
 
+import net.dmulloy2.util.MaterialUtil;
+
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

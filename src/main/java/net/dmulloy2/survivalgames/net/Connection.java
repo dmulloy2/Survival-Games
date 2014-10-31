@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.util.Util;
+import net.dmulloy2.util.Util;
 
 // TODO: Does this serve any sort of purpose?
 public class Connection extends Thread {

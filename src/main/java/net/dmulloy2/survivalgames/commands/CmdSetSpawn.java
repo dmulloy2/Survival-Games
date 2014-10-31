@@ -17,7 +17,7 @@ public class CmdSetSpawn extends SurvivalGamesCommand {
     public CmdSetSpawn(SurvivalGames plugin) {
         super(plugin);
         this.name = "setspawn";
-        this.requiredArgs.add("id");
+        this.addRequiredArg("id");
         this.description = "Sets a spawn for the arena you are located in";
 
         this.permission = Permission.ADMIN_SETSPAWN;

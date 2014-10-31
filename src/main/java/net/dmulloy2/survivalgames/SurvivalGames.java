@@ -3,13 +3,17 @@ package net.dmulloy2.survivalgames;
 import java.util.logging.Level;
 
 import lombok.Getter;
+import net.dmulloy2.SwornPlugin;
+import net.dmulloy2.commands.CmdHelp;
+import net.dmulloy2.handlers.CommandHandler;
+import net.dmulloy2.handlers.LogHandler;
+import net.dmulloy2.handlers.PermissionHandler;
 import net.dmulloy2.survivalgames.commands.CmdAddWall;
 import net.dmulloy2.survivalgames.commands.CmdCreateArena;
 import net.dmulloy2.survivalgames.commands.CmdDelArena;
 import net.dmulloy2.survivalgames.commands.CmdDisable;
 import net.dmulloy2.survivalgames.commands.CmdEnable;
 import net.dmulloy2.survivalgames.commands.CmdForceStart;
-import net.dmulloy2.survivalgames.commands.CmdHelp;
 import net.dmulloy2.survivalgames.commands.CmdJoin;
 import net.dmulloy2.survivalgames.commands.CmdLeave;
 import net.dmulloy2.survivalgames.commands.CmdLeaveQueue;
@@ -37,10 +41,7 @@ import net.dmulloy2.survivalgames.events.PlaceEvent;
 import net.dmulloy2.survivalgames.events.SignClickEvent;
 import net.dmulloy2.survivalgames.events.SpectatorEvents;
 import net.dmulloy2.survivalgames.events.TeleportEvent;
-import net.dmulloy2.survivalgames.handlers.CommandHandler;
-import net.dmulloy2.survivalgames.handlers.LogHandler;
 import net.dmulloy2.survivalgames.handlers.MessageHandler;
-import net.dmulloy2.survivalgames.handlers.PermissionHandler;
 import net.dmulloy2.survivalgames.hooks.HookManager;
 import net.dmulloy2.survivalgames.managers.DatabaseManager;
 import net.dmulloy2.survivalgames.managers.EconomyManager;
@@ -51,15 +52,15 @@ import net.dmulloy2.survivalgames.managers.QueueManager;
 import net.dmulloy2.survivalgames.managers.SettingsManager;
 import net.dmulloy2.survivalgames.stats.StatsManager;
 import net.dmulloy2.survivalgames.types.Game;
-import net.dmulloy2.survivalgames.types.Reloadable;
 import net.dmulloy2.survivalgames.util.ChestRatioStorage;
-import net.dmulloy2.survivalgames.util.FormatUtil;
+import net.dmulloy2.types.Reloadable;
+import net.dmulloy2.util.FormatUtil;
+import net.dmulloy2.util.Util;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
@@ -77,7 +78,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
  * Currently maintained by dmulloy2
  */
 
-public class SurvivalGames extends JavaPlugin implements Reloadable {
+public class SurvivalGames extends SwornPlugin implements Reloadable {
     private @Getter boolean dbcon;
     private @Getter boolean disabling;
     private @Getter boolean configUpToDate;
@@ -95,10 +96,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable {
     private @Getter SettingsManager settingsManager;
     private @Getter ChestRatioStorage chestRatioStorage;
 
-    private @Getter PermissionHandler permissionHandler;
-    private @Getter CommandHandler commandHandler;
     private @Getter MessageHandler messageHandler;
-    private @Getter LogHandler logHandler;
 
     private @Getter WorldEditPlugin worldEdit;
 
@@ -117,7 +115,7 @@ public class SurvivalGames extends JavaPlugin implements Reloadable {
         lobbyManager = new LobbyManager(this);
         gameManager = new GameManager(this);
 
-        permissionHandler = new PermissionHandler();
+        permissionHandler = new PermissionHandler(this);
         commandHandler = new CommandHandler(this);
         messageHandler = new MessageHandler(this);
 
@@ -128,7 +126,6 @@ public class SurvivalGames extends JavaPlugin implements Reloadable {
         commandHandler.registerCommand(new CmdDelArena(this));
         commandHandler.registerCommand(new CmdDisable(this));
         commandHandler.registerCommand(new CmdEnable(this));
-        // commandHandler.registerCommand(new CmdFlag(this));
         commandHandler.registerCommand(new CmdForceStart(this));
         commandHandler.registerCommand(new CmdHelp(this));
         commandHandler.registerCommand(new CmdJoin(this));
@@ -161,9 +158,8 @@ public class SurvivalGames extends JavaPlugin implements Reloadable {
 
             statsManager.setup(c.getBoolean("stats.enabled"));
             dbcon = true;
-        } catch (Exception e) {
-            log(Level.SEVERE, "Could not connect to the database ({0}). Check your settings!", e.getMessage());
-
+        } catch (Throwable ex) {
+            log(Level.SEVERE, Util.getUsefulStack(ex, "connecting to the database. Check your settings!"));
             getServer().getPluginManager().disablePlugin(this);
             return;
         }

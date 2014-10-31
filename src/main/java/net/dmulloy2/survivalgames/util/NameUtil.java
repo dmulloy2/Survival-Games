@@ -6,16 +6,20 @@ import java.util.List;
 import org.bukkit.ChatColor;
 
 public class NameUtil {
-    public static final List<String> auth = Arrays.asList(new String[] { "dmulloy2", "irene325", "minermac8521", "brett_setchfield" });
+    private static final List<String> AUTHORS = Arrays.asList("dmulloy2");
 
-    public static String stylize(String name, boolean r) {
-        if (auth.contains(name) && r) {
+    public static String stylize(String name, boolean inactive) {
+        if (AUTHORS.contains(name) && inactive) {
             name = ChatColor.DARK_RED + name;
         }
-        if (auth.contains(name) && !r) {
+        if (AUTHORS.contains(name) && !inactive) {
             name = ChatColor.DARK_BLUE + name;
         }
 
         return name;
+    }
+
+    public static List<String> getAuthors() {
+        return AUTHORS;
     }
 }

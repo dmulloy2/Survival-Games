@@ -5,7 +5,7 @@ import java.util.HashSet;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Game.GameMode;
-import net.dmulloy2.survivalgames.util.Util;
+import net.dmulloy2.util.Util;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;

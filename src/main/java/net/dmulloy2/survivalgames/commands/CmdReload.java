@@ -4,7 +4,7 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
 import net.dmulloy2.survivalgames.types.Prefix;
-import net.dmulloy2.survivalgames.types.Reloadable;
+import net.dmulloy2.types.Reloadable;
 
 /**
  * @author dmulloy2
@@ -15,7 +15,7 @@ public class CmdReload extends SurvivalGamesCommand implements Reloadable {
         super(plugin);
         this.name = "reload";
         this.aliases.add("rl");
-        this.optionalArgs.add("type");
+        this.addOptionalArg("type");
         this.description = "reload SurvivalGames";
         this.permission = Permission.ADMIN_RELOAD;
 
