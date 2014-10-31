@@ -9,7 +9,6 @@ import java.util.Set;
 
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.api.PlayerLeaveArenaEvent;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Game.GameMode;
 import net.dmulloy2.survivalgames.types.Prefix;
@@ -192,13 +191,6 @@ public class GameHandler {
     }
 
     public void removePlayer(Player p, boolean b) {
-        for (Game g : games) {
-            if (g.getAllPlayers().contains(p)) {
-                PlayerLeaveArenaEvent leavearena = new PlayerLeaveArenaEvent(p, g);
-                plugin.getServer().getPluginManager().callEvent(leavearena);
-            }
-        }
-
         getGame(getPlayerGameId(p)).removePlayer(p, b);
     }
 

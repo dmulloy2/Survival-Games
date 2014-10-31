@@ -189,7 +189,7 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
             }
         }
 
-        log("{0} has been enabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
+        log("{0} has been enabled. Took {1} ms.", getDescription().getFullName(), System.currentTimeMillis() - start);
     }
 
     @Override
@@ -207,7 +207,7 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
             g.disable();
         }
 
-        log("{0} has been disabled ({1}ms)", getDescription().getFullName(), System.currentTimeMillis() - start);
+        log("{0} has been disabled. Took {1} ms.", getDescription().getFullName(), System.currentTimeMillis() - start);
     }
 
     public WorldEditPlugin hookIntoWorldEdit() {
@@ -240,6 +240,7 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
 
     @Override
     public void reload() {
+        // TODO: Reload properly
         PluginManager pm = getServer().getPluginManager();
         pm.disablePlugin(this);
         pm.enablePlugin(this);

@@ -9,9 +9,6 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.survivalgames.api.PlayerGameDeathEvent;
-import net.dmulloy2.survivalgames.api.PlayerJoinArenaEvent;
-import net.dmulloy2.survivalgames.api.PlayerWinEvent;
 import net.dmulloy2.survivalgames.util.ItemReader;
 import net.dmulloy2.survivalgames.util.Kit;
 import net.dmulloy2.survivalgames.util.NameUtil;
@@ -219,8 +216,6 @@ public class Game {
         if (mode == GameMode.WAITING || mode == GameMode.STARTING) {
             if (activePlayers.size() < plugin.getSettingsHandler().getSpawnCount(gameID)) {
                 plugin.getMessageHandler().sendMessage(Prefix.INFO, "Joining Arena " + gameID, p);
-                PlayerJoinArenaEvent joinarena = new PlayerJoinArenaEvent(p, plugin.getGameHandler().getGame(gameID));
-                plugin.getServer().getPluginManager().callEvent(joinarena);
                 boolean placed = false;
                 int spawnCount = plugin.getSettingsHandler().getSpawnCount(gameID);
 
@@ -545,8 +540,6 @@ public class Game {
         inactivePlayers.add(p.getUniqueId());
 
         if (left) {
-            PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, p, this);
-            plugin.getServer().getPluginManager().callEvent(leavearena);
             msgFall(Prefix.INFO, "game.playerleavegame", "player-" + p.getName());
         } else {
             if (mode != GameMode.WAITING && p.getLastDamageCause() != null && p.getLastDamageCause().getCause() != null) {
@@ -554,8 +547,6 @@ public class Game {
                     case ENTITY_ATTACK:
                         if (p.getLastDamageCause().getEntityType() == EntityType.PLAYER) {
                             Player killer = p.getKiller();
-                            PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, killer, this);
-                            plugin.getServer().getPluginManager().callEvent(leavearena);
                             msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + ((killer != null) ? (NameUtil.getAuthors().contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName() : "Unknown"), "item-" + ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType()) : "Unknown Item"));
                             if (killer != null && p != null)
                                 plugin.getStatsHandler().addKill(killer, p, gameID);
@@ -570,8 +561,6 @@ public class Game {
                     case PROJECTILE:
                         if (p.getKiller() != null) {
                             Player killer = p.getKiller();
-                            PlayerGameDeathEvent leavearena = new PlayerGameDeathEvent(p, killer, this);
-                            plugin.getServer().getPluginManager().callEvent(leavearena);
                             msgFall(Prefix.INFO, "death." + p.getLastDamageCause().getCause(), "player-" + (NameUtil.getAuthors().contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(), "killer-" + p.getKiller().getName());
                             if (killer != null && p != null)
                                 plugin.getStatsHandler().addKill(killer, p, gameID);
@@ -639,9 +628,6 @@ public class Game {
         win.setFoodLevel(20);
         win.setFireTicks(0);
         win.setFallDistance(0);
-
-        PlayerWinEvent winEvent = new PlayerWinEvent(win, victim, this);
-        plugin.getServer().getPluginManager().callEvent(winEvent);
 
         plugin.getStatsHandler().playerWin(win, gameID, new Date().getTime() - startTime);
         plugin.getStatsHandler().saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
