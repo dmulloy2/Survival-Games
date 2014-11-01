@@ -25,6 +25,7 @@ public abstract class SurvivalGamesCommand extends Command {
     public SurvivalGamesCommand(SurvivalGames plugin) {
         super(plugin);
         this.plugin = plugin;
+        this.usesPrefix = true;
 
         this.messageHandler = plugin.getMessageHandler();
         this.lobbyHandler = plugin.getLobbyHandler();

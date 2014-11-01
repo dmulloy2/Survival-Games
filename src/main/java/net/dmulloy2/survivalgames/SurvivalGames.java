@@ -115,26 +115,26 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
 
         // Register commands
         commandHandler.setCommandPrefix("survivalgames");
-        commandHandler.registerCommand(new CmdAddWall(this));
-        commandHandler.registerCommand(new CmdCreateArena(this));
-        commandHandler.registerCommand(new CmdDelArena(this));
-        commandHandler.registerCommand(new CmdDisable(this));
-        commandHandler.registerCommand(new CmdEnable(this));
-        commandHandler.registerCommand(new CmdForceStart(this));
-        commandHandler.registerCommand(new CmdHelp(this));
-        commandHandler.registerCommand(new CmdJoin(this));
-        commandHandler.registerCommand(new CmdLeave(this));
-        commandHandler.registerCommand(new CmdLeaveQueue(this));
-        commandHandler.registerCommand(new CmdList(this));
-        commandHandler.registerCommand(new CmdListArenas(this));
-        commandHandler.registerCommand(new CmdReload(this));
-        commandHandler.registerCommand(new CmdResetSpawns(this));
-        commandHandler.registerCommand(new CmdSetLobbySpawn(this));
-        commandHandler.registerCommand(new CmdSetSpawn(this));
-        commandHandler.registerCommand(new CmdSpectate(this));
-        commandHandler.registerCommand(new CmdTeleport(this));
-        commandHandler.registerCommand(new CmdVersion(this));
-        commandHandler.registerCommand(new CmdVote(this));
+        commandHandler.registerPrefixedCommand(new CmdAddWall(this));
+        commandHandler.registerPrefixedCommand(new CmdCreateArena(this));
+        commandHandler.registerPrefixedCommand(new CmdDelArena(this));
+        commandHandler.registerPrefixedCommand(new CmdDisable(this));
+        commandHandler.registerPrefixedCommand(new CmdEnable(this));
+        commandHandler.registerPrefixedCommand(new CmdForceStart(this));
+        commandHandler.registerPrefixedCommand(new CmdHelp(this));
+        commandHandler.registerPrefixedCommand(new CmdJoin(this));
+        commandHandler.registerPrefixedCommand(new CmdLeave(this));
+        commandHandler.registerPrefixedCommand(new CmdLeaveQueue(this));
+        commandHandler.registerPrefixedCommand(new CmdList(this));
+        commandHandler.registerPrefixedCommand(new CmdListArenas(this));
+        commandHandler.registerPrefixedCommand(new CmdReload(this));
+        commandHandler.registerPrefixedCommand(new CmdResetSpawns(this));
+        commandHandler.registerPrefixedCommand(new CmdSetLobbySpawn(this));
+        commandHandler.registerPrefixedCommand(new CmdSetSpawn(this));
+        commandHandler.registerPrefixedCommand(new CmdSpectate(this));
+        commandHandler.registerPrefixedCommand(new CmdTeleport(this));
+        commandHandler.registerPrefixedCommand(new CmdVersion(this));
+        commandHandler.registerPrefixedCommand(new CmdVote(this));
 
         // Hook into WorldEdit
         worldEdit = hookIntoWorldEdit();
