@@ -106,9 +106,9 @@ public class Game {
         int z1 = system.getInt("sg-system.arenas." + gameID + ".z2");
 
         Location max = new Location(plugin.getSettingsHandler().getGameWorld(gameID), Math.max(x, x1), Math.max(y, y1), Math.max(z, z1));
-        debug("[Max] " + Util.locationToString(max));
+        // debug("[Max] " + Util.locationToString(max));
         Location min = new Location(plugin.getSettingsHandler().getGameWorld(gameID), Math.min(x, x1), Math.min(y, y1), Math.min(z, z1));
-        debug("[Min] " + Util.locationToString(min));
+        // debug("[Min] " + Util.locationToString(min));
 
         arena = new Arena(min, max);
 

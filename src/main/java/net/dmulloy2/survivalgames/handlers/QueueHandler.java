@@ -3,46 +3,52 @@ package net.dmulloy2.survivalgames.handlers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Level;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.BlockData;
 import net.dmulloy2.survivalgames.types.Game;
+import net.dmulloy2.util.Util;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.NPC;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class QueueHandler {
-    private ConcurrentHashMap<Integer, List<BlockData>> queue = new ConcurrentHashMap<Integer, List<BlockData>>();
-    private File baseDir;
+    private final ConcurrentMap<Integer, List<BlockData>> queue;
+    private final File baseDir;
 
     private final SurvivalGames plugin;
-
     public QueueHandler(SurvivalGames plugin) {
         this.plugin = plugin;
+        this.queue = new ConcurrentHashMap<>();
+
         this.baseDir = new File(plugin.getDataFolder(), "ArenaData");
+        if (!baseDir.exists())
+            baseDir.mkdirs();
 
-        try {
-            if (!baseDir.exists())
-                baseDir.mkdirs();
-
-            for (Game g : plugin.getGameHandler().getGames()) {
-                ensureFile(g.getID());
-            }
-        } catch (Throwable ex) {
+        for (Game g : plugin.getGameHandler().getGames()) {
+            ensureFile(g.getID());
         }
 
         new DataDumper().runTaskTimer(plugin, 100, 100);
     }
+
+    private static final List<EntityType> PERSISTENT = Arrays.asList(
+            EntityType.PLAYER, EntityType.VILLAGER, EntityType.ITEM_FRAME, EntityType.PAINTING
+    );
 
     public void rollback(final int id) {
         loadSave(id);
@@ -53,20 +59,18 @@ public class QueueHandler {
             new Rollback(id, false, 0, 1, 0).runTaskLater(plugin, 2L);
         }
 
-        List<Entity> removelist = new ArrayList<Entity>();
+        for (Entity entity : plugin.getSettingsHandler().getGameWorld(id).getEntities()) {
+            if (entity != null && entity.isValid()) {
+                if (!PERSISTENT.contains(entity.getType())) {
+                    if (plugin.getGameHandler().getBlockGameId(entity.getLocation()) == id) {
+                        if (entity instanceof LivingEntity) {
+                            ((LivingEntity) entity).setHealth(0.0D);
+                        }
 
-        for (Entity e : plugin.getSettingsHandler().getGameWorld(id).getEntities()) {
-            if (!(e instanceof Player) && !(e instanceof NPC)) {
-                if (plugin.getGameHandler().getBlockGameId(e.getLocation()) == id) {
-                    removelist.add(e);
+                        entity.remove();
+                    }
                 }
             }
-        }
-
-        if (plugin.isDisabling()) {
-            removeEntites(removelist);
-        } else {
-            new EntityRemoveTask(removelist).runTaskLater(plugin, 2L);
         }
     }
 
@@ -83,14 +87,16 @@ public class QueueHandler {
 
     public void ensureFile(int id) {
         try {
-            File f2 = new File(baseDir, "Arena" + id + ".dat");
-            if (!f2.exists())
-                f2.createNewFile();
-        } catch (Throwable ex) {
+            File file = new File(baseDir, "Arena" + id + ".dat");
+            if (!file.exists())
+                file.createNewFile();
+        } catch (IOException ex) {
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "creating data file for game " + id));
         }
     }
 
     public class DataDumper extends BukkitRunnable {
+
         @Override
         public void run() {
             for (int id : queue.keySet()) {
@@ -101,35 +107,33 @@ public class QueueHandler {
                     out.writeObject(data);
                     out.flush();
                     out.close();
-                } catch (Throwable ex) {
+                } catch (IOException ex) {
+                    plugin.log(Level.WARNING, Util.getUsefulStack(ex, "dumping data for game " + id));
                 }
             }
         }
+
     }
 
-    @SuppressWarnings("unchecked")
     public void loadSave(int id) {
         ensureFile(id);
 
         try {
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(baseDir, "Arena" + id + ".dat")));
 
-            List<BlockData> input = (ArrayList<BlockData>) in.readObject();
+            @SuppressWarnings("unchecked")
+            List<BlockData> input = (List<BlockData>) in.readObject();
 
             List<BlockData> data = queue.get(id);
             if (data == null) {
                 data = new ArrayList<BlockData>();
             }
 
-            for (BlockData d : input) {
-                if (!data.contains(d)) {
-                    data.add(d);
-                }
-            }
-
+            data.addAll(input);
             queue.put(id, data);
             in.close();
         } catch (Throwable ex) {
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "loading save for game " + id));
         }
     }
 
@@ -192,25 +196,6 @@ public class QueueHandler {
         } else {
             plugin.log("Arena " + id + " reset. Rolled back " + totalRollback + " blocks in " + iteration + " iterations. Total time spent rolling back was " + time + "ms");
             game.resetCallback();
-        }
-    }
-
-    public class EntityRemoveTask extends BukkitRunnable {
-        private final List<Entity> entities;
-
-        public EntityRemoveTask(List<Entity> entities) {
-            this.entities = entities;
-        }
-
-        @Override
-        public void run() {
-            removeEntites(entities);
-        }
-    }
-
-    public final void removeEntites(List<Entity> entities) {
-        for (Entity entity : entities) {
-            entity.remove();
         }
     }
 }

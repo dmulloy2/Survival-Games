@@ -69,7 +69,7 @@ public class SettingsHandler {
             if (!chestsFile.exists())
                 loadFile("chest.yml");
         } catch (Throwable ex) {
-            ex.printStackTrace();
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "creating settings files"));
         }
 
         reloadSystem();
@@ -195,40 +195,40 @@ public class SettingsHandler {
     public void saveSystemConfig() {
         try {
             system.save(systemFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "saving system config"));
         }
     }
 
     public void saveSpawns() {
         try {
             spawns.save(spawnsFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "saving spawns config"));
         }
     }
 
     public void saveKits() {
         try {
             kits.save(kitsFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "saving kits config"));
         }
     }
 
     public void saveMessages() {
         try {
             messages.save(messagesFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "saving system config"));
         }
     }
 
     public void saveChest() {
         try {
             chest.save(chestsFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "saving system config"));
         }
     }
 
@@ -304,13 +304,14 @@ public class SettingsHandler {
         if (spawnid > spawns.getInt("spawns." + gameid + ".count")) {
             spawns.set("spawns." + gameid + ".count", spawnid);
         }
+
         try {
             spawns.save(spawnsFile);
-        } catch (IOException ignored) {
+        } catch (IOException ex) {
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "saving spawns config"));
         }
 
         plugin.getGameHandler().getGame(gameid).addSpawn();
-
     }
 
     public String getSqlPrefix() {
@@ -338,8 +339,8 @@ public class SettingsHandler {
             isr.close();
             br.close();
             out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "writing " + t.getAbsolutePath()));
         }
     }
 }

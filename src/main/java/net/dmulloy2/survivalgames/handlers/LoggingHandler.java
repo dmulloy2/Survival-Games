@@ -1,6 +1,7 @@
 package net.dmulloy2.survivalgames.handlers;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
@@ -27,7 +28,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class LoggingHandler implements Listener {
-    private @Getter HashMap<String, Integer> i = new HashMap<String, Integer>();
+    private @Getter Map<String, Integer> i = new HashMap<String, Integer>();
 
     private final SurvivalGames plugin;
 
@@ -62,7 +63,6 @@ public class LoggingHandler implements Listener {
 
         logBlockCreated(e.getBlock());
         i.put("BPLACE", i.get("BPLACE") + 1);
-
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -136,9 +136,6 @@ public class LoggingHandler implements Listener {
 
         logBlockCreated(e.getBlock());
         i.put("BSPREAD", i.get("BSPREAD") + 1);
-
-        // System.out.println(9);
-
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -153,9 +150,6 @@ public class LoggingHandler implements Listener {
 
         logBlockDestoryed(e.getClickedBlock());
         i.put("BCHANGE", i.get("BCHANGE") + 1);
-
-        // System.out.println(9);
-
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

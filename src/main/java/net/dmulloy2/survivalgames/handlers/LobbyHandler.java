@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
 
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.LobbyWall;
 import net.dmulloy2.survivalgames.types.Prefix;
+import net.dmulloy2.util.Util;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -59,9 +61,10 @@ public class LobbyHandler {
                 t.add(ls);
                 ls.update();
             }
-        } catch (Exception e) {
+        } catch (Throwable ex) {
             s.set("sg-system.lobby.signs." + a, null);
             s.set("sg-system.lobby.signno", s.getInt("sg-system.lobby.signno") - 1);
+            plugin.log(Level.WARNING, Util.getUsefulStack(ex, "loading sign: " + a));
         }
     }
 
