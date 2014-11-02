@@ -109,7 +109,8 @@ public class LobbyWall {
         // sign 1
         s1.setLine(0, game.getName());
         s1.setLine(1, game.getMode() + "");
-        s1.setLine(2, game.getActivePlayers() + "/" + ChatColor.GRAY + game.getInactivePlayers() + ChatColor.BLACK + "/" + plugin.getSettingsHandler().getSpawnCount(game.getID()));
+        s1.setLine(2, game.getActivePlayers() + "/" + ChatColor.GRAY + game.getInactivePlayers() + ChatColor.BLACK + "/"
+                + plugin.getSettingsHandler().getSpawnCount(game.getID()));
 
         // live update line s1
         if (game.getMode() == Game.GameMode.STARTING) {
@@ -129,7 +130,8 @@ public class LobbyWall {
         // live player data
         ArrayList<String> display = new ArrayList<String>();
         for (Player p : game.getAllPlayers()) {
-            display.add((game.isPlayerActive(p) ? ChatColor.BLACK : ChatColor.GRAY) + NameUtil.stylize(p.getName(), !game.isPlayerActive(p)));
+            display.add((game.isPlayerActive(p) ? ChatColor.BLACK : ChatColor.GRAY)
+                    + NameUtil.stylize(p.getName(), !game.isPlayerActive(p)));
         }
 
         try {

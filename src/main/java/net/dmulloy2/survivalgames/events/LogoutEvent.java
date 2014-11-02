@@ -25,18 +25,19 @@ public class LogoutEvent implements Listener {
         } catch (Throwable ex) {
         }
 
-        int id = plugin.getGameHandler().getPlayerGameId(player);
         if (plugin.getGameHandler().isSpectator(player)) {
             plugin.getGameHandler().removeSpectator(player);
         }
 
-        if (id == -1)
+        Game game = plugin.getGameHandler().getGame(player);
+        if (game == null) {
             return;
+        }
 
-        if (plugin.getGameHandler().getGameMode(id) == Game.GameMode.INGAME) {
-            plugin.getGameHandler().getGame(id).killPlayer(player, true);
+        if (game.getGameMode() == Game.GameMode.INGAME) {
+            game.killPlayer(player, true);
         } else {
-            plugin.getGameHandler().getGame(id).removePlayer(player, true);
+            game.removePlayer(player, true);
         }
     }
 }

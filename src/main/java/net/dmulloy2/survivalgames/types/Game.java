@@ -554,11 +554,18 @@ public class Game {
                     case ENTITY_ATTACK:
                         if (player.getLastDamageCause().getEntityType() == EntityType.PLAYER) {
                             Player killer = player.getKiller();
-                            msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getEntityType(), "player-" + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + player.getName(), "killer-" + ((killer != null) ? (NameUtil.getAuthors().contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName() : "Unknown"), "item-" + ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType()) : "Unknown Item"));
+                            msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getEntityType(), "player-"
+                                    + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
+                                    + player.getName(), "killer-"
+                                    + ((killer != null) ? (NameUtil.getAuthors().contains(killer.getName()) ? ChatColor.DARK_RED + ""
+                                    + ChatColor.BOLD : "") + killer.getName() : "Unknown"), "item-"
+                                    + ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType()) : "Unknown Item"));
                             if (killer != null && player != null)
                                 plugin.getStatsHandler().addKill(killer, player, gameID);
                         } else {
-                            msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getEntityType(), "player-" + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + player.getName(), "killer-" + player.getLastDamageCause().getEntityType());
+                            msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getEntityType(), "player-"
+                                    + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
+                                    + player.getName(), "killer-" + player.getLastDamageCause().getEntityType());
                         }
                         break;
                     case FIRE:
@@ -568,21 +575,28 @@ public class Game {
                     case PROJECTILE:
                         if (player.getKiller() != null) {
                             Player killer = player.getKiller();
-                            msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getCause(), "player-" + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + player.getName(), "killer-" + player.getKiller().getName());
+                            msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getCause(), "player-"
+                                    + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
+                                    + player.getName(), "killer-" + player.getKiller().getName());
                             if (killer != null && player != null)
                                 plugin.getStatsHandler().addKill(killer, player, gameID);
                         } else {
-                            msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getCause(), "player-" + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + player.getName(), "killer-" + player.getLastDamageCause().getCause());
+                            msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getCause(), "player-"
+                                    + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
+                                    + player.getName(), "killer-" + player.getLastDamageCause().getCause());
                         }
                         break;
                     default:
-                        msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getCause(), "player-" + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + player.getName(), "killer-" + player.getLastDamageCause().getCause());
+                        msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getCause(), "player-"
+                                + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
+                                + player.getName(), "killer-" + player.getLastDamageCause().getCause());
                         break;
                 }
 
                 if (getActivePlayers() > 1) {
                     for (Player pl : getAllPlayers()) {
-                        plugin.getMessageHandler().sendMessage(Prefix.INFO, ChatColor.DARK_AQUA + "There are " + ChatColor.YELLOW + "" + getActivePlayers() + ChatColor.DARK_AQUA + " players remaining!", pl);
+                        plugin.getMessageHandler().sendMessage(Prefix.INFO, ChatColor.DARK_AQUA + "There are "
+                                + ChatColor.YELLOW + "" + getActivePlayers() + ChatColor.DARK_AQUA + " players remaining!", pl);
                     }
                 }
             }
@@ -597,7 +611,8 @@ public class Game {
             }
         }
 
-        if (getActivePlayers() <= config.getInt("endgame.players") && config.getBoolean("endgame.fire-lighting.enabled") && !endgameRunning) {
+        if (getActivePlayers() <= config.getInt("endgame.players") && config.getBoolean("endgame.fire-lighting.enabled")
+                && !endgameRunning) {
             tasks.add(new EndgameHandler().runTaskTimer(plugin, 0, config.getInt("endgame.fire-lighting.interval") * 20).getTaskId());
         }
 
@@ -613,33 +628,34 @@ public class Game {
     // Player win
     // -------------------------//
     public void playerWin(Player victim) {
-        if (GameMode.DISABLED == mode)
+        if (mode == GameMode.DISABLED) {
             return;
+        }
 
-        String name = activePlayers.get(0);
-        Player win = plugin.getServer().getPlayer(name);
-        win.teleport(plugin.getSettingsHandler().getLobbySpawn());
-        restoreInv(win);
-        plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "game.playerwin", "arena-" + gameID, "victim-" + victim.getName(), "player-" + win.getName());
-        plugin.getLobbyHandler().display(new String[] { win.getName(), "", "Won the ", "Survival Games!" }, gameID);
+        Player winner = plugin.getServer().getPlayer(activePlayers.get(0));
+        winner.teleport(plugin.getSettingsHandler().getLobbySpawn());
+        restoreInv(winner);
+        plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "game.playerwin", "arena-" + gameID, "victim-" + victim.getName(),
+                "player-" + winner.getName());
+        plugin.getLobbyHandler().display(new String[] { winner.getName(), "", "Won the ", "Survival Games!" }, gameID);
 
         mode = GameMode.FINISHING;
         if (config.getBoolean("reward.enabled", false)) {
             List<String> items = config.getStringList("reward.contents");
             for (String s : items) {
                 ItemStack item = ItemReader.read(s);
-                win.getInventory().addItem(item);
+                winner.getInventory().addItem(item);
             }
         }
 
         clearSpecs();
-        win.setHealth(win.getMaxHealth());
-        win.setFoodLevel(20);
-        win.setFireTicks(0);
-        win.setFallDistance(0);
+        winner.setHealth(winner.getMaxHealth());
+        winner.setFoodLevel(20);
+        winner.setFireTicks(0);
+        winner.setFallDistance(0);
 
-        plugin.getStatsHandler().playerWin(win, gameID, new Date().getTime() - startTime);
-        plugin.getStatsHandler().saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
+        plugin.getStatsHandler().playerWin(winner, gameID, new Date().getTime() - startTime);
+        plugin.getStatsHandler().saveGame(gameID, winner, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
 
         activePlayers.clear();
         inactivePlayers.clear();

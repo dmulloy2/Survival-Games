@@ -1,12 +1,14 @@
 package net.dmulloy2.survivalgames.events;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.types.Game;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class TeleportEvent implements Listener {
     private final SurvivalGames plugin;
@@ -17,13 +19,14 @@ public class TeleportEvent implements Listener {
 
     @EventHandler
     public void playerTeleport(PlayerTeleportEvent event) {
-        Player p = event.getPlayer();
-        int id = plugin.getGameHandler().getPlayerGameId(p);
-        if (id == -1) {
+        Player player = event.getPlayer();
+        Game game = plugin.getGameHandler().getGame(player);
+        if (game == null) {
             return;
         }
-        if (plugin.getGameHandler().getGame(id).isPlayerActive(p) && event.getCause() == PlayerTeleportEvent.TeleportCause.COMMAND) {
-            p.sendMessage(ChatColor.RED + " Cannot teleport while ingame!");
+
+        if (event.getCause() == TeleportCause.COMMAND) {
+            player.sendMessage(ChatColor.RED + " Cannot teleport while ingame!");
             event.setCancelled(true);
         }
     }

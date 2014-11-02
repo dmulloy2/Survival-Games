@@ -28,7 +28,7 @@ import net.dmulloy2.survivalgames.commands.CmdTeleport;
 import net.dmulloy2.survivalgames.commands.CmdVersion;
 import net.dmulloy2.survivalgames.commands.CmdVote;
 import net.dmulloy2.survivalgames.events.BandageUse;
-import net.dmulloy2.survivalgames.events.BreakEvent;
+import net.dmulloy2.survivalgames.events.BlockEvents;
 import net.dmulloy2.survivalgames.events.ChestReplaceEvent;
 import net.dmulloy2.survivalgames.events.CommandCatch;
 import net.dmulloy2.survivalgames.events.DeathEvent;
@@ -37,7 +37,6 @@ import net.dmulloy2.survivalgames.events.KeepLobbyLoadedEvent;
 import net.dmulloy2.survivalgames.events.KitEvents;
 import net.dmulloy2.survivalgames.events.LogoutEvent;
 import net.dmulloy2.survivalgames.events.MoveEvent;
-import net.dmulloy2.survivalgames.events.PlaceEvent;
 import net.dmulloy2.survivalgames.events.SignClickEvent;
 import net.dmulloy2.survivalgames.events.SpectatorEvents;
 import net.dmulloy2.survivalgames.events.TeleportEvent;
@@ -164,8 +163,7 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
 
         // Register events
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new PlaceEvent(this), this);
-        pm.registerEvents(new BreakEvent(this), this);
+        pm.registerEvents(new BlockEvents(this), this);
         pm.registerEvents(new DeathEvent(this), this);
         pm.registerEvents(new MoveEvent(this), this);
         pm.registerEvents(new CommandCatch(this), this);

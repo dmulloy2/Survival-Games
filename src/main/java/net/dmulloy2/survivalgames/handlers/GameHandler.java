@@ -103,6 +103,25 @@ public class GameHandler {
         return -1;
     }
 
+    public Game getGame(Player player) {
+        for (Game game : games) {
+            if (game.isPlayerActive(player))
+                return game;
+        }
+
+        return null;
+    }
+
+    public Game getGame(Location loc) {
+        for (Game game : games) {
+            if (game.isBlockInArena(loc)) {
+                return game;
+            }
+        }
+
+        return null;
+    }
+
     public int getPlayerSpectateId(Player p) {
         for (Game g : games) {
             if (g.isSpectator(p))
@@ -179,10 +198,9 @@ public class GameHandler {
         return games.size();
     }
 
-    public Game getGame(int a) {
-        // int t = gamemap.get(a);
+    public Game getGame(int  id) {
         for (Game g : games) {
-            if (g.getID() == a) {
+            if (g.getID() == id) {
                 return g;
             }
         }
