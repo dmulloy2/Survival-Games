@@ -539,7 +539,7 @@ public class Game {
 
         plugin.getStatsHandler().playerDied(player, activePlayers.size(), gameID, new Date().getTime() - startTime);
 
-        if (!activePlayers.contains(player))
+        if (!activePlayers.contains(player.getName()))
             return;
 
         restoreInv(player);
