@@ -21,35 +21,34 @@ public class CmdForceStart extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        int game = -1;
+        int gameId = -1;
         int seconds = 10;
 
         if (args.length == 2) {
             seconds = Integer.parseInt(args[1]);
         } else if (args.length >= 1) {
-            game = Integer.parseInt(args[0]);
+            gameId = Integer.parseInt(args[0]);
         } else {
-            game = gameHandler.getPlayerGameId(player);
+            gameId = gameHandler.getGameId(player);
         }
 
-        if (game == -1) {
+        Game game = gameHandler.getGame(player);
+        if (game == null) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notingame", player);
             return;
         }
 
-        if (gameHandler.getGame(game).getActivePlayers() < 2) {
+        if (game.getActivePlayers() < 2) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notenoughtplayers", player);
             return;
         }
 
-        Game g = gameHandler.getGame(game);
-        if (g.getMode() != Game.GameMode.WAITING && !player.hasPermission("sg.admin.restart")) {
+        if (game.getMode() != Game.GameMode.WAITING && !player.hasPermission("sg.admin.restart")) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.alreadyingame", player);
             return;
         }
 
-        g.countdown(seconds);
-
-        plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.started", player, "arena-" + game);
+        game.countdown(seconds);
+        plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.started", player, "arena-" + gameId);
     }
 }

@@ -1,6 +1,7 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
 import net.dmulloy2.survivalgames.types.Prefix;
 
@@ -19,12 +20,12 @@ public class CmdVote extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        int game = gameHandler.getPlayerGameId(player);
-        if (game == -1) {
+        Game game = gameHandler.getGame(player);
+        if (game == null) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinarena", player);
             return;
         }
 
-        gameHandler.getGame(gameHandler.getPlayerGameId(player)).vote(player);
+        game.vote(player);
     }
 }

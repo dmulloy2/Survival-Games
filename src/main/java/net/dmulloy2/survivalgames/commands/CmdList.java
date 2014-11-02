@@ -1,6 +1,7 @@
 package net.dmulloy2.survivalgames.commands;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
 import net.dmulloy2.survivalgames.types.Prefix;
 
@@ -19,15 +20,16 @@ public class CmdList extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        int gid = 0;
+        int id = 0;
         try {
             if (args.length == 0) {
-                gid = gameHandler.getPlayerGameId(player);
+                id = gameHandler.getGameId(player);
             } else {
-                gid = Integer.parseInt(args[0]);
+                id = Integer.parseInt(args[0]);
             }
 
-            for (String s : gameHandler.getStringList(gid)) {
+            Game game = gameHandler.getGame(id);
+            for (String s : gameHandler.getStringList(game)) {
                 player.sendMessage(s);
             }
         } catch (NumberFormatException ex) {

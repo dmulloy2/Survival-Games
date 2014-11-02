@@ -33,14 +33,15 @@ public class ChestReplaceEvent implements Listener {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             BlockState clicked = e.getClickedBlock().getState();
             if (clicked instanceof Chest || clicked instanceof DoubleChest) {
-                int gameid = plugin.getGameHandler().getPlayerGameId(e.getPlayer());
-                if (gameid != -1) {
-                    Game game = plugin.getGameHandler().getGame(gameid);
+                Game game = plugin.getGameHandler().getGame(e.getPlayer());
+                if (game != null) {
                     if (game.getMode() == GameMode.INGAME) {
-                        HashSet<Block> openedChest = plugin.getGameHandler().getOpenedChest().get(gameid);
+                        HashSet<Block> openedChest = plugin.getGameHandler().getOpenedChest().get(game.getID());
                         openedChest = (openedChest == null) ? new HashSet<Block>() : openedChest;
                         if (!openedChest.contains(e.getClickedBlock())) {
-                            Inventory[] invs = ((clicked instanceof Chest)) ? new Inventory[] { ((Chest) clicked).getBlockInventory() } : new Inventory[] { ((DoubleChest) clicked).getLeftSide().getInventory(), ((DoubleChest) clicked).getRightSide().getInventory() };
+                            Inventory[] invs = ((clicked instanceof Chest)) ? new Inventory[] { ((Chest) clicked).getBlockInventory() }
+                                : new Inventory[] { ((DoubleChest) clicked).getLeftSide().getInventory(),
+                                    ((DoubleChest) clicked).getRightSide().getInventory() };
                             ItemStack item = invs[0].getItem(0);
 
                             int data = 1;
@@ -63,7 +64,7 @@ public class ChestReplaceEvent implements Listener {
                         }
 
                         openedChest.add(e.getClickedBlock());
-                        plugin.getGameHandler().getOpenedChest().put(gameid, openedChest);
+                        plugin.getGameHandler().getOpenedChest().put(game.getID(), openedChest);
                     } else {
                         e.setCancelled(true);
                         return;

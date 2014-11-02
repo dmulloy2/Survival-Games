@@ -30,7 +30,7 @@ public class CmdJoin extends SurvivalGamesCommand {
             }
         } else {
             if (plugin.getPermissionHandler().hasPermission(player, Permission.PLAYER_JOIN_LOBBY)) {
-                if (gameHandler.getPlayerGameId(player) != -1) {
+                if (gameHandler.getGameId(player) != -1) {
                     plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.alreadyingame", player);
                     return;
                 }

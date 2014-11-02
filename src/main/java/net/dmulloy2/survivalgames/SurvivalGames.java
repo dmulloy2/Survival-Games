@@ -182,7 +182,7 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
         pm.registerEvents(new KeepLobbyLoadedEvent(this), this);
 
         for (Player pl : getServer().getOnlinePlayers()) {
-            if (gameHandler.getBlockGameId(pl.getLocation()) != -1) {
+            if (gameHandler.getGameId(pl.getLocation()) != -1) {
                 pl.teleport(settingsHandler.getLobbySpawn());
             }
         }

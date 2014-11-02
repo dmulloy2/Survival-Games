@@ -184,39 +184,38 @@ public class Game {
     // -------------------------//
     // Add Player
     // -------------------------//
-    public boolean addPlayer(Player p) {
-        String name = p.getName();
+    public boolean addPlayer(Player player) {
+        String name = player.getName();
         if (plugin.getSettingsHandler().getLobbySpawn() == null) {
-            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.nolobbyspawn", p);
+            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.nolobbyspawn", player);
             return false;
         }
 
-        if (!canJoinArena(p, gameID)) {
+        if (!canJoinArena(player, gameID)) {
             debug("permission needed to join arena: " + "sg.arena.join." + gameID);
-            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "game.nopermission", p, "arena-" + gameID);
+            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "game.nopermission", player, "arena-" + gameID);
             return false;
         }
 
-        plugin.getHookHandler().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + spawns.size(), "players-" + activePlayers.size());
+        plugin.getHookHandler().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + player.getName(),
+                "maxplayers-" + spawns.size(), "players-" + activePlayers.size());
 
-        plugin.getGameHandler().removeFromOtherQueues(p, gameID);
+        plugin.getGameHandler().removeFromOtherQueues(player, gameID);
 
-        if (plugin.getGameHandler().getPlayerGameId(p) != -1) {
-            if (plugin.getGameHandler().isPlayerActive(p)) {
-                plugin.getMessageHandler().sendMessage(Prefix.ERROR, "Cannot join multiple games!", p);
-                return false;
-            }
+        if (plugin.getGameHandler().isPlayerActive(player)) {
+            plugin.getMessageHandler().sendMessage(Prefix.ERROR, "Cannot join multiple games!", player);
+            return false;
         }
 
-        if (p.isInsideVehicle())
-            p.leaveVehicle();
+        if (player.isInsideVehicle())
+            player.leaveVehicle();
 
         if (spectators.contains(name))
-            removeSpectator(p);
+            removeSpectator(player);
 
         if (mode == GameMode.WAITING || mode == GameMode.STARTING) {
             if (activePlayers.size() < plugin.getSettingsHandler().getSpawnCount(gameID)) {
-                plugin.getMessageHandler().sendMessage(Prefix.INFO, "Joining Arena " + gameID, p);
+                plugin.getMessageHandler().sendMessage(Prefix.INFO, "Joining Arena " + gameID, player);
                 boolean placed = false;
                 int spawnCount = plugin.getSettingsHandler().getSpawnCount(gameID);
 
@@ -224,23 +223,23 @@ public class Game {
                     if (spawns.get(a) == null) {
                         placed = true;
                         spawns.put(a, name);
-                        p.setGameMode(org.bukkit.GameMode.SURVIVAL);
+                        player.setGameMode(org.bukkit.GameMode.SURVIVAL);
 
-                        p.teleport(plugin.getSettingsHandler().getLobbySpawn());
-                        saveInv(p);
-                        clearInv(p);
-                        p.teleport(plugin.getSettingsHandler().getSpawnPoint(gameID, a));
+                        player.teleport(plugin.getSettingsHandler().getLobbySpawn());
+                        saveInv(player);
+                        clearInv(player);
+                        player.teleport(plugin.getSettingsHandler().getSpawnPoint(gameID, a));
 
-                        p.setHealth(p.getMaxHealth());
-                        p.setFoodLevel(20);
-                        clearInv(p);
+                        player.setHealth(player.getMaxHealth());
+                        player.setFoodLevel(20);
+                        clearInv(player);
 
                         activePlayers.add(name);
-                        plugin.getStatsHandler().addPlayer(p, gameID);
+                        plugin.getStatsHandler().addPlayer(player, gameID);
 
                         hookvars.put("activeplayers", activePlayers.size() + "");
                         plugin.getLobbyHandler().updateWall(gameID);
-                        showMenu(p);
+                        showMenu(player);
                         plugin.getHookHandler().runHook("GAME_POST_ADDPLAYER", "activePlayers-" + activePlayers.size());
 
                         if (spawnCount == activePlayers.size()) {
@@ -252,19 +251,19 @@ public class Game {
                 }
 
                 if (!placed) {
-                    plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gamefull", p, "arena-" + gameID);
+                    plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gamefull", player, "arena-" + gameID);
                     return false;
                 }
 
             } else if (plugin.getSettingsHandler().getSpawnCount(gameID) == 0) {
-                plugin.getMessageHandler().sendMessage(Prefix.WARNING, "No spawns set for Arena " + gameID + "!", p);
+                plugin.getMessageHandler().sendMessage(Prefix.WARNING, "No spawns set for Arena " + gameID + "!", player);
                 return false;
             } else {
-                plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.gamefull", p, "arena-" + gameID);
+                plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.gamefull", player, "arena-" + gameID);
                 return false;
             }
 
-            msgFall(Prefix.INFO, "game.playerjoingame", "player-" + p.getName(), "activeplayers-" + getActivePlayers(), "maxplayers-" + plugin.getSettingsHandler().getSpawnCount(gameID));
+            msgFall(Prefix.INFO, "game.playerjoingame", "player-" + player.getName(), "activeplayers-" + getActivePlayers(), "maxplayers-" + plugin.getSettingsHandler().getSpawnCount(gameID));
             if (activePlayers.size() >= config.getInt("auto-start-players") && !countdownRunning)
                 countdown(config.getInt("auto-start-time"));
 
@@ -273,13 +272,13 @@ public class Game {
             if (config.getBoolean("enable-player-queue")) {
                 if (!queue.contains(name)) {
                     queue.add(name);
-                    plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playerjoinqueue", p, "queuesize-" + queue.size());
+                    plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playerjoinqueue", player, "queuesize-" + queue.size());
                 }
                 int a = 1;
                 for (String queueName : queue) {
                     Player qp = plugin.getServer().getPlayer(queueName);
-                    if (qp.equals(p)) {
-                        plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playercheckqueue", p, "queuepos-" + a);
+                    if (qp.equals(player)) {
+                        plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playercheckqueue", player, "queuepos-" + a);
                         break;
                     }
                     a++;
@@ -288,13 +287,13 @@ public class Game {
         }
 
         if (mode == GameMode.INGAME) {
-            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.alreadyingame", p);
+            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.alreadyingame", player);
         } else if (mode == GameMode.DISABLED) {
-            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.gamedisabled", p, "arena-" + gameID);
+            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.gamedisabled", player, "arena-" + gameID);
         } else if (mode == GameMode.RESETTING) {
-            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.gameresetting", p);
+            plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "error.gameresetting", player);
         } else {
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Cannot join game!", p);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Cannot join game!", player);
         }
 
         plugin.getLobbyHandler().updateWall(gameID);

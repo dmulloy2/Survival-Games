@@ -52,7 +52,7 @@ public class LoggingHandler implements Listener {
         if (e.isCancelled())
             return;
 
-        logBlockDestoryed(e.getBlock());
+        logBlockDestroyed(e.getBlock());
         i.put("BCHANGE", i.get("BCHANGE") + 1);
     }
 
@@ -70,7 +70,7 @@ public class LoggingHandler implements Listener {
         if (e.isCancelled())
             return;
 
-        logBlockDestoryed(e.getBlock());
+        logBlockDestroyed(e.getBlock());
         i.put("BFADE", i.get("BFADE") + 1);
     }
 
@@ -80,7 +80,7 @@ public class LoggingHandler implements Listener {
             return;
 
         for (Block b : e.blockList()) {
-            logBlockDestoryed(b);
+            logBlockDestroyed(b);
         }
 
         i.put("BBLOW", i.get("BBLOW") + 1);
@@ -100,7 +100,7 @@ public class LoggingHandler implements Listener {
         if (e.isCancelled())
             return;
 
-        logBlockDestoryed(e.getBlock());
+        logBlockDestroyed(e.getBlock());
         i.put("BBURN", i.get("BBURN") + 1);
     }
 
@@ -125,7 +125,7 @@ public class LoggingHandler implements Listener {
         if (e.isCancelled())
             return;
 
-        logBlockDestoryed(e.getBlock());
+        logBlockDestroyed(e.getBlock());
         i.put("LDECAY", i.get("LDECAY") + 1);
     }
 
@@ -148,7 +148,7 @@ public class LoggingHandler implements Listener {
             return;
         }
 
-        logBlockDestoryed(e.getClickedBlock());
+        logBlockDestroyed(e.getClickedBlock());
         i.put("BCHANGE", i.get("BCHANGE") + 1);
     }
 
@@ -164,26 +164,37 @@ public class LoggingHandler implements Listener {
         i.put("BPISTION", i.get("BPISTION") + 1);
     }
 
-    public void logBlockCreated(Block b) {
-        if (plugin.getGameHandler().getBlockGameId(b.getLocation()) == -1)
+    public void logBlockCreated(Block block) {
+        Game game = plugin.getGameHandler().getGame(block.getLocation());
+        if (game == null) {
             return;
+        }
 
-        if (plugin.getGameHandler().getGameMode(plugin.getGameHandler().getBlockGameId(b.getLocation())) == Game.GameMode.DISABLED)
+        Game.GameMode mode = game.getGameMode();
+        if (mode == Game.GameMode.DISABLED) {
             return;
+        }
 
-        plugin.getQueueHandler().add(new BlockData(plugin.getGameHandler().getBlockGameId(b.getLocation()), b.getWorld().getName(), null, null, b.getType(), b.getState().getData(), b.getX(), b.getY(), b.getZ(), null));
+        plugin.getQueueHandler().add(new BlockData(game.getID(), block.getWorld().getName(), null, null, block.getType(),
+                block.getState().getData(), block.getX(), block.getY(), block.getZ(), null));
     }
 
-    public void logBlockDestoryed(Block b) {
-        if (plugin.getGameHandler().getBlockGameId(b.getLocation()) == -1)
+    public void logBlockDestroyed(Block block) {
+        if (block.getType() == Material.FIRE) {
             return;
+        }
 
-        if (plugin.getGameHandler().getGameMode(plugin.getGameHandler().getBlockGameId(b.getLocation())) == Game.GameMode.DISABLED)
+        Game game = plugin.getGameHandler().getGame(block.getLocation());
+        if (game == null) {
             return;
+        }
 
-        if (b.getType() == Material.FIRE)
+        Game.GameMode mode = game.getGameMode();
+        if (mode == Game.GameMode.DISABLED) {
             return;
+        }
 
-        plugin.getQueueHandler().add(new BlockData(plugin.getGameHandler().getBlockGameId(b.getLocation()), b.getWorld().getName(), null, null, b.getType(), b.getState().getData(), b.getX(), b.getY(), b.getZ(), null));
+        plugin.getQueueHandler().add(new BlockData(game.getID(), block.getWorld().getName(), null, null, block.getType(),
+                block.getState().getData(), block.getX(), block.getY(), block.getZ(), null));
     }
 }

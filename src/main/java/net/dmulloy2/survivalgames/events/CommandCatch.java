@@ -1,7 +1,9 @@
 package net.dmulloy2.survivalgames.events;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.survivalgames.types.Game;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,27 +18,32 @@ public class CommandCatch implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        String m = event.getMessage();
-
-        if (!plugin.getGameHandler().isPlayerActive(event.getPlayer()) && !plugin.getGameHandler().isPlayerInactive(event.getPlayer()) && !plugin.getGameHandler().isSpectator(event.getPlayer())) {
-            return;
-        }
-
-        if (m.equalsIgnoreCase("/list")) {
-            for (String s : plugin.getGameHandler().getStringList(plugin.getGameHandler().getPlayerGameId(event.getPlayer()))) {
-                event.getPlayer().sendMessage(s);
-            }
-            return;
-        }
         if (!plugin.getSettingsHandler().getConfig().getBoolean("disallow-commands")) {
             return;
         }
 
+        Player player = event.getPlayer();
+        Game game = plugin.getGameHandler().getGame(player);
+        if (game == null) {
+            return;
+        }
+
+        String message = event.getMessage();
+        if (message.toLowerCase().startsWith("/list") || message.toLowerCase().startsWith("/who")) {
+            for (String s : plugin.getGameHandler().getStringList(game)) {
+                player.sendMessage(s);
+            }
+
+            return;
+        }
+
+
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("sg.staff.nocmdblock")) {
             return;
-        } else if (m.startsWith("/sg") || m.startsWith("/survivalgames") || m.startsWith("/hg") || m.startsWith("/hungergames") || m.startsWith("/msg")) {
+        } else if (message.startsWith("/sg") || message.startsWith("/survivalgames") || message.startsWith("/hg")
+                || message.startsWith("/hungergames") || message.startsWith("/msg")) {
             return;
-        } else if (plugin.getSettingsHandler().getConfig().getStringList("cmdwhitelist").contains(m)) {
+        } else if (plugin.getSettingsHandler().getConfig().getStringList("cmdwhitelist").contains(message)) {
             return;
         }
 

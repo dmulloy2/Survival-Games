@@ -16,7 +16,7 @@ public class CmdLeave extends SurvivalGamesCommand {
 
     @Override
     public void perform() {
-        if (gameHandler.getPlayerGameId(player) == -1) {
+        if (gameHandler.getGameId(player) == -1) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notingame", player);
             return;
         }

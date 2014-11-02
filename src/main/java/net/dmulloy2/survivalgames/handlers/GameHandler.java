@@ -85,23 +85,7 @@ public class GameHandler {
         plugin.log("Loaded " + loaded + " arenas!");
     }
 
-    public int getBlockGameId(Location v) {
-        for (Game g : games) {
-            if (g.isBlockInArena(v))
-                return g.getID();
-        }
-
-        return -1;
-    }
-
-    public int getPlayerGameId(Player p) {
-        for (Game g : games) {
-            if (g.isPlayerActive(p))
-                return g.getID();
-        }
-
-        return -1;
-    }
+    // ---- Game Getters
 
     public Game getGame(Player player) {
         for (Game game : games) {
@@ -122,27 +106,42 @@ public class GameHandler {
         return null;
     }
 
-    public int getPlayerSpectateId(Player p) {
+    // ---- Game ID Getters
+
+    public int getGameId(Player player) {
         for (Game g : games) {
-            if (g.isSpectator(p))
+            if (g.isPlayerActive(player))
                 return g.getID();
         }
 
         return -1;
     }
 
-    public boolean isPlayerActive(Player player) {
+    public int getGameId(Location loc) {
         for (Game g : games) {
-            if (g.isPlayerActive(player))
-                return true;
+            if (g.isBlockInArena(loc))
+                return g.getID();
         }
 
-        return false;
+        return -1;
     }
 
-    public boolean isPlayerInactive(Player player) {
-        for (Game g : games) {
-            if (g.isPlayerInactive(player))
+    // ---- Spectating
+
+    public int getSpectateId(Player player) {
+        for (Game game : games) {
+            if (game.isSpectator(player))
+                return game.getID();
+        }
+
+        return -1;
+    }
+
+    // ---- Activity
+
+    public boolean isPlayerActive(Player player) {
+        for (Game game : games) {
+            if (game.isPlayerActive(player))
                 return true;
         }
 
@@ -150,8 +149,8 @@ public class GameHandler {
     }
 
     public boolean isSpectator(Player player) {
-        for (Game g : games) {
-            if (g.isSpectator(player))
+        for (Game game : games) {
+            if (game.isSpectator(player))
                 return true;
         }
 
@@ -209,11 +208,11 @@ public class GameHandler {
     }
 
     public void removePlayer(Player p, boolean b) {
-        getGame(getPlayerGameId(p)).removePlayer(p, b);
+        getGame(p).removePlayer(p, b);
     }
 
     public void removeSpectator(Player p) {
-        getGame(getPlayerSpectateId(p)).removeSpectator(p);
+        getGame(getSpectateId(p)).removeSpectator(p);
     }
 
     public void disableGame(int id) {
@@ -334,14 +333,14 @@ public class GameHandler {
         openedChest.put(id, new HashSet<Block>());
     }
 
-    public List<String> getStringList(int gid) {
-        Game g = getGame(gid);
-        Player[][] players = g.getPlayers();
+    public List<String> getStringList(Game game) {
+        Player[][] players = game.getPlayers();
 
         List<String> lines = new ArrayList<String>();
         StringBuilder line = new StringBuilder();
 
-        line.append(ChatColor.GREEN + "<---------------------[ Alive: " + players[0].length + " ]--------------------->" + ChatColor.GREEN + " ");
+        line.append(ChatColor.GREEN + "<---------------------[ Alive: " + players[0].length + " ]--------------------->" + ChatColor.GREEN
+                + " ");
         lines.add(line.toString());
 
         line = new StringBuilder();
@@ -358,7 +357,8 @@ public class GameHandler {
         lines.add(line.toString());
 
         line = new StringBuilder();
-        line.append(ChatColor.RED + "<---------------------[ Dead: " + players[1].length + " ]--------------------->" + ChatColor.RED + " ");
+        line.append(ChatColor.RED + "<---------------------[ Dead: " + players[1].length + " ]--------------------->" + ChatColor.RED
+                + " ");
         lines.add(line.toString());
 
         line = new StringBuilder();

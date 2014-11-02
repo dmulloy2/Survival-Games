@@ -47,7 +47,7 @@ public class QueueHandler {
         for (Entity entity : plugin.getSettingsHandler().getGameWorld(id).getEntities()) {
             if (entity != null && entity.isValid()) {
                 if (!PERSISTENT.contains(entity.getType())) {
-                    if (plugin.getGameHandler().getBlockGameId(entity.getLocation()) == id) {
+                    if (plugin.getGameHandler().getGameId(entity.getLocation()) == id) {
                         if (entity instanceof LivingEntity) {
                             ((LivingEntity) entity).setHealth(0.0D);
                         }

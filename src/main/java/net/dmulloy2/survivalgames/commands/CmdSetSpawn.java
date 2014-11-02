@@ -28,7 +28,7 @@ public class CmdSetSpawn extends SurvivalGamesCommand {
         loadNextSpawn();
 
         Location l = player.getLocation();
-        int game = gameHandler.getBlockGameId(l);
+        int game = gameHandler.getGameId(l);
 
         if (game == -1) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notinarena", player);

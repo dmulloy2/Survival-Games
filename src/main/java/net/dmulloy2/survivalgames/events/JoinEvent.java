@@ -20,7 +20,7 @@ public class JoinEvent implements Listener {
     public void PlayerJoin(PlayerJoinEvent e) {
         final Player p = e.getPlayer();
 
-        if (plugin.getGameHandler().getBlockGameId(p.getLocation()) != -1) {
+        if (plugin.getGameHandler().getGameId(p.getLocation()) != -1) {
             new TeleportTask(p).runTaskLater(plugin, 5L);
         }
     }
