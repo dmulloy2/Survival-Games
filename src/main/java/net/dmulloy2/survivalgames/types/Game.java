@@ -653,7 +653,7 @@ public class Game {
             }
 
             int cashReward = plugin.getConfig().getInt("reward.cash", -1);
-            if (cashReward > 0) {
+            if (cashReward > 0 && plugin.getEconomyHandler().isEnabled()) {
                 cashReward = cashReward * scale;
 
                 Economy economy = plugin.getEconomyHandler().getEconomy();
@@ -922,6 +922,7 @@ public class Game {
     // Ending Games
     // -------------------------//
     public class EndgameHandler extends BukkitRunnable {
+
         @Override
         public void run() {
             for (String name : new ArrayList<>(activePlayers)) {
@@ -940,6 +941,7 @@ public class Game {
     // Death Match
     // -------------------------//
     public class DeathMatch extends BukkitRunnable {
+
         @Override
         public void run() {
             for (String name : new ArrayList<>(activePlayers)) {
@@ -955,6 +957,7 @@ public class Game {
             }
 
             tasks.add(new BukkitRunnable() {
+
                 @Override
                 public void run() {
                     for (String name : new ArrayList<>(activePlayers)) {
@@ -963,6 +966,7 @@ public class Game {
                             p.getLocation().getWorld().strikeLightning(p.getLocation());
                     }
                 }
+
             }.runTaskLater(plugin, config.getInt("deathmatch.killtime") * 20 * 60).getTaskId());
         }
     }
