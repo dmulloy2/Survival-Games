@@ -13,6 +13,7 @@ import net.dmulloy2.survivalgames.types.BlockData;
 import net.dmulloy2.survivalgames.types.Game;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -38,13 +39,18 @@ public class QueueHandler {
     );
 
     public void rollback(final int id) {
+        World world = plugin.getSettingsHandler().getGameWorld(id);
+        if (world == null) {
+            return;
+        }
+
         if (plugin.isDisabling()) {
             rollback(id, true, 0, 1, 0);
         } else {
             new Rollback(id, false, 0, 1, 0).runTaskLater(plugin, 2L);
         }
 
-        for (Entity entity : plugin.getSettingsHandler().getGameWorld(id).getEntities()) {
+        for (Entity entity : world.getEntities()) {
             if (entity != null && entity.isValid()) {
                 if (!PERSISTENT.contains(entity.getType())) {
                     if (plugin.getGameHandler().getGameId(entity.getLocation()) == id) {

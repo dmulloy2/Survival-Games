@@ -11,8 +11,8 @@ public class CmdCreateArena extends SurvivalGamesCommand {
     public CmdCreateArena(SurvivalGames plugin) {
         super(plugin);
         this.name = "createarena";
+        this.aliases.add("create");
         this.description = "Create a new arena with the current WorldEdit selection";
-
         this.permission = Permission.ADMIN_CREATEARENA;
     }
 

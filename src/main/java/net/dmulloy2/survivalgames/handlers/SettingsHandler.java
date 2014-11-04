@@ -7,16 +7,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.types.ItemParser;
 import net.dmulloy2.util.Util;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class SettingsHandler {
@@ -342,5 +345,15 @@ public class SettingsHandler {
         } catch (IOException ex) {
             plugin.log(Level.WARNING, Util.getUsefulStack(ex, "writing " + t.getAbsolutePath()));
         }
+    }
+
+    private List<ItemStack> rewardItems;
+
+    public List<ItemStack> getRewardItems() {
+        if (rewardItems == null) {
+            rewardItems = ItemParser.parse(plugin, getConfig().getStringList("reward.contents"));
+        }
+
+        return rewardItems;
     }
 }

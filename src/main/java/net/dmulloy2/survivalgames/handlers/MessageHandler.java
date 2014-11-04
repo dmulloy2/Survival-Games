@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import lombok.Getter;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Prefix;
+import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.Util;
 
 import org.bukkit.ChatColor;
@@ -114,12 +115,12 @@ public class MessageHandler {
         broadcastFMessage(Prefix.INFO, input, args);
     }
 
-    public void broadcastMessage(Prefix type, String msg) {
-        plugin.getServer().broadcastMessage(prefixes.get(Prefix.MAIN) + " " + prefixes.get(type) + replaceColors(msg));
+    public void broadcastMessage(Prefix type, String msg, Object... args) {
+        plugin.getServer().broadcastMessage(prefixes.get(Prefix.MAIN) + " " + prefixes.get(type) + FormatUtil.format(msg, args));
     }
 
-    public void broadcastMessage(String msg) {
-        broadcastMessage(Prefix.INFO, msg);
+    public void broadcastMessage(String msg, Object... args) {
+        broadcastMessage(Prefix.INFO, msg, args);
     }
 
     public String replaceColors(String s) {

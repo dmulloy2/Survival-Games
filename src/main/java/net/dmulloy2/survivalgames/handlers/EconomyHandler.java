@@ -25,11 +25,11 @@ public class EconomyHandler {
         return economy != null;
     }
 
-    public Economy getEcon() {
+    public Economy getEconomy() {
         return economy;
     }
 
-    public boolean econPresent() {
+    public boolean isEnabled() {
         return enabled;
     }
 }

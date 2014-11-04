@@ -13,7 +13,10 @@ import net.dmulloy2.survivalgames.util.ItemReader;
 import net.dmulloy2.survivalgames.util.Kit;
 import net.dmulloy2.survivalgames.util.NameUtil;
 import net.dmulloy2.survivalgames.util.SpectatorUtil;
+import net.dmulloy2.util.FormatUtil;
+import net.dmulloy2.util.InventoryUtil;
 import net.dmulloy2.util.Util;
+import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -68,6 +71,8 @@ public class Game {
     private long startTime = 0;
     private boolean countdownRunning;
 
+    private Map<String, Integer> kills = new HashMap<>();
+
     private Map<String, String> hookvars = new HashMap<>();
 
     private final SurvivalGames plugin;
@@ -83,14 +88,6 @@ public class Game {
     public void reloadConfig() {
         config = plugin.getSettingsHandler().getConfig();
         system = plugin.getSettingsHandler().getSystemConfig();
-    }
-
-    public void $(String msg) {
-        plugin.log(msg);
-    }
-
-    public void debug(String msg) {
-        plugin.debug(msg);
     }
 
     // -------------------------//
@@ -192,13 +189,10 @@ public class Game {
         }
 
         if (!canJoinArena(player, gameID)) {
-            debug("permission needed to join arena: " + "sg.arena.join." + gameID);
+            // debug("permission needed to join arena: " + "sg.arena.join." + gameID);
             plugin.getMessageHandler().sendFMessage(Prefix.WARNING, "game.nopermission", player, "arena-" + gameID);
             return false;
         }
-
-        plugin.getHookHandler().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + player.getName(),
-                "maxplayers-" + spawns.size(), "players-" + activePlayers.size());
 
         plugin.getGameHandler().removeFromOtherQueues(player, gameID);
 
@@ -240,7 +234,6 @@ public class Game {
                         hookvars.put("activeplayers", activePlayers.size() + "");
                         plugin.getLobbyHandler().updateWall(gameID);
                         showMenu(player);
-                        plugin.getHookHandler().runHook("GAME_POST_ADDPLAYER", "activePlayers-" + activePlayers.size());
 
                         if (spawnCount == activePlayers.size()) {
                             countdown(5);
@@ -325,7 +318,7 @@ public class Game {
             ItemStack i1 = k.getIcon();
             ItemMeta im = i1.getItemMeta();
 
-            debug(k.getName() + " " + i1 + " " + im);
+            // debug(k.getName() + " " + i1 + " " + im);
 
             im.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + k.getName());
             i1.setItemMeta(im);
@@ -344,7 +337,7 @@ public class Game {
         }
 
         p.openInventory(i);
-        debug("Showing menu");
+        // debug("Showing menu");
     }
 
     // -------------------------//
@@ -381,8 +374,6 @@ public class Game {
             if (player != null)
                 plugin.getMessageHandler().sendFMessage(Prefix.INFO, "game.playervote", player, "player-" + pl.getName(), "voted-" + vote, "players-" + getActivePlayers());
         }
-
-        plugin.getHookHandler().runHook("PLAYER_VOTE", "player-" + pl.getName());
 
         if ((((vote + 0.0) / (getActivePlayers() + 0.0)) >= (config.getInt("auto-start-vote") + 0.0) / 100) && getActivePlayers() > 1) {
             countdown(config.getInt("auto-start-time"));
@@ -522,7 +513,6 @@ public class Game {
             msgFall(Prefix.INFO, "game.playerleavegame", "player-" + p.getName());
         }
 
-        plugin.getHookHandler().runHook("PLAYER_REMOVED", "player-" + p.getName());
         plugin.getLobbyHandler().updateWall(gameID);
     }
 
@@ -559,8 +549,15 @@ public class Game {
                                     + ((killer != null) ? (NameUtil.getAuthors().contains(killer.getName()) ? ChatColor.DARK_RED + ""
                                     + ChatColor.BOLD : "") + killer.getName() : "Unknown"), "item-"
                                     + ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType()) : "Unknown Item"));
-                            if (killer != null && player != null)
+                            if (killer != null && player != null) {
+                                if (kills.containsKey(killer.getName())) {
+                                    kills.put(killer.getName(), kills.get(killer.getName()) + 1);
+                                } else {
+                                    kills.put(killer.getName(), 1);
+                                }
+
                                 plugin.getStatsHandler().addKill(killer, player, gameID);
+                            }
                         } else {
                             msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getEntityType(), "player-"
                                     + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
@@ -634,16 +631,35 @@ public class Game {
         Player winner = plugin.getServer().getPlayer(activePlayers.get(0));
         winner.teleport(plugin.getSettingsHandler().getLobbySpawn());
         restoreInv(winner);
+        plugin.getMessageHandler().broadcastMessage(Prefix.INFO, "&e{0} &3killed &e{1} &3to win the SurvivalGames at &e{2}");
         plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "game.playerwin", "arena-" + gameID, "victim-" + victim.getName(),
-                "player-" + winner.getName());
+                "player-" + winner.getName(), "kills-" + kills.get(winner.getName()));
         plugin.getLobbyHandler().display(new String[] { winner.getName(), "", "Won the ", "Survival Games!" }, gameID);
 
         mode = GameMode.FINISHING;
+
         if (config.getBoolean("reward.enabled", false)) {
-            List<String> items = config.getStringList("reward.contents");
-            for (String s : items) {
-                ItemStack item = ItemReader.read(s);
-                winner.getInventory().addItem(item);
+            // Give them scaled rewards
+            int scale = (int) Math.floor(kills.get(winner.getName()) / 2);
+
+            List<ItemStack> rewards = plugin.getSettingsHandler().getRewardItems();
+            for (ItemStack reward : rewards) {
+                reward = reward.clone();
+                int amount = reward.getAmount() * scale;
+                if (amount > 0) {
+                    reward.setAmount(amount);
+                    InventoryUtil.giveItem(winner, reward);
+                }
+            }
+
+            int cashReward = plugin.getConfig().getInt("reward.cash", -1);
+            if (cashReward > 0) {
+                cashReward = cashReward * scale;
+
+                Economy economy = plugin.getEconomyHandler().getEconomy();
+                economy.depositPlayer(winner, cashReward);
+                plugin.getMessageHandler().sendMessage(Prefix.INFO, FormatUtil.format("&a{0} has been added to your account!",
+                        economy.format(cashReward)), winner);
             }
         }
 
@@ -771,8 +787,6 @@ public class Game {
         saveInv(p);
         clearInv(p);
         p.teleport(plugin.getSettingsHandler().getSpawnPoint(gameID, 1).add(0, 10, 0));
-
-        plugin.getHookHandler().runHook("PLAYER_SPECTATE", "player-" + p.getName());
 
         for (Player pl : plugin.getServer().getOnlinePlayers()) {
             pl.hidePlayer(p);

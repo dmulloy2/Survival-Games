@@ -48,7 +48,6 @@ import net.dmulloy2.survivalgames.handlers.LoggingHandler;
 import net.dmulloy2.survivalgames.handlers.MessageHandler;
 import net.dmulloy2.survivalgames.handlers.QueueHandler;
 import net.dmulloy2.survivalgames.handlers.SettingsHandler;
-import net.dmulloy2.survivalgames.hooks.HookHandler;
 import net.dmulloy2.survivalgames.stats.StatsHandler;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.util.ChestRatioStorage;
@@ -79,7 +78,6 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class SurvivalGames extends SwornPlugin implements Reloadable {
     private @Getter GameHandler gameHandler;
-    private @Getter HookHandler hookHandler;
     private @Getter StatsHandler statsHandler;
     private @Getter LobbyHandler lobbyHandler;
     private @Getter QueueHandler queueHandler;
@@ -159,7 +157,6 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
 
         chestRatioStorage = new ChestRatioStorage(this);
         economyHandler = new EconomyHandler(this);
-        hookHandler = new HookHandler(this);
 
         // Register events
         PluginManager pm = getServer().getPluginManager();
