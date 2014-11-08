@@ -255,7 +255,7 @@ public class GameHandler {
             return;
         }
 
-        getGame(g).addPlayer(p);
+        game.addPlayer(p);
     }
 
     public void autoAddPlayer(Player pl) {
