@@ -35,7 +35,7 @@ public class CmdList extends SurvivalGamesCommand {
         } catch (NumberFormatException ex) {
             plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.notanumber", player, "input-Arena");
         } catch (NullPointerException ex) {
-            plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", player);
+            plugin.getMessageHandler().sendFMessage(Prefix.ERROR, "error.gameDoesNotExist", player, "arena-" + id);
         }
     }
 }
