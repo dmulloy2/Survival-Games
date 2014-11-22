@@ -97,12 +97,10 @@ public class SurvivalGames extends SwornPlugin implements Reloadable {
     public void onEnable() {
         long start = System.currentTimeMillis();
 
-        // Register log and message handlers first
         logHandler = new LogHandler(this);
+        settingsHandler = new SettingsHandler(this);
         messageHandler = new MessageHandler(this);
 
-        // Register some Handlers
-        settingsHandler = new SettingsHandler(this);
         statsHandler = new StatsHandler(this);
         lobbyHandler = new LobbyHandler(this);
         gameHandler = new GameHandler(this);
