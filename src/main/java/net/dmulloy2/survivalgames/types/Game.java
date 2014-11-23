@@ -639,7 +639,11 @@ public class Game {
 
         if (config.getBoolean("reward.enabled", false)) {
             // Give them scaled rewards
-            int scale = (int) Math.floor(kills.get(winner.getName()) / 2);
+            int scale = 0;
+            if (kills.containsKey(winner.getName()))
+                scale = (int) Math.floor(kills.get(winner.getName()) / 2);
+            else
+                scale = 1;
 
             List<ItemStack> rewards = plugin.getSettingsHandler().getRewardItems();
             for (ItemStack reward : rewards) {
