@@ -631,7 +631,6 @@ public class Game {
         Player winner = plugin.getServer().getPlayer(activePlayers.get(0));
         winner.teleport(plugin.getSettingsHandler().getLobbySpawn());
         restoreInv(winner);
-        plugin.getMessageHandler().broadcastMessage(Prefix.INFO, "&e{0} &3killed &e{1} &3to win the SurvivalGames at &e{2}");
         plugin.getMessageHandler().broadcastFMessage(Prefix.INFO, "game.playerwin", "arena-" + gameID, "victim-" + victim.getName(),
                 "player-" + winner.getName(), "kills-" + kills.get(winner.getName()));
         plugin.getLobbyHandler().display(new String[] { winner.getName(), "", "Won the ", "Survival Games!" }, gameID);
