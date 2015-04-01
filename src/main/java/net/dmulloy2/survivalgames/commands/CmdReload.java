@@ -4,13 +4,12 @@ import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.types.Permission;
 import net.dmulloy2.survivalgames.types.Prefix;
-import net.dmulloy2.types.Reloadable;
 
 /**
  * @author dmulloy2
  */
 
-public class CmdReload extends SurvivalGamesCommand implements Reloadable {
+public class CmdReload extends SurvivalGamesCommand {
     public CmdReload(SurvivalGames plugin) {
         super(plugin);
         this.name = "reload";
@@ -18,22 +17,16 @@ public class CmdReload extends SurvivalGamesCommand implements Reloadable {
         this.addOptionalArg("type");
         this.description = "reload SurvivalGames";
         this.permission = Permission.ADMIN_RELOAD;
-
         this.mustBePlayer = false;
     }
 
     @Override
     public void perform() {
-        reload();
-    }
-
-    @Override
-    public void reload() {
         if (args.length != 1) {
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Valid reload types <Settings | Games | All>", player);
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Settings will reload the settings configs and attempt to reapply them", player);
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Games will reload all games currently running", player);
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "All will attempt to reload the entire plugin", player);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Valid reload types <Settings | Games | All>", sender);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Settings will reload the settings configs and attempt to reapply them", sender);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Games will reload all games currently running", sender);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "All will attempt to reload the entire plugin", sender);
             return;
         }
 
@@ -49,7 +42,7 @@ public class CmdReload extends SurvivalGamesCommand implements Reloadable {
                 g.reloadConfig();
             }
 
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Settings Reloaded", player);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Settings Reloaded", sender);
             return;
         } else if (args[0].equalsIgnoreCase("games")) {
             for (Game g : gameHandler.getGames()) {
@@ -59,18 +52,18 @@ public class CmdReload extends SurvivalGamesCommand implements Reloadable {
                 g.enable();
             }
 
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Games Reloaded", player);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Games Reloaded", sender);
             return;
         } else if (args[0].equalsIgnoreCase("all")) {
             plugin.reload();
 
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Plugin reloaded", player);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Plugin reloaded", sender);
             return;
         } else {
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Valid reload types <Settings | Games | All>", player);
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Settings will reload the settings configs and attempt to reapply them", player);
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Games will reload all games currently running", player);
-            plugin.getMessageHandler().sendMessage(Prefix.INFO, "All will attempt to reload the entire plugin", player);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Valid reload types <Settings | Games | All>", sender);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Settings will reload the settings configs and attempt to reapply them", sender);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "Games will reload all games currently running", sender);
+            plugin.getMessageHandler().sendMessage(Prefix.INFO, "All will attempt to reload the entire plugin", sender);
             return;
         }
     }

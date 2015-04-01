@@ -10,8 +10,8 @@ import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.Util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 /**
  * @author dmulloy2
@@ -38,10 +38,10 @@ public class MessageHandler {
      * in the form of {$var} with its correct values, then sends to the player,
      * adding the correct prefix
      */
-    public void sendFMessage(Prefix type, String input, Player player, String... args) {
+    public void sendFMessage(Prefix type, String input, CommandSender sender, String... args) {
         String msg = plugin.getSettingsHandler().getMessageConfig().getString("messages." + input);
         if (msg == null) {
-            player.sendMessage(ChatColor.RED + "Failed to load message for messages." + input);
+            sender.sendMessage(ChatColor.RED + "Failed to load message for messages." + input);
             logMessage(Prefix.WARNING, "Failed to load message for messages." + input);
             return;
         }
@@ -54,23 +54,23 @@ public class MessageHandler {
             msg = replaceVars(msg, args);
         }
 
-        player.sendMessage(prefixes.get(Prefix.MAIN) + " " + prefixes.get(type) + replaceColors(msg));
+        sender.sendMessage(prefixes.get(Prefix.MAIN) + " " + prefixes.get(type) + replaceColors(msg));
     }
 
-    public void sendFMessage(String input, Player player, String... args) {
-        sendFMessage(Prefix.INFO, input, player, args);
+    public void sendFMessage(String input, CommandSender sender, String... args) {
+        sendFMessage(Prefix.INFO, input, sender, args);
     }
 
     /**
      * Sends a pre formated message from the plugin to a player, adding correct
      * prefix first
      */
-    public void sendMessage(Prefix type, String msg, Player player) {
-        player.sendMessage(prefixes.get(Prefix.MAIN) + " " + prefixes.get(type) + replaceColors(msg));
+    public void sendMessage(Prefix type, String msg, CommandSender sender) {
+        sender.sendMessage(prefixes.get(Prefix.MAIN) + " " + prefixes.get(type) + replaceColors(msg));
     }
 
-    public void sendMessage(String msg, Player player) {
-        sendMessage(Prefix.INFO, msg, player);
+    public void sendMessage(String msg, CommandSender sender) {
+        sendMessage(Prefix.INFO, msg, sender);
     }
 
     public void logMessage(Prefix type, String msg, Object... args) {
