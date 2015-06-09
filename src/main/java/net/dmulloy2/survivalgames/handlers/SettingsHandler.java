@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
-import net.dmulloy2.types.ItemParser;
+import net.dmulloy2.util.ItemUtil;
 import net.dmulloy2.util.Util;
 
 import org.bukkit.Location;
@@ -351,7 +351,7 @@ public class SettingsHandler {
 
     public List<ItemStack> getRewardItems() {
         if (rewardItems == null) {
-            rewardItems = ItemParser.parse(plugin, getConfig().getStringList("reward.contents"));
+            rewardItems = ItemUtil.readItems(getConfig().getStringList("reward.contents"), plugin);
         }
 
         return rewardItems;
