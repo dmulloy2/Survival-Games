@@ -328,14 +328,14 @@ public class SettingsHandler {
         try {
             t.createNewFile();
             FileWriter out = new FileWriter(t);
-            plugin.debug(file);
+            // plugin.debug(file);
             InputStream is = getClass().getResourceAsStream("/" + file);
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null) {
                 out.write(line + "\n");
-                plugin.debug(line);
+                // plugin.debug(line);
             }
             out.flush();
             is.close();
