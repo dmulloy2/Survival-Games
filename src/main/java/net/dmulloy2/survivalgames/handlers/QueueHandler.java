@@ -38,7 +38,7 @@ public class QueueHandler {
             EntityType.PLAYER, EntityType.VILLAGER, EntityType.ITEM_FRAME, EntityType.PAINTING
     );
 
-    public void rollback(final int id) {
+    public void rollback(int id) {
         World world = plugin.getSettingsHandler().getGameWorld(id);
         if (world == null) {
             return;
@@ -68,7 +68,7 @@ public class QueueHandler {
     public void add(BlockData data) {
         List<BlockData> dat = queue.get(data.getGameId());
         if (dat == null) {
-            dat = new ArrayList<BlockData>();
+            dat = new ArrayList<>();
         }
 
         dat.add(data);

@@ -240,7 +240,7 @@ public class SettingsHandler {
     }
 
     public Map<String, Object> getGameFlags(int id) {
-        Map<String, Object> flags = new HashMap<String, Object>();
+        Map<String, Object> flags = new HashMap<>();
         flags.put("AUTOSTART_PLAYERS", system.getInt("sg-system.arenas." + id + ".flags.autostart"));
         flags.put("AUTOSTART_VOTE", system.getInt("sg-system.arenas." + id + ".flags.vote"));
         flags.put("ENDGAME_ENABLED", system.getBoolean("sg-system.arenas." + id + ".flags.endgame-enabled"));

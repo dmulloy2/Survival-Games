@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 public class Kit {
     private String name;
     private double cost;
-    private ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+    private ArrayList<ItemStack> items = new ArrayList<>();
     private ItemStack icon;
 
     private final SurvivalGames plugin;

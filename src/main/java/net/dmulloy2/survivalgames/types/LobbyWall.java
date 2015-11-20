@@ -16,8 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class LobbyWall {
-    private ArrayList<Sign> signs = new ArrayList<Sign>();
-    private ArrayList<String> msgqueue = new ArrayList<String>();
+    private ArrayList<Sign> signs = new ArrayList<>();
+    private ArrayList<String> msgqueue = new ArrayList<>();
     private int gameid;
 
     private final SurvivalGames plugin;
@@ -28,7 +28,7 @@ public class LobbyWall {
     }
 
     public boolean loadSign(World w, int x1, int x2, int z1, int z2, int y1) {
-        boolean usingx = (x1 == x2) ? false : true;
+        boolean usingx = x1 != x2;
         plugin.debug(w + " " + x1 + " " + x2 + " " + z1 + " " + z2 + " " + y1 + " " + usingx);
 
         BlockState state = new Location(w, x1, y1, z1).getBlock().getState();
@@ -128,7 +128,7 @@ public class LobbyWall {
         }
 
         // live player data
-        ArrayList<String> display = new ArrayList<String>();
+        ArrayList<String> display = new ArrayList<>();
         for (Player p : game.getAllPlayers()) {
             display.add((game.isPlayerActive(p) ? ChatColor.BLACK : ChatColor.GRAY)
                     + NameUtil.stylize(p.getName(), !game.isPlayerActive(p)));

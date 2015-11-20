@@ -38,10 +38,10 @@ public class GameHandler {
         this.plugin = plugin;
         this.messageHandler = plugin.getMessageHandler();
 
-        this.games = new ArrayList<Game>();
-        this.kits = new ArrayList<Kit>();
-        this.kitsel = new HashSet<String>();
-        this.openedChest = new HashMap<Integer, HashSet<Block>>();
+        this.games = new ArrayList<>();
+        this.kits = new ArrayList<>();
+        this.kitsel = new HashSet<>();
+        this.openedChest = new HashMap<>();
 
         loadGames();
         loadKits();
@@ -186,7 +186,8 @@ public class GameHandler {
         if (i <= kits.size()) {
             Kit k = getKits(p).get(i);
             if (k != null) {
-                p.getInventory().setContents(k.getContents().toArray(new ItemStack[0]));
+                ArrayList<ItemStack> var = k.getContents();
+                p.getInventory().setContents(var.toArray(new ItemStack[var.size()]));
             }
         }
 
@@ -234,7 +235,7 @@ public class GameHandler {
     }
 
     public List<Kit> getKits(Player p) {
-        List<Kit> k = new ArrayList<Kit>();
+        List<Kit> k = new ArrayList<>();
         for (Kit kit : kits) {
             if (kit.canUse(p)) {
                 k.add(kit);
@@ -259,7 +260,7 @@ public class GameHandler {
     }
 
     public void autoAddPlayer(Player pl) {
-        List<Game> qg = new ArrayList<Game>(5);
+        List<Game> qg = new ArrayList<>(5);
         for (Game g : games) {
             if (g.getMode() == Game.GameMode.WAITING)
                 qg.add(g);
@@ -321,7 +322,7 @@ public class GameHandler {
     }
 
     public void hotRemoveArena(int no) {
-        for (Game g : games.toArray(new Game[0])) {
+        for (Game g : games.toArray(new Game[games.size()])) {
             if (g.getID() == no) {
                 games.remove(getGame(no));
             }
@@ -336,11 +337,10 @@ public class GameHandler {
     public List<String> getStringList(Game game) {
         Player[][] players = game.getPlayers();
 
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         StringBuilder line = new StringBuilder();
 
-        line.append(ChatColor.GREEN + "<---------------------[ Alive: " + players[0].length + " ]--------------------->" + ChatColor.GREEN
-                + " ");
+        line.append(ChatColor.GREEN + "<---------------------[ Alive: ").append(players[0].length).append(" ]--------------------->").append(ChatColor.GREEN).append(" ");
         lines.add(line.toString());
 
         line = new StringBuilder();
@@ -348,7 +348,7 @@ public class GameHandler {
             line.append(ChatColor.GREEN + "None");
         } else {
             for (Player p : players[0]) {
-                line.append(ChatColor.GREEN + p.getName() + ", ");
+                line.append(ChatColor.GREEN).append(p.getName()).append(", ");
             }
             line.delete(line.lastIndexOf(","), line.lastIndexOf(" "));
         }
@@ -357,8 +357,7 @@ public class GameHandler {
         lines.add(line.toString());
 
         line = new StringBuilder();
-        line.append(ChatColor.RED + "<---------------------[ Dead: " + players[1].length + " ]--------------------->" + ChatColor.RED
-                + " ");
+        line.append(ChatColor.RED + "<---------------------[ Dead: ").append(players[1].length).append(" ]--------------------->").append(ChatColor.RED).append(" ");
         lines.add(line.toString());
 
         line = new StringBuilder();
@@ -366,7 +365,7 @@ public class GameHandler {
             line.append(ChatColor.RED + "None");
         } else {
             for (Player p : players[1]) {
-                line.append(ChatColor.RED + p.getName() + ", ");
+                line.append(ChatColor.RED).append(p.getName()).append(", ");
             }
             line.delete(line.lastIndexOf(","), line.lastIndexOf(" "));
         }

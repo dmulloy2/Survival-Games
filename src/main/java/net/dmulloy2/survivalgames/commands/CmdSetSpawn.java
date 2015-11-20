@@ -62,14 +62,14 @@ public class CmdSetSpawn extends SurvivalGamesCommand {
 
         plugin.getSettingsHandler().setSpawn(game, i, l.toVector());
         plugin.getMessageHandler().sendFMessage(Prefix.INFO, "info.spawnset", player, "num-" + i, "arena-" + game);
-        return;
     }
 
-    private HashMap<Integer, Integer> next = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> next = new HashMap<>();
 
     public void loadNextSpawn() {
         // Avoid Concurrency problems
-        for (Game g : gameHandler.getGames().toArray(new Game[0])) {
+        java.util.List<Game> var = gameHandler.getGames();
+        for (Game g : var.toArray(new Game[var.size()])) {
             next.put(g.getID(), plugin.getSettingsHandler().getSpawnCount(g.getID()) + 1);
         }
     }
