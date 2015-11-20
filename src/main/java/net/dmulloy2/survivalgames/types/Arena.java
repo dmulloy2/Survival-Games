@@ -14,9 +14,9 @@ public class Arena {
     public boolean containsBlock(Location v) {
         if (v.getWorld() != min.getWorld())
             return false;
-        final double x = v.getX();
-        final double y = v.getY();
-        final double z = v.getZ();
+        double x = v.getX();
+        double y = v.getY();
+        double z = v.getZ();
         return x >= min.getBlockX() && x < max.getBlockX() + 1 && y >= min.getBlockY() && y < max.getBlockY() + 1 && z >= min.getBlockZ() && z < max.getBlockZ() + 1;
     }
 

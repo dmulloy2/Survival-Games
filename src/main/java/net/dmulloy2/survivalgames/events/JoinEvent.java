@@ -18,7 +18,7 @@ public class JoinEvent implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void PlayerJoin(PlayerJoinEvent e) {
-        final Player p = e.getPlayer();
+        Player p = e.getPlayer();
 
         if (plugin.getGameHandler().getGameId(p.getLocation()) != -1) {
             new TeleportTask(p).runTaskLater(plugin, 5L);

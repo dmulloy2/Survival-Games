@@ -24,7 +24,7 @@ public class MessageHandler {
 
     public MessageHandler(SurvivalGames plugin) {
         this.plugin = plugin;
-        this.prefixes = new HashMap<Prefix, String>();
+        this.prefixes = new HashMap<>();
 
         FileConfiguration f = plugin.getSettingsHandler().getMessageConfig();
         prefixes.put(Prefix.MAIN, replaceColors(f.getString("prefix.main", plugin.getPrefix())));
@@ -141,7 +141,7 @@ public class MessageHandler {
     }
 
     public String replaceVars(String msg, String... vars) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
 
         for (String str : vars) {
             String[] s = str.split("-");

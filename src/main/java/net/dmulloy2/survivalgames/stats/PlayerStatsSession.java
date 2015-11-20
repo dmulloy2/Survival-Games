@@ -24,7 +24,7 @@ public class PlayerStatsSession {
 
     private List<String> killed = new ArrayList<>();
 
-    private HashMap<Integer, Integer> kslist = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> kslist = new HashMap<>();
 
     private final SurvivalGames plugin;
 

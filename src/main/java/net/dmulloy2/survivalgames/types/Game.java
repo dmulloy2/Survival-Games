@@ -33,7 +33,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * Data container for a game
  */
 public class Game {
-    public static enum GameMode {
+    public enum GameMode {
         DISABLED,
         LOADING,
         INACTIVE,
@@ -549,7 +549,7 @@ public class Game {
                                     + ((killer != null) ? (NameUtil.getAuthors().contains(killer.getName()) ? ChatColor.DARK_RED + ""
                                     + ChatColor.BOLD : "") + killer.getName() : "Unknown"), "item-"
                                     + ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType()) : "Unknown Item"));
-                            if (killer != null && player != null) {
+                            if (killer != null) {
                                 if (kills.containsKey(killer.getName())) {
                                     kills.put(killer.getName(), kills.get(killer.getName()) + 1);
                                 } else {
@@ -574,7 +574,7 @@ public class Game {
                             msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getCause(), "player-"
                                     + (NameUtil.getAuthors().contains(player.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
                                     + player.getName(), "killer-" + player.getKiller().getName());
-                            if (killer != null && player != null)
+                            if (killer != null)
                                 plugin.getStatsHandler().addKill(killer, player, gameID);
                         } else {
                             msgFall(Prefix.INFO, "death." + player.getLastDamageCause().getCause(), "player-"
@@ -878,7 +878,7 @@ public class Game {
             clearInv(p);
             p.getInventory().setContents(inventoryStore.get(p.getName())[0]);
             p.getInventory().setArmorContents(inventoryStore.get(p.getName())[1]);
-            inventoryStore.remove(p);
+            inventoryStore.remove(p.getName());
             p.updateInventory();
         } catch (Throwable ex) {
             plugin.log(Level.WARNING, Util.getUsefulStack(ex, "restoring " + p.getName() + "'s inventory"));
@@ -954,7 +954,7 @@ public class Game {
                         Player player = plugin.getServer().getPlayer(name);
                         if (player != null)
                             player.teleport(plugin.getSettingsHandler().getSpawnPoint(gameID, entry.getKey()));
-                        break spawns;
+                        break;
                     }
                 }
             }
@@ -998,11 +998,14 @@ public class Game {
     }
 
     public Player[][] getPlayers() {
-        return new Player[][] { getActivePlayerList().toArray(new Player[0]), getInactivePlayerList().toArray(new Player[0]) };
+        List<Player> activePlayerList = getActivePlayerList();
+        List<Player> inactivePlayerList = getInactivePlayerList();
+        return new Player[][] {activePlayerList.toArray(new Player[activePlayerList.size()]), inactivePlayerList.toArray(new Player[inactivePlayerList.size()])};
     }
 
+
     public List<Player> getAllPlayers() {
-        List<Player> all = new ArrayList<Player>();
+        List<Player> all = new ArrayList<>();
         all.addAll(getActivePlayerList());
         all.addAll(getInactivePlayerList());
         return all;

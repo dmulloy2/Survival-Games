@@ -15,7 +15,7 @@ public class ItemReader {
     private static HashMap<String, Enchantment> encids;
 
     private static void loadIds() {
-        encids = new HashMap<String, Enchantment>();
+        encids = new HashMap<>();
 
         for (Enchantment e : Enchantment.values()) {
             encids.put(e.toString().toLowerCase().replace("_", ""), e);

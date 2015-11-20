@@ -31,14 +31,14 @@ public class CmdListArenas extends SurvivalGamesCommand {
             return;
         }
 
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         StringBuilder line = new StringBuilder();
         line.append(ChatColor.BLUE + "-----[ " + ChatColor.GOLD + "Available Arenas" + ChatColor.BLUE + " ]-----");
         lines.add(line.toString());
 
         for (Game game : games) {
             line = new StringBuilder();
-            line.append(ChatColor.GREEN + game.getName() + "    ");
+            line.append(ChatColor.GREEN).append(game.getName()).append("    ");
             if (game.getMode() == Game.GameMode.INGAME) {
                 line.append(ChatColor.GREEN + "[INGAME]");
             } else if (game.getMode() == Game.GameMode.STARTING) {
@@ -50,12 +50,12 @@ public class CmdListArenas extends SurvivalGamesCommand {
             } else if (game.getMode() == Game.GameMode.WAITING) {
                 line.append(ChatColor.YELLOW + "[WAITING]");
             } else {
-                line.append(ChatColor.RED + "[" + game.getGameMode().toString() + "]");
+                line.append(ChatColor.RED + "[").append(game.getGameMode().toString()).append("]");
             }
 
             line.append(ChatColor.YELLOW + "    [");
-            line.append(game.getActivePlayers() + "/");
-            line.append(game.getInactivePlayers() + "/");
+            line.append(game.getActivePlayers()).append("/");
+            line.append(game.getInactivePlayers()).append("/");
             line.append(plugin.getSettingsHandler().getSpawnCount(game.getID()));
             line.append("]");
             lines.add(line.toString());

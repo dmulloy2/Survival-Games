@@ -15,8 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public class SpectatorUtil {
-    private static List<String> browsingInventory = new ArrayList<String>();
-    private static HashMap<String, Game> spectating = new HashMap<String, Game>();
+    private static List<String> browsingInventory = new ArrayList<>();
+    private static HashMap<String, Game> spectating = new HashMap<>();
 
     public static void openInventory(Player p, Game g) {
         String name = ChatColor.DARK_RED + "" + ChatColor.BOLD + "Tributes";

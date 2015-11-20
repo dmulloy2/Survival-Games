@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 public class ChestRatioStorage {
-    private final HashMap<Integer, List<ItemStack>> lvlstore = new HashMap<Integer, List<ItemStack>>();
+    private final HashMap<Integer, List<ItemStack>> lvlstore = new HashMap<>();
 
     private int ratio = 2;
     private int maxlevel = 0;
@@ -20,12 +20,12 @@ public class ChestRatioStorage {
         FileConfiguration conf = plugin.getSettingsHandler().getChest();
 
         for (int clevel = 1; clevel <= 16; clevel++) {
-            List<ItemStack> lvl = new ArrayList<ItemStack>();
+            List<ItemStack> lvl = new ArrayList<>();
             List<String> list = conf.getStringList("chest.lvl" + clevel);
 
             if (!list.isEmpty()) {
-                for (int b = 0; b < list.size(); b++) {
-                    ItemStack i = ItemReader.read(list.get(b));
+                for (String aList : list) {
+                    ItemStack i = ItemReader.read(aList);
                     lvl.add(i);
                 }
 
@@ -51,7 +51,7 @@ public class ChestRatioStorage {
 
     public List<ItemStack> getItems(int level) {
         Random r = new Random();
-        List<ItemStack> items = new ArrayList<ItemStack>();
+        List<ItemStack> items = new ArrayList<>();
 
         for (int a = 0; a < r.nextInt(7) + 10; a++) {
             if (r.nextBoolean()) {
