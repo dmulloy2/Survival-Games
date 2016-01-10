@@ -954,7 +954,7 @@ public class Game {
                         Player player = plugin.getServer().getPlayer(name);
                         if (player != null)
                             player.teleport(plugin.getSettingsHandler().getSpawnPoint(gameID, entry.getKey()));
-                        break;
+                        break spawns;
                     }
                 }
             }
