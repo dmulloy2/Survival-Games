@@ -67,7 +67,6 @@ public class ChestReplaceEvent implements Listener {
                         plugin.getGameHandler().getOpenedChest().put(game.getID(), openedChest);
                     } else {
                         e.setCancelled(true);
-                        return;
                     }
                 }
             }

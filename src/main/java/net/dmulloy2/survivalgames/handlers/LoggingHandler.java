@@ -28,7 +28,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class LoggingHandler implements Listener {
-    private @Getter Map<String, Integer> i = new HashMap<String, Integer>();
+    private @Getter Map<String, Integer> i = new HashMap<>();
 
     private final SurvivalGames plugin;
 

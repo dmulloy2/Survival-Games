@@ -43,7 +43,6 @@ public class CmdReload extends SurvivalGamesCommand {
             }
 
             plugin.getMessageHandler().sendMessage(Prefix.INFO, "Settings Reloaded", sender);
-            return;
         } else if (args[0].equalsIgnoreCase("games")) {
             for (Game g : gameHandler.getGames()) {
                 plugin.getQueueHandler().rollback(g.getID());
@@ -53,18 +52,15 @@ public class CmdReload extends SurvivalGamesCommand {
             }
 
             plugin.getMessageHandler().sendMessage(Prefix.INFO, "Games Reloaded", sender);
-            return;
         } else if (args[0].equalsIgnoreCase("all")) {
             plugin.reload();
 
             plugin.getMessageHandler().sendMessage(Prefix.INFO, "Plugin reloaded", sender);
-            return;
         } else {
             plugin.getMessageHandler().sendMessage(Prefix.INFO, "Valid reload types <Settings | Games | All>", sender);
             plugin.getMessageHandler().sendMessage(Prefix.INFO, "Settings will reload the settings configs and attempt to reapply them", sender);
             plugin.getMessageHandler().sendMessage(Prefix.INFO, "Games will reload all games currently running", sender);
             plugin.getMessageHandler().sendMessage(Prefix.INFO, "All will attempt to reload the entire plugin", sender);
-            return;
         }
     }
 }

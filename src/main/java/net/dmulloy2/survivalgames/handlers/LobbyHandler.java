@@ -22,9 +22,9 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
 public class LobbyHandler {
-    private HashMap<Integer, List<LobbyWall>> signs = new HashMap<Integer, List<LobbyWall>>();
+    private HashMap<Integer, List<LobbyWall>> signs = new HashMap<>();
 
-    public @Getter HashSet<Chunk> lobbychunks = new HashSet<Chunk>();
+    public @Getter HashSet<Chunk> lobbychunks = new HashSet<>();
 
     private FileConfiguration s;
 
@@ -54,7 +54,7 @@ public class LobbyHandler {
             if (ls.loadSign(w, x1, x2, z1, z2, y1)) {
                 List<LobbyWall> t = signs.get(gameid);
                 if (t == null) {
-                    t = new ArrayList<LobbyWall>();
+                    t = new ArrayList<>();
                     signs.put(gameid, t);
                 }
 

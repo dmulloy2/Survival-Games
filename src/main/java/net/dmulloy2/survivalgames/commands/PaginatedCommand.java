@@ -63,7 +63,7 @@ public abstract class PaginatedCommand extends SurvivalGamesCommand {
      * @return List of page lines
      */
     public List<String> getPage(int index) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         lines.add(getHeader(index));
         lines.addAll(getLines((index - 1) * linesPerPage, index * linesPerPage));
         return lines;
@@ -88,7 +88,7 @@ public abstract class PaginatedCommand extends SurvivalGamesCommand {
      * @return All lines between start and end indexes
      */
     public List<String> getLines(int startIndex, int endIndex) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         for (int i = startIndex; i < endIndex && i < getListSize(); i++) {
             String line = getLine(i);
             if (line != null)

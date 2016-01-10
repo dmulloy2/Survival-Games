@@ -8,5 +8,5 @@ public enum Prefix {
     MAIN,
     INFO,
     WARNING,
-    ERROR;
+    ERROR
 }
