@@ -51,7 +51,6 @@ import net.dmulloy2.survivalgames.handlers.SettingsHandler;
 import net.dmulloy2.survivalgames.stats.StatsHandler;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.util.ChestRatioStorage;
-import net.dmulloy2.types.Reloadable;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.Util;
 
@@ -76,7 +75,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
  * Currently maintained by dmulloy2
  */
 
-public class SurvivalGames extends SwornPlugin implements Reloadable {
+public class SurvivalGames extends SwornPlugin {
     private @Getter GameHandler gameHandler;
     private @Getter StatsHandler statsHandler;
     private @Getter LobbyHandler lobbyHandler;
