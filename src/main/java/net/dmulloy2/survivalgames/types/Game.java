@@ -13,6 +13,7 @@ import net.dmulloy2.survivalgames.util.ItemReader;
 import net.dmulloy2.survivalgames.util.Kit;
 import net.dmulloy2.survivalgames.util.NameUtil;
 import net.dmulloy2.survivalgames.util.SpectatorUtil;
+import net.dmulloy2.util.CompatUtil;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.InventoryUtil;
 import net.dmulloy2.util.Util;
@@ -548,7 +549,7 @@ public class Game {
                                     + player.getName(), "killer-"
                                     + ((killer != null) ? (NameUtil.getAuthors().contains(killer.getName()) ? ChatColor.DARK_RED + ""
                                     + ChatColor.BOLD : "") + killer.getName() : "Unknown"), "item-"
-                                    + ((killer != null) ? ItemReader.getFriendlyName(killer.getItemInHand().getType()) : "Unknown Item"));
+                                    + ((killer != null) ? ItemReader.getFriendlyName(CompatUtil.getItemInMainHand(player).getType()) : "Unknown Item"));
                             if (killer != null) {
                                 if (kills.containsKey(killer.getName())) {
                                     kills.put(killer.getName(), kills.get(killer.getName()) + 1);

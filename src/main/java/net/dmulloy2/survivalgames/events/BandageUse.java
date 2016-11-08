@@ -1,6 +1,7 @@
 package net.dmulloy2.survivalgames.events;
 
 import net.dmulloy2.survivalgames.SurvivalGames;
+import net.dmulloy2.util.CompatUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,14 +26,14 @@ public class BandageUse implements Listener {
             return;
 
         if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            ItemStack stack = player.getItemInHand();
+            ItemStack stack = CompatUtil.getItemInMainHand(player);
             if (stack == null || stack.getType() == Material.AIR)
                 return;
 
             if (stack.getType() == Material.PAPER) {
-                player.getItemInHand().setAmount(stack.getAmount() - 1);
-                if (player.getItemInHand().getAmount() == 0)
-                    player.getInventory().removeItem(player.getItemInHand());
+                stack.setAmount(stack.getAmount() - 1);
+                if (stack.getAmount() == 0)
+                    player.getInventory().removeItem(stack);
                 player.updateInventory();
 
                 double amountToGive = amountToGive(player);

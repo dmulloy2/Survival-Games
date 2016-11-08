@@ -3,6 +3,7 @@ package net.dmulloy2.survivalgames.events;
 import net.dmulloy2.survivalgames.SurvivalGames;
 import net.dmulloy2.survivalgames.types.Game;
 import net.dmulloy2.survivalgames.util.SpectatorUtil;
+import net.dmulloy2.util.CompatUtil;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -56,7 +57,7 @@ public class SpectatorEvents implements Listener {
     public void onPlayerClickEvent(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (SpectatorUtil.isSpectating(player)) {
-            if (player.getItemInHand().getType() == Material.COMPASS) {
+            if (CompatUtil.getItemInMainHand(player).getType() == Material.COMPASS) {
                 Game game = SpectatorUtil.getGame(player);
                 if (game != null) {
                     event.setCancelled(true);
